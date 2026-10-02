@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/*
+ * Paleta de Repelón Market: tres colores y ni uno más.
+ *   - Blanco (#FFFFFF): fondo y superficies.
+ *   - Verde (#16A34A): barras de navegación y encabezados.
+ *   - Azul (#2563EB): botones y acciones.
+ * El texto va en negro y los bordes en negro translúcido, para no meter
+ * un cuarto color al tema. No hay modo oscuro: el mercado se usa a plena
+ * luz del día y una paleta clara fija es más simple de mantener.
+ */
+@theme {
+	--color-verde: #16a34a;
+	--color-azul: #2563eb;
+}
+
+html,
+body {
+	background: #ffffff;
+	color: #000000;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+}

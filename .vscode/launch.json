@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ReplonConectaApplication<ReplonConecta>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.repelonconecta.ReplonConecta.ReplonConectaApplication",
+            "projectName": "ReplonConecta",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

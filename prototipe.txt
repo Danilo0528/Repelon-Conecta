@@ -1,0 +1,53 @@
+Actúa como un desarrollador full-stack senior y diseñador de producto. Crea el MVP (versión base funcional) de una app tipo marketplace local llamada "Repelón Market" (nombre provisional), que conecte a todos los negocios del municipio de Repelón, Atlántico, Colombia, con los compradores del pueblo.
+
+OBJETIVO
+Digitalizar el comercio local: que cualquier tienda, restaurante, panadería, droguería, ferretería, productor agrícola o prestador de servicios del pueblo pueda mostrar sus productos y recibir pedidos, y que los habitantes puedan comprar fácilmente desde el celular.
+
+USUARIOS Y ROLES
+1. Comprador: explora negocios y productos, arma un carrito y hace pedidos.
+2. Vendedor (dueño de negocio): crea su perfil de tienda, publica productos y gestiona pedidos.
+3. Administrador: aprueba negocios nuevos, gestiona categorías y ve estadísticas generales.
+
+FUNCIONES DEL MVP
+Comprador:
+- Registro/inicio de sesión con número de celular o correo.
+- Pantalla de inicio con categorías (comida, tiendas de barrio, droguería, ferretería, agro, ropa, servicios, etc.) y negocios destacados.
+- Buscador y filtros por categoría, barrio/vereda y "abierto ahora".
+- Perfil de cada negocio: logo, descripción, horario, dirección, teléfono, productos.
+- Carrito de compras (un negocio por pedido) y confirmación del pedido.
+- Opciones de entrega: domicilio o recoger en tienda. Dirección con barrio/vereda y referencia.
+- Métodos de pago: efectivo contra entrega, Nequi/Daviplata/transferencia (por ahora solo se muestra el dato y el vendedor confirma el pago manualmente).
+- Historial y estado de pedidos (recibido, en preparación, en camino, entregado, cancelado).
+- Botón para contactar al negocio por WhatsApp con el resumen del pedido.
+
+Vendedor:
+- Registro de negocio (queda "pendiente de aprobación").
+- Panel para editar perfil, horario y estado abierto/cerrado.
+- CRUD de productos: nombre, descripción, precio en COP, foto, categoría, disponibilidad/stock.
+- Lista de pedidos entrantes con cambio de estado y notificación.
+- Resumen simple de ventas del día y de la semana.
+
+Administrador:
+- Aprobar o rechazar negocios.
+- Gestionar categorías y usuarios.
+- Ver métricas: negocios activos, pedidos, ventas totales.
+
+REQUISITOS TÉCNICOS
+- Mobile-first, porque la mayoría de usuarios entrará desde el celular (idealmente PWA instalable).
+- Que funcione bien con internet lento (imágenes comprimidas, carga rápida).
+- Interfaz en español, precios en pesos colombianos (COP, formato $12.000).
+- Stack sugerido: React/Next.js + Tailwind en el frontend, y Supabase o Firebase para autenticación, base de datos y almacenamiento de imágenes. Si propones otro, justifícalo.
+- Modelo de datos mínimo: usuarios, negocios, categorías, productos, pedidos, items_pedido, direcciones.
+- Seguridad básica: roles con permisos, validación de formularios y protección de rutas.
+
+DISEÑO
+- Estilo cálido, cercano y sencillo, pensado para personas de todas las edades y poco acostumbradas a apps.
+- Botones grandes, textos claros, pocos pasos para comprar.
+- Paleta de colores con identidad local (puedes proponer una).
+
+LO QUE QUIERO QUE ENTREGUES
+1. Resumen breve de la arquitectura y el modelo de datos.
+2. El código base funcional del proyecto con la estructura de carpetas.
+3. Datos de ejemplo (seed) con 5 negocios ficticios de Repelón y 3 a 5 productos cada uno.
+5. Una lista de mejoras para la fase 2 (pagos en línea, repartidores, reseñas, notificaciones push, cupones, mapa).
+Empieza por lo esencial: primero lo que permita que un comprador vea un negocio, agregue productos al carrito y envíe un pedido, y que el vendedor lo reciba. Luego completa lo demás.
