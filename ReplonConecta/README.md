@@ -1,4 +1,4 @@
-# Repelón Market
+# Repelón Conecta
 
 Marketplace local para Repelón (Atlántico): los negocios del pueblo publican
 sus productos y los compradores arman un pedido por negocio (domicilio o
@@ -11,11 +11,26 @@ recoger en tienda). Un pedido siempre pertenece a **un solo negocio**.
   usuario se crea en la primera llamada a `GET /api/me`.
 - **Frontend**: Next.js 16 (App Router) + Tailwind v4, mobile-first.
 
+## La app en cuatro toques
+
+La pantalla principal (`/`) **es el mapa**, no un extra: se abre la app, se ve
+dónde está cada negocio y se toca un pin. Los cuatro destinos de la barra
+inferior son Mapa, Lista (`/negocios`), Pedidos y Perfil.
+
+| Qué se ve | Dónde |
+|---|---|
+| Mapa a pantalla completa, pin verde si está abierto y gris si está cerrado | `/` |
+| Filtros flotando sobre el mapa (categoría, "Abiertos ahora") | `/` |
+| Ficha del negocio: foto grande, mapa chico, productos en rejilla de 2 con botón **+** de ancho completo | `/negocios/[slug]` |
+| Carrito y checkout con total en pesos grandes y botones de 48 px | `/carrito`, `/checkout` |
+| Pedidos con el estado en color y un toque para el detalle | `/pedidos` |
+| Panel del vendedor (con pin arrastrable al crear el negocio) y de admin | `/perfil` → Mi negocio |
+
 ## Estructura
 
 ```
-ReplonConecta/
-  ReplonConecta/        backend Spring Boot (Maven)
+RepelonConecta/
+  RepelonConecta/        backend Spring Boot (Maven)
   frontend/             app Next.js
 ```
 
@@ -61,9 +76,30 @@ npm run dev
 ```
 
 Variables (`NEXT_PUBLIC_*`, ver `.env.local.example`): `NEXT_PUBLIC_API_URL`,
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-`NEXT_PUBLIC_SUPABASE_BUCKET`. Sin credenciales la app igual arranca y avisa
-que Supabase no está configurado.
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (o
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`), `NEXT_PUBLIC_SUPABASE_BUCKET`. Sin
+credenciales la app igual arranca y avisa que Supabase no está configurado.
+
+El mapa es **OpenStreetMap** con Leaflet (`src/components/Mapa.tsx`): teselas
+de `tile.openstreetmap.org`, sin clave ni registro. Como los negocios vienen
+sin latitud/longitud, `src/lib/geocodificar.ts` resuelve su dirección con
+Nominatim a través del proxy `src/app/api/geocode/route.ts` (Nominatim no
+envía cabeceras CORS, así que el navegador no puede pedirle nada directo) y
+guarda el resultado en el navegador para no repetir consultas ni pasar del
+límite de una por segundo. Los botones "Cómo llegar" y "Ver en
+OpenStreetMap" abren la web de OpenStreetMap con la ruta o el punto exacto.
+
+La altura de la barra de marca y la de la barra inferior están en
+`src/app/globals.css` como tokens `--spacing-cabecera`, `--spacing-nav` y
+`--spacing-nav-total`. Si se cambia una, se cambian las tres: el mapa de la
+home mide el alto disponible con esos mismos números.
+
+### Paleta
+
+Blanco de fondo, verde (`#16A34A`) solo para barra de marca, "Abierto" y pin
+abierto, azul (`#2563EB`) solo para agregar, confirmar, cómo llegar y pedir.
+Negro para títulos y un gris suave (negro con opacidad) para lo secundario.
+Precios siempre visibles y en grande.
 
 ## Flujo y estados del pedido
 

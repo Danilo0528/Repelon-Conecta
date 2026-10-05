@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { Aviso, Cargando, EtiquetaEstado, Vacio } from "@/components/ui";
-import { useSesion } from "@/context/SesionContext";
+import { Aviso, CLASE_BOTON_AZUL, Cargando, EtiquetaEstado, Vacio } from "@/components/ui";import { useSesion } from "@/context/SesionContext";
 import { apiConSesion } from "@/lib/api";
 import { fecha, pesos } from "@/lib/format";
 import type { Pedido } from "@/lib/tipos";
@@ -44,33 +43,35 @@ export default function MisPedidos() {
 					titulo="Todavía no tienes pedidos"
 					texto="Cuando hagas tu primer pedido lo verás aquí."
 				>
-					<Link
-						href="/"
-						className="inline-block rounded-xl bg-azul px-4 py-2 text-sm font-semibold text-white"
-					>
-						Ver negocios
+					<Link href="/" className={CLASE_BOTON_AZUL}>
+						Ver el mapa
 					</Link>
 				</Vacio>
 			)}
 
-			<ul className="mt-3 space-y-3">
+			{/* Cada pedido es una fila que se abre de un toque. El color del
+			    estado es lo único que cambia de una a otra: la lista se lee
+			    de un vistazo y sin tener que leer texto. */}
+			<ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 				{(datos ?? []).map((p) => (
 					<li key={p.id}>
 						<Link
 							href={`/pedidos/${p.id}`}
-							className="block rounded-2xl border border-black/10 p-4 shadow-sm active:bg-black/[.03]"
+							className="flex items-center gap-3 rounded-2xl border border-black/10 p-4 active:bg-black/[.03]"
 						>
-							<div className="flex items-center justify-between gap-2">
-								<span className="font-semibold">{p.negocioNombre}</span>
-								<EtiquetaEstado estado={p.estado} />
+							<div className="min-w-0 flex-1">
+								<p className="font-semibold leading-tight">{p.negocioNombre}</p>
+								<p className="mt-0.5 text-sm text-black/55">
+									Pedido {p.numero} · {p.cantidadItems}{" "}
+									{p.cantidadItems === 1 ? "ítem" : "ítems"}
+								</p>
+								<p className="mt-0.5 text-xs text-black/45">{fecha(p.creadoEn)}</p>
 							</div>
-							<p className="mt-1 text-sm text-black/60">
-								Pedido {p.numero} · {fecha(p.creadoEn)}
-							</p>
-							<p className="mt-1 text-sm">
-								{p.cantidadItems} ítem(s) ·{" "}
-								<span className="font-semibold">{pesos(p.total)}</span>
-							</p>
+
+							<div className="shrink-0 text-right">
+								<EtiquetaEstado estado={p.estado} />
+								<p className="mt-1.5 font-bold">{pesos(p.total)}</p>
+							</div>
 						</Link>
 					</li>
 				))}

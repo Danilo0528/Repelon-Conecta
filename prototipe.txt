@@ -1,53 +1,34 @@
-Actúa como un desarrollador full-stack senior y diseñador de producto. Crea el MVP (versión base funcional) de una app tipo marketplace local llamada "Repelón Market" (nombre provisional), que conecte a todos los negocios del municipio de Repelón, Atlántico, Colombia, con los compradores del pueblo.
+Actúa como un arquitecto de software senior y revisor de código. Necesito que AUDITES el proyecto que está abierto en esta carpeta y compares lo que YA existe contra lo que QUEREMOS construir. No modifiques ni borres nada: solo analiza y reporta.
 
-OBJETIVO
-Digitalizar el comercio local: que cualquier tienda, restaurante, panadería, droguería, ferretería, productor agrícola o prestador de servicios del pueblo pueda mostrar sus productos y recibir pedidos, y que los habitantes puedan comprar fácilmente desde el celular.
+CONTEXTO DEL PROYECTO
+"Repelón Conecta" (nombre provisional): marketplace local web que conecta a los negocios del municipio de Repelón, Atlántico, Colombia, con los compradores del pueblo. Es únicamente un proyecto web, que debe verse y funcionar bien desde el navegador del celular y del computador.
 
-USUARIOS Y ROLES
-1. Comprador: explora negocios y productos, arma un carrito y hace pedidos.
-2. Vendedor (dueño de negocio): crea su perfil de tienda, publica productos y gestiona pedidos.
-3. Administrador: aprueba negocios nuevos, gestiona categorías y ve estadísticas generales.
-
-FUNCIONES DEL MVP
-Comprador:
-- Registro/inicio de sesión con número de celular o correo.
-- Pantalla de inicio con categorías (comida, tiendas de barrio, droguería, ferretería, agro, ropa, servicios, etc.) y negocios destacados.
-- Buscador y filtros por categoría, barrio/vereda y "abierto ahora".
-- Perfil de cada negocio: logo, descripción, horario, dirección, teléfono, productos.
-- Carrito de compras (un negocio por pedido) y confirmación del pedido.
-- Opciones de entrega: domicilio o recoger en tienda. Dirección con barrio/vereda y referencia.
-- Métodos de pago: efectivo contra entrega, Nequi/Daviplata/transferencia (por ahora solo se muestra el dato y el vendedor confirma el pago manualmente).
-- Historial y estado de pedidos (recibido, en preparación, en camino, entregado, cancelado).
-- Botón para contactar al negocio por WhatsApp con el resumen del pedido.
-
-Vendedor:
-- Registro de negocio (queda "pendiente de aprobación").
-- Panel para editar perfil, horario y estado abierto/cerrado.
-- CRUD de productos: nombre, descripción, precio en COP, foto, categoría, disponibilidad/stock.
-- Lista de pedidos entrantes con cambio de estado y notificación.
-- Resumen simple de ventas del día y de la semana.
-
-Administrador:
-- Aprobar o rechazar negocios.
-- Gestionar categorías y usuarios.
-- Ver métricas: negocios activos, pedidos, ventas totales.
-
-REQUISITOS TÉCNICOS
-- Mobile-first, porque la mayoría de usuarios entrará desde el celular (idealmente PWA instalable).
-- Que funcione bien con internet lento (imágenes comprimidas, carga rápida).
-- Interfaz en español, precios en pesos colombianos (COP, formato $12.000).
-- Stack sugerido: React/Next.js + Tailwind en el frontend, y Supabase o Firebase para autenticación, base de datos y almacenamiento de imágenes. Si propones otro, justifícalo.
-- Modelo de datos mínimo: usuarios, negocios, categorías, productos, pedidos, items_pedido, direcciones.
-- Seguridad básica: roles con permisos, validación de formularios y protección de rutas.
+STACK OBJETIVO
+- Backend: Spring Boot (Java 21, Spring Web, Spring Security con JWT, Spring Data JPA), PostgreSQL, API REST documentada con OpenAPI/Swagger, migraciones con Flyway.
+- Frontend: web responsive y mobile-first en React + Tailwind que consuma la API. Sin plantillas renderizadas en servidor (Thymeleaf).
+- Fotos en Cloudinary o similar.
 
 DISEÑO
-- Estilo cálido, cercano y sencillo, pensado para personas de todas las edades y poco acostumbradas a apps.
-- Botones grandes, textos claros, pocos pasos para comprar.
-- Paleta de colores con identidad local (puedes proponer una).
+- Fondo blanco (#FFFFFF), barras de navegación verdes (#16A34A), botones azules (#2563EB).
+- Interfaz en español, precios en COP con formato $12.000.
+- Botones grandes y pocos pasos para comprar.
 
-LO QUE QUIERO QUE ENTREGUES
-1. Resumen breve de la arquitectura y el modelo de datos.
-2. El código base funcional del proyecto con la estructura de carpetas.
-3. Datos de ejemplo (seed) con 5 negocios ficticios de Repelón y 3 a 5 productos cada uno.
-5. Una lista de mejoras para la fase 2 (pagos en línea, repartidores, reseñas, notificaciones push, cupones, mapa).
-Empieza por lo esencial: primero lo que permita que un comprador vea un negocio, agregue productos al carrito y envíe un pedido, y que el vendedor lo reciba. Luego completa lo demás.
+ROLES Y FUNCIONES QUE QUEREMOS
+Comprador: registro/login (celular o correo), inicio con categorías y negocios destacados, buscador y filtros (categoría, barrio/vereda, "abierto ahora"), perfil de negocio, carrito (un negocio por pedido), entrega a domicilio o recoger, métodos de pago (efectivo, Nequi/Daviplata/transferencia con confirmación manual), historial y estados de pedido (recibido, en preparación, en camino, entregado, cancelado), botón de WhatsApp con resumen del pedido.
+Vendedor: registro de negocio (queda pendiente de aprobación), editar perfil/horario/abierto-cerrado, CRUD de productos (nombre, descripción, precio, foto, categoría, stock), pedidos entrantes con cambio de estado, resumen de ventas del día y la semana.
+Administrador: aprobar o rechazar negocios, gestionar categorías y usuarios, métricas (negocios activos, pedidos, ventas totales).
+Modelo de datos mínimo: usuarios, negocios, categorías, productos, pedidos, items_pedido, direcciones.
+Seguridad: roles con permisos, validación de formularios, rutas protegidas.
+
+LO QUE QUIERO QUE HAGAS
+1. Recorre todo el proyecto y dime la estructura real de carpetas y qué tecnologías y versiones se están usando (revisa pom.xml/build.gradle, package.json, application.properties, etc.).
+2. Haz una tabla de cada función de la lista anterior con su estado: Hecho / Parcial / No existe. Indica el archivo o clase donde está implementada.
+3. Revisa específicamente: modelo de datos (entidades y relaciones), endpoints existentes, autenticación y roles, validaciones, manejo de errores, conexión a base de datos, y si el frontend ya existe.
+4. Detecta problemas: errores de nombres (por ejemplo "ReplonConecta" debería ser "RepelonConecta"), código duplicado, secretos o contraseñas expuestos en el código, dependencias desactualizadas o innecesarias, y cualquier cosa que impida compilar o ejecutar.
+5. Dime si lo que existe respeta la paleta de colores y si el diseño es responsive en pantallas de celular.
+6. Entrégame un plan priorizado de lo que falta, en orden, empezando por lo mínimo para este flujo: comprador ve un negocio → agrega productos al carrito → envía el pedido → el vendedor lo recibe. Divide el plan en tareas pequeñas.
+7. Termina con un RESUMEN CORTO (máximo 25 líneas) en texto plano que yo pueda copiar y pegar a otra IA, con: estructura de carpetas, stack real, lo que está hecho, lo que falta y los 5 próximos pasos.
+
+Si algo no lo puedes determinar o no lo encuentras, dilo explícitamente en lugar de suponer.
+
+

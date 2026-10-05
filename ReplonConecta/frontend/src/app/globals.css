@@ -1,25 +1,178 @@
 @import "tailwindcss";
 
 /*
- * Paleta de Repelón Market: tres colores y ni uno más.
- *   - Blanco (#FFFFFF): fondo y superficies.
- *   - Verde (#16A34A): barras de navegación y encabezados.
- *   - Azul (#2563EB): botones y acciones.
- * El texto va en negro y los bordes en negro translúcido, para no meter
- * un cuarto color al tema. No hay modo oscuro: el mercado se usa a plena
- * luz del día y una paleta clara fija es más simple de mantener.
+ * Sistema de diseño de Repelón Conecta.
+ *
+ * El estilo viene de la plantilla del proyecto (repelon-conecta-codigo):
+ * superficies "glass" (blanco translúcido con desenfoque), blobs de color
+ * que respiran detrás del contenido y dos tipografías con oficio:
+ *   - Fraunces (font-display): títulos y el nombre de la marca.
+ *   - Manrope (font-sans):     todo lo demás.
+ *
+ * Los colores de la versión vieja se conservan como alias porque las
+ * pantallas que todavía no se rediseñaron los usan:
+ *   - verde (#16A34A) = leaf: abierto, marca, activo.
+ *   - azul  (#2563EB): agregar, confirmar, pedir.
+ *
+ * No hay modo oscuro: el mercado se usa a plena luz del día.
  */
 @theme {
+	--font-display: var(--font-fraunces);
+	--font-sans: var(--font-manrope);
+
 	--color-verde: #16a34a;
 	--color-azul: #2563eb;
+
+	--color-leaf: #16a34a;
+	--color-cielo: #7dd3fc;
+	--color-mist: #eef4f0;
+	--color-ink: #101c2b;
+	--color-muted-foreground: #64748b;
+	--color-glass: #ffffff;
+	--color-background: #f7faf9;
+
+	--color-blob-1: #d1fae5;
+	--color-blob-2: #dbeafe;
+	--color-blob-3: #e0f2fe;
+
+	/*
+	 * Altura reservada para la barra inferior de destinos: la barra va
+	 * flotando a 12 px del borde y mide ~52 px, así que el contenido de
+	 * las pantallas baja 4.5rem + el margen seguro del teléfono para
+	 * que nunca quede debajo de la barra.
+	 */
+	--spacing-nav-total: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+:root {
+	--shadow-glass: 0 18px 50px -25px rgba(23, 84, 52, 0.45);
+	--shadow-float: 0 30px 80px -30px rgba(23, 84, 52, 0.5);
+	--shadow-leaf: 0 12px 30px -10px rgba(22, 163, 74, 0.7);
 }
 
 html,
 body {
-	background: #ffffff;
-	color: #000000;
+	background: var(--color-background);
+	color: var(--color-ink);
 }
 
 body {
+	font-family: var(--font-sans);
 	-webkit-font-smoothing: antialiased;
+}
+
+/* ====================================================================
+ * Superficies
+ * ==================================================================== */
+
+/* Panel de vidrio: lo que antes era una caja blanca con borde. */
+@utility glass {
+	background: color-mix(in oklab, var(--color-glass) 55%, transparent);
+	border: 1px solid color-mix(in oklab, var(--color-glass) 60%, transparent);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	box-shadow: var(--shadow-glass);
+}
+
+/* Versión más quieta, para pastillas y campos que van sobre el mapa. */
+@utility glass-soft {
+	background: color-mix(in oklab, var(--color-glass) 72%, transparent);
+	border: 1px solid color-mix(in oklab, var(--color-glass) 70%, transparent);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+}
+
+@utility shadow-float {
+	box-shadow: var(--shadow-float);
+}
+
+@utility shadow-leaf {
+	box-shadow: var(--shadow-leaf);
+}
+
+/* ====================================================================
+ * Blobs: las manchas de color que respiran detrás de todo
+ * ==================================================================== */
+
+@keyframes drift {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(24px, -18px) scale(1.08);
+	}
+}
+
+@keyframes floaty {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-16px);
+	}
+}
+
+@utility animate-drift {
+	animation: drift 20s ease-in-out infinite;
+}
+
+@utility animate-floaty {
+	animation: floaty 6s ease-in-out infinite;
+}
+
+/*
+ * El mapa tapaba la barra de destinos.
+ *
+ * Leaflet pinta sus capas (teselas 200, pines 600, globos 650) con
+ * z-index dentro del contenedor, pero ese contenedor NO crea contexto de
+ * apilamiento, así que esos números se fugaban al resto del documento y
+ * quedaban por encima de la barra y de las tarjetas. Aislar el
+ * contenedor devuelve esas capas al mapa y deja que lo que va encima se
+ * dibuje encima de verdad.
+ */
+.leaflet-container {
+	isolation: isolate;
+	font-family: var(--font-sans);
+	background: var(--color-mist);
+}
+
+/*
+ * Globo que aparece al pasar sobre un pin: el nombre del negocio y si
+ * está abierto. Es lo que se sabe antes de tocar: pasar el dedo por ahí
+ * y ver qué tienda es.
+ */
+.leaflet-tooltip.tooltip-negocio {
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: 12px;
+	padding: 6px 10px;
+	font-size: 12px;
+	line-height: 1.3;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.tooltip-negocio .tn-nombre {
+	display: block;
+	font-family: var(--font-display);
+	font-weight: 700;
+	color: var(--color-ink);
+}
+
+.tooltip-negocio .tn-fila {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	color: var(--color-muted-foreground);
+}
+
+.tooltip-negocio .tn-punto {
+	width: 7px;
+	height: 7px;
+	border-radius: 999px;
+	background: #6b7280;
+}
+
+.tooltip-negocio .tn-punto.abierto {
+	background: var(--color-leaf);
 }

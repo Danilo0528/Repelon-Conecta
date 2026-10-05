@@ -3,47 +3,57 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useCarrito } from "@/context/CarritoContext";
-import { useSesion } from "@/context/SesionContext";
+import HeaderConecta from "@/components/HeaderConecta";
 
 /*
  * Navegación de la app.
  *
- * Arriba, una barra verde con la marca y el carrito. Abajo, una barra
- * fija tipo app de celular, que es como se va a usar esto: en el
- * teléfono, con una mano. En pantallas grandes la barra inferior se
- * centra con el resto del contenido.
+ * Arriba, la pastilla de vidrio con la marca y el carrito
+ * (HeaderConecta). Abajo, cuatro destinos y solo cuatro, en una barra
+ * que FLOTA sobre el fondo (12 px separada del borde) con acabado de
+ * vidrio: ya no es una caja blanca pegada abajo, es una pastilla que
+ * descansa sobre el contenido.
+ *
+ * El destino encendido se marca en verde y en negrita, que es la señal
+ * que usa la plantilla. En pantallas anchas la barra se oculta porque
+ * los mismos destinos ya están en la cabecera.
+ *
+ * El acceso del vendedor y del administrador NO vive aquí: meter un
+ * quinto destino descuadra la barra para todos. "Mi negocio" sí entra,
+ * porque es de todos.
  */
 
-function Icono({ nombre }: { nombre: "inicio" | "pedidos" | "tienda" | "perfil" }) {
-	const clase = "h-6 w-6";
+function Icono({ nombre }: { nombre: "inicio" | "negocios" | "negocio" | "perfil" }) {
+	const clase = "h-5 w-5";
 	switch (nombre) {
 		case "inicio":
 			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-					<path d="M3 11l9-8 9 8" strokeLinecap="round" strokeLinejoin="round" />
-					<path d="M5 10v10h14V10" strokeLinecap="round" strokeLinejoin="round" />
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M3.5 11 12 4l8.5 7" strokeLinecap="round" strokeLinejoin="round" />
+					<path d="M6 10.2V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.8" strokeLinecap="round" strokeLinejoin="round" />
+					<path d="M10 20v-5h4v5" strokeLinecap="round" strokeLinejoin="round" />
 				</svg>
 			);
-		case "pedidos":
+		case "negocios":
 			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-					<path d="M6 2h12l1 4H5l1-4z" strokeLinejoin="round" />
-					<path d="M5 6h14v14a1 1 0 01-1 1H6a1 1 0 01-1-1V6z" strokeLinejoin="round" />
-					<path d="M9 11h6" strokeLinecap="round" />
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M4.5 9.5h15V19a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" strokeLinejoin="round" />
+					<path d="M3 9.5 4.8 4.5h14.4L21 9.5" strokeLinejoin="round" />
+					<path d="M9.5 20v-5.5h5V20" strokeLinejoin="round" />
 				</svg>
 			);
-		case "tienda":
+		case "negocio":
 			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-					<path d="M4 4h16v4H4z" strokeLinejoin="round" />
-					<path d="M5 8v12h14V8" strokeLinejoin="round" />
-					<path d="M9 12h6" strokeLinecap="round" />
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+					<rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+					<rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+					<rect x="13.5" y="13.5" width="7" height="7" rx="2" />
 				</svg>
 			);
 		case "perfil":
 			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
 					<circle cx="12" cy="8" r="4" />
 					<path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
 				</svg>
@@ -51,72 +61,48 @@ function Icono({ nombre }: { nombre: "inicio" | "pedidos" | "tienda" | "perfil" 
 	}
 }
 
+const ENLACES: {
+	href: string;
+	etiqueta: string;
+	icono: Parameters<typeof Icono>[0]["nombre"];
+}[] = [
+	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
+	{ href: "/negocios", etiqueta: "Negocios", icono: "negocios" },
+	{ href: "/vendedor", etiqueta: "Mi negocio", icono: "negocio" },
+	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
+];
+
 export default function BarraNavegacion() {
 	const pathname = usePathname();
-	const { cantidadTotal } = useCarrito();
-	const { perfil } = useSesion();
-
-	const esAdmin = perfil?.rol === "ADMIN";
-	const puedeVender = perfil?.rol === "VENDEDOR" || esAdmin;
-
-	const enlaces: { href: string; etiqueta: string; icono: Parameters<typeof Icono>[0]["nombre"] }[] = [
-		{ href: "/", etiqueta: "Inicio", icono: "inicio" },
-		{ href: "/pedidos", etiqueta: "Pedidos", icono: "pedidos" },
-	];
-
-	if (puedeVender) {
-		enlaces.push({
-			href: esAdmin ? "/admin" : "/vendedor",
-			etiqueta: esAdmin ? "Admin" : "Mi negocio",
-			icono: "tienda",
-		});
-	}
-
-	enlaces.push({ href: "/perfil", etiqueta: "Perfil", icono: "perfil" });
 
 	return (
 		<>
-			<header className="sticky top-0 z-20 bg-verde text-white shadow-sm">
-				<div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-3">
-					<Link href="/" className="text-lg font-bold tracking-tight">
-						Repelón Market
-					</Link>
-					<Link
-						href="/carrito"
-						className="relative flex items-center gap-1 rounded-full px-2 py-1 text-sm font-medium"
-						aria-label="Carrito"
-					>
-						<svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-							<circle cx="9" cy="20" r="1.6" />
-							<circle cx="18" cy="20" r="1.6" />
-							<path d="M2 3h3l2.4 12.4a1 1 0 001 .8h9.7a1 1 0 001-.8L21 7H6" strokeLinecap="round" strokeLinejoin="round" />
-						</svg>
-						{cantidadTotal > 0 && (
-							<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-verde">
-								{cantidadTotal}
-							</span>
-						)}
-					</Link>
-				</div>
-			</header>
+			<HeaderConecta />
 
-			<nav className="fixed inset-x-0 bottom-0 z-20 border-t border-black/10 bg-white">
-				<div className="mx-auto flex w-full max-w-2xl items-stretch justify-around">
-					{enlaces.map((e) => {
+			<nav className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 md:hidden">
+				<div className="glass grid grid-cols-4 rounded-2xl px-1 py-1.5">
+					{ENLACES.map(({ href, etiqueta, icono }) => {
+						// "/" es la home pero también el prefijo de todo lo
+						// demás, así que se compara exacto; el resto por
+						// prefijo, para que /negocios/[slug] deje "Negocios"
+						// encendido dentro de la ficha.
 						const activo =
-							e.href === "/"
+							href === "/"
 								? pathname === "/"
-								: pathname.startsWith(e.href);
+								: pathname === href || pathname.startsWith(`${href}/`);
 						return (
 							<Link
-								key={e.href}
-								href={e.href}
-								className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs font-medium ${
-									activo ? "text-verde" : "text-black/55"
+								key={href}
+								href={href}
+								aria-current={activo ? "page" : undefined}
+								className={`flex flex-col items-center gap-0.5 rounded-xl py-1 text-[11px] transition-colors ${
+									activo
+										? "font-bold text-leaf"
+										: "font-medium text-muted-foreground hover:text-leaf"
 								}`}
 							>
-								<Icono nombre={e.icono} />
-								{e.etiqueta}
+								<Icono nombre={icono} />
+								{etiqueta}
 							</Link>
 						);
 					})}

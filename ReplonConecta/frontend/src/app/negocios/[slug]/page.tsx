@@ -2,28 +2,57 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 
-import { Aviso, Cargando, Vacio } from "@/components/ui";
+import { MapaMini } from "@/components/Mapa";
+import {
+	CLASE_BOTON_AZUL,
+	CLASE_BOTON_NEUTRO,
+	Cargando,
+	Foto,
+	InsigniaAbierto,
+	Vacio,
+} from "@/components/ui";
 import { useCarrito } from "@/context/CarritoContext";
 import { api } from "@/lib/api";
 import { pesos } from "@/lib/format";
+import { useCoordenadas } from "@/lib/geocodificar";
+import { fotoNegocio } from "@/lib/imagenes";
+import { enlaceComoLlegar, enlaceVerEnMapa } from "@/lib/maps";
 import type { NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 
+/*
+ * Ficha del negocio ("/negocios/[slug]").
+ *
+ * El orden de la pantalla es el orden en que se decide: foto grande, qué
+ * es, si está abierto, cómo llegar, qué vende y cuánto. Ese último par
+ * (qué vende / cuánto) es lo único que hay que ver para tocar el botón,
+ * así que la rejilla de productos pone la foto, el nombre y el precio
+ * juntos, y el botón ocupa todo el ancho de la tarjeta: con un pulgar, un
+ * botón pequeño a un lado de la fila se falla.
+ *
+ * La barra de "Ver carrito" solo aparece si lo que hay en el carrito es
+ * de ESTE negocio. Un pedido es de un solo negocio, así que ofrecer el
+ * carrito de otro aquí sería llevar al comprador a una pantalla donde
+ * tendrá que vaciar lo que acaba de armar.
+ */
 export default function FichaNegocio() {
 	const { slug } = useParams<{ slug: string }>();
 	const { agregar, carrito, vaciar, cantidadTotal, total } = useCarrito();
-	const [aviso, setAviso] = useState<string | null>(null);
 
 	const { datos: negocio, cargando, error } = useDatos<NegocioDetalle>(
 		() => api(`/api/negocios/slug/${encodeURIComponent(slug)}`),
 		[slug],
 	);
+	/*
+	 * Mismo truco que en el home: el negocio no trae coordenadas, así
+	 * que se resuelven al entrar (una sola vez, guardadas) y con ellas
+	 * se puede dibujar el mapa de la ficha y abrir OpenStreetMap en el
+	 * punto exacto.
+	 */
+	const coordenadas = useCoordenadas(negocio ? [negocio] : []);
 
 	function agregarProducto(producto: Producto) {
-		setAviso(null);
-
 		const otroNegocio =
 			carrito != null && carrito.negocioId !== producto.negocioId;
 
@@ -36,7 +65,6 @@ export default function FichaNegocio() {
 		}
 
 		agregar(producto);
-		setAviso(`Agregado: ${producto.nombre}`);
 	}
 
 	if (cargando) return <Cargando />;
@@ -44,109 +72,201 @@ export default function FichaNegocio() {
 	if (error || !negocio) {
 		return (
 			<div className="px-4 pt-4">
-				<Aviso tono="error">{error ?? "No se encontró el negocio."}</Aviso>
-				<Link href="/" className="mt-3 inline-block text-sm font-medium text-azul">
-					Volver al inicio
+				<p className="text-sm">{error ?? "No se encontró el negocio."}</p>
+				<Link
+					href="/"
+					className={`${CLASE_BOTON_AZUL} mt-4`}
+				>
+					Volver al mapa
 				</Link>
 			</div>
 		);
 	}
 
 	const disponibles = negocio.productos.filter((p) => p.disponible);
+	/*
+	 * Coordenadas a usar en la ficha: las de la base si vienen, o las
+	 * que resolvió useCoordenadas a partir de la dirección escrita.
+	 * Con ellas el mapa tiene dónde poner el pin y OpenStreetMap abre
+	 * exactamente en el negocio y no en el centro del pueblo.
+	 */
+	const lat = negocio.latitud ?? coordenadas[negocio.id]?.lat ?? null;
+	const lng = negocio.longitud ?? coordenadas[negocio.id]?.lng ?? null;
+	const ubicacion = lat != null && lng != null ? { ...negocio, latitud: lat, longitud: lng } : negocio;
+	const enCarrito = carrito?.negocioId === negocio.id;
+	const unidadesDe = (productoId: string) =>
+		carrito?.items.find((i) => i.productoId === productoId)?.cantidad ?? 0;
 
 	return (
 		<div className="pb-4">
-			<div className="bg-verde px-4 py-4 text-white">
-				<h1 className="text-xl font-bold">{negocio.nombre}</h1>
-				<p className="mt-1 text-sm text-white/85">
-					{negocio.barrio ?? "Repelón"} · {negocio.direccion}
-				</p>
-				<div className="mt-2 flex items-center gap-2 text-xs">
-					<span
-						className={`rounded-full px-2 py-0.5 font-semibold ${
-							negocio.abierto ? "bg-white text-verde" : "bg-black/40 text-white"
-						}`}
-					>
-						{negocio.abierto ? "Abierto" : "Cerrado"}
-					</span>
+			{/* Foto grande. No solo texto: es la primera señal de si es o no
+			    el negocio que uno tiene en mente. */}
+			<Foto
+				src={fotoNegocio(negocio)}
+				alt={`Logo de ${negocio.nombre}`}
+				className="h-44 w-full sm:h-56 md:h-72"
+			/>
+
+			{/*
+			 * En PC la ficha se parte en dos columnas: a la izquierda lo
+			 * que se lee (nombre, dirección, descripción), a la derecha lo
+			 * que se mira y se toca (cómo llegar y el mapa). En móvil
+			 * siguen apiladas, en el mismo orden de siempre.
+			 */}
+			<div className="md:grid md:grid-cols-2 md:items-start md:gap-6 lg:gap-10">
+				<div className="px-4 pt-4">
+					<div className="flex items-start justify-between gap-2">
+						<h1 className="text-2xl font-bold leading-tight">{negocio.nombre}</h1>
+						<InsigniaAbierto abierto={negocio.abierto} />
+					</div>
+
+					<p className="mt-1 text-sm text-black/60">
+						{negocio.barrio ?? "Repelón"} · {negocio.direccion}
+					</p>
+
+					{negocio.descripcion && (
+						<p className="mt-3 text-sm text-black/70">{negocio.descripcion}</p>
+					)}
+
 					{negocio.whatsapp && (
 						<a
 							href={`https://wa.me/${negocio.whatsapp.replace(/\D/g, "")}`}
 							target="_blank"
 							rel="noreferrer"
-							className="underline"
+							className={`${CLASE_BOTON_NEUTRO} mt-4 justify-start`}
 						>
-							Escribir por WhatsApp
+							<svg
+								className="h-5 w-5 shrink-0"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								aria-hidden
+							>
+								<path
+									d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.7-5.2A8.5 8.5 0 1 1 21 11.5z"
+									strokeLinejoin="round"
+								/>
+							</svg>
+							Escribir por WhatsApp · {negocio.whatsapp}
 						</a>
 					)}
 				</div>
+
+				{/* Dónde está y cómo llegar. El botón va primero y grande: es la
+				    acción que hace la gente que ya sabe qué quiere comprar. */}
+				<section className="mt-5 px-4 md:mt-0">
+					<a
+						href={enlaceComoLlegar(ubicacion)}
+						target="_blank"
+						rel="noreferrer"
+						className={CLASE_BOTON_AZUL}
+					>
+						Cómo llegar
+					</a>
+
+					<a
+						href={enlaceVerEnMapa(ubicacion)}
+						target="_blank"
+						rel="noreferrer"
+						className={`${CLASE_BOTON_NEUTRO} mt-2`}
+					>
+						Ver en OpenStreetMap
+					</a>
+
+					<div className="mt-3">
+						{lat != null && lng != null ? (
+							<MapaMini
+								lat={lat}
+								lng={lng}
+								nombre={negocio.nombre}
+								abierto={negocio.abierto}
+							/>
+						) : (
+							<p className="rounded-2xl bg-black/[.03] px-4 py-3 text-sm text-black/60">
+								{negocio.direccion}
+								{negocio.referenciaUbicacion
+									? ` · ${negocio.referenciaUbicacion}`
+									: ""}
+							</p>
+						)}
+					</div>
+				</section>
 			</div>
 
-			{negocio.descripcion && (
-				<p className="px-4 pt-4 text-sm text-black/70">{negocio.descripcion}</p>
-			)}
-
-			{!negocio.abierto && (
-				<div className="px-4 pt-4">
-					<Aviso tono="info">
-						El negocio está cerrado ahora. Puedes ver el catálogo, pero
-						confirma antes de pedir.
-					</Aviso>
+			<section className="mt-6 px-4">
+				<div className="flex items-baseline justify-between gap-2">
+					<h2 className="text-lg font-bold">Productos</h2>
+					{disponibles.length > 0 && (
+						<span className="text-sm text-black/50">{disponibles.length}</span>
+					)}
 				</div>
-			)}
 
-			{aviso && (
-				<div className="px-4 pt-4">
-					<Aviso tono="ok">{aviso}</Aviso>
-				</div>
-			)}
-
-			<section className="mt-4 px-4">
-				<h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black/50">
-					Productos
-				</h2>
+				{!negocio.abierto && disponibles.length > 0 && (
+					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-sm text-black/70">
+						El negocio está cerrado ahora. Puedes armar el pedido, pero confirma
+						antes de enviarlo.
+					</p>
+				)}
 
 				{disponibles.length === 0 ? (
 					<Vacio titulo="Este negocio aún no tiene productos" />
 				) : (
-					<ul className="divide-y divide-black/10 rounded-2xl border border-black/10">
-						{disponibles.map((p) => (
-							<li key={p.id} className="flex items-center gap-3 p-3">
-								<div className="min-w-0 flex-1">
-									<p className="font-medium leading-tight">{p.nombre}</p>
-									{p.descripcion && (
-										<p className="line-clamp-1 text-xs text-black/55">
-											{p.descripcion}
-										</p>
-									)}
-									<p className="mt-1 font-semibold text-azul">{pesos(p.precio)}</p>
-									{p.stock != null && p.stock <= 5 && (
-										<p className="text-xs text-black/50">
-											{p.stock === 0 ? "Agotado" : `Quedan ${p.stock}`}
-										</p>
-									)}
-								</div>
-								<button
-									type="button"
-									onClick={() => agregarProducto(p)}
-									disabled={p.stock === 0}
-									className="shrink-0 rounded-xl bg-azul px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+					<ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{disponibles.map((p) => {
+							const unidades = unidadesDe(p.id);
+							return (
+								<li
+									key={p.id}
+									className="flex flex-col overflow-hidden rounded-2xl border border-black/10"
 								>
-									Agregar
-								</button>
-							</li>
-						))}
+									<Foto src={p.imagenUrl} alt={p.nombre} className="h-24 w-full" />
+									<div className="flex flex-1 flex-col p-2.5">
+										<p className="line-clamp-2 text-sm font-medium leading-tight">
+											{p.nombre}
+										</p>
+
+										<p className="mt-1 text-base font-bold">{pesos(p.precio)}</p>
+
+										{p.stock != null && p.stock <= 5 && (
+											<p className="text-xs text-black/50">
+												{p.stock === 0 ? "Agotado" : `Quedan ${p.stock}`}
+											</p>
+										)}
+
+										{unidades > 0 && (
+											<p className="text-xs font-medium text-azul">
+												{unidades === 1 ? "1 en el carrito" : `${unidades} en el carrito`}
+											</p>
+										)}
+
+										<button
+											type="button"
+											onClick={() => agregarProducto(p)}
+											disabled={p.stock === 0}
+											className={`${CLASE_BOTON_AZUL} mt-auto pt-2.5`}
+											aria-label={`Agregar ${p.nombre} al carrito`}
+										>
+											<span aria-hidden className="text-xl leading-none">
+												+
+											</span>
+											Agregar
+										</button>
+									</div>
+								</li>
+							);
+						})}
 					</ul>
 				)}
 			</section>
 
-			{cantidadTotal > 0 && (
-				<div className="fixed inset-x-0 bottom-16 z-10 px-4 pb-2">
+			{enCarrito && cantidadTotal > 0 && (
+				<div className="fixed inset-x-0 bottom-nav-total z-20 px-4 pb-2">
 					<Link
 						href="/carrito"
-						className="mx-auto flex w-full max-w-2xl items-center justify-between rounded-2xl bg-azul px-4 py-3 font-semibold text-white shadow-lg"
+						className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 rounded-2xl bg-azul px-4 py-3.5 font-semibold text-white shadow-lg"
 					>
-						<span>Ver carrito · {cantidadTotal} ítem(s)</span>
+						<span>Ver carrito ({cantidadTotal})</span>
 						<span>{pesos(total)}</span>
 					</Link>
 				</div>

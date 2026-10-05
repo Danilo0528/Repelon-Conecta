@@ -4,7 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Aviso, Cargando, Vacio } from "@/components/ui";
+import { MapaSelector } from "@/components/Mapa";
+import {
+	Aviso,
+	Cargando,
+	CLASE_BOTON_AZUL,
+	CLASE_BOTON_NEUTRO,
+	InsigniaAbierto,
+	Vacio,
+} from "@/components/ui";
 import { useSesion } from "@/context/SesionContext";
 import { apiConSesion } from "@/lib/api";
 import { pesos } from "@/lib/format";
@@ -51,6 +59,8 @@ export default function PanelVendedor() {
 				</div>
 			)}
 
+			{/* En PC los negocios salen en dos columnas; en móvil, uno
+			    debajo del otro como siempre. */}
 			{(negocios ?? []).length === 0 && !cargando ? (
 				<>
 					<Vacio
@@ -60,7 +70,7 @@ export default function PanelVendedor() {
 					<FormularioNegocio onCreado={alCrear} />
 				</>
 			) : (
-				<ul className="mt-3 space-y-4">
+				<ul className="mt-3 grid gap-4 md:grid-cols-2">
 					{(negocios ?? []).map((n) => (
 						<TarjetaNegocio key={n.id} negocio={n} />
 					))}
@@ -107,21 +117,15 @@ function TarjetaNegocio({ negocio }: { negocio: Negocio }) {
 	}
 
 	return (
-		<li className="rounded-2xl border border-black/10 p-4 shadow-sm">
+		<li className="rounded-2xl border border-black/10 p-4">
 			<div className="flex items-start justify-between gap-2">
-				<div>
-					<p className="font-semibold">{negocio.nombre}</p>
+				<div className="min-w-0">
+					<p className="font-semibold leading-tight">{negocio.nombre}</p>
 					<p className="text-xs text-black/55">
 						{negocio.barrio ?? "Repelón"} · {negocio.cantidadProductos} productos
 					</p>
 				</div>
-				<span
-					className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
-						abierto ? "bg-verde text-white" : "bg-black/60 text-white"
-					}`}
-				>
-					{abierto ? "Abierto" : "Cerrado"}
-				</span>
+				<InsigniaAbierto abierto={abierto} />
 			</div>
 
 			{error && (
@@ -142,7 +146,7 @@ function TarjetaNegocio({ negocio }: { negocio: Negocio }) {
 			<div className="mt-4 flex gap-2">
 				<Link
 					href={`/vendedor/negocios/${negocio.id}`}
-					className="flex-1 rounded-xl bg-azul py-2 text-center text-sm font-semibold text-white"
+					className={`${CLASE_BOTON_AZUL} flex-1`}
 				>
 					Gestionar
 				</Link>
@@ -150,7 +154,7 @@ function TarjetaNegocio({ negocio }: { negocio: Negocio }) {
 					type="button"
 					onClick={() => alternar(!abierto)}
 					disabled={cambiando}
-					className="flex-1 rounded-xl border border-black/15 py-2 text-sm font-semibold disabled:opacity-50"
+					className={`${CLASE_BOTON_NEUTRO} flex-1`}
 				>
 					{abierto ? "Cerrar" : "Abrir"}
 				</button>
@@ -177,6 +181,9 @@ function FormularioNegocio({
 	const [descripcion, setDescripcion] = useState("");
 	const [direccion, setDireccion] = useState("");
 	const [barrio, setBarrio] = useState("");
+	const [referencia, setReferencia] = useState("");
+	const [lat, setLat] = useState<number | null>(null);
+	const [lng, setLng] = useState<number | null>(null);
 	const [whatsapp, setWhatsapp] = useState("");
 	const [enviando, setEnviando] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -199,6 +206,9 @@ function FormularioNegocio({
 					descripcion: descripcion.trim(),
 					direccion: direccion.trim(),
 					barrio: barrio.trim(),
+					latitud: lat,
+					longitud: lng,
+					referenciaUbicacion: referencia.trim(),
 					telefono: "",
 					whatsapp: whatsapp.trim(),
 					horario: null,
@@ -212,7 +222,10 @@ function FormularioNegocio({
 	}
 
 	return (
-		<form onSubmit={crear} className="space-y-2 rounded-2xl border border-black/10 p-4">
+		<form
+			onSubmit={crear}
+			className="space-y-2 rounded-2xl border border-black/10 p-4 md:max-w-2xl"
+		>
 			<h2 className="font-semibold">Crear mi negocio</h2>
 			{error && <Aviso tono="error">{error}</Aviso>}
 
@@ -220,39 +233,65 @@ function FormularioNegocio({
 				value={nombre}
 				onChange={(e) => setNombre(e.target.value)}
 				placeholder="Nombre del negocio"
-				className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
 			/>
 			<textarea
 				value={descripcion}
 				onChange={(e) => setDescripcion(e.target.value)}
 				rows={2}
 				placeholder="¿Qué vendes?"
-				className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
 			/>
 			<input
 				value={direccion}
 				onChange={(e) => setDireccion(e.target.value)}
 				placeholder="Dirección"
-				className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
 			/>
 			<div className="flex gap-2">
 				<input
 					value={barrio}
 					onChange={(e) => setBarrio(e.target.value)}
 					placeholder="Barrio"
-					className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+					className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
 				/>
 				<input
 					value={whatsapp}
 					onChange={(e) => setWhatsapp(e.target.value)}
 					placeholder="WhatsApp (300 000 0000)"
-					className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+					className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
 				/>
 			</div>
+			<input
+				value={referencia}
+				onChange={(e) => setReferencia(e.target.value)}
+				placeholder="Referencia (ej. frente a la plaza)"
+				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+			/>
+
+			<div>
+				<p className="mb-1 text-xs font-medium text-black/55">
+					Marca tu ubicación en el mapa
+				</p>
+				<MapaSelector
+					lat={lat}
+					lng={lng}
+					onCambiar={(la, ln) => {
+						setLat(la);
+						setLng(ln);
+					}}
+				/>
+				{lat != null && lng != null && (
+					<p className="mt-1 text-xs font-medium text-verde">
+						Ubicación lista: {lat.toFixed(5)}, {lng.toFixed(5)}
+					</p>
+				)}
+			</div>
+
 			<button
 				type="submit"
 				disabled={enviando}
-				className="w-full rounded-xl bg-azul py-2 font-semibold text-white disabled:opacity-60"
+				className={CLASE_BOTON_AZUL}
 			>
 				{enviando ? "Creando…" : "Crear negocio"}
 			</button>

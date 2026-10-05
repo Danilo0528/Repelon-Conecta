@@ -47,7 +47,7 @@ export default function Registro() {
 
 	if (confirmaCorreo) {
 		return (
-			<div className="px-4 pt-6">
+			<div className="px-4 pt-6 md:mx-auto md:max-w-md">
 				<Aviso tono="ok">
 					Creamos tu cuenta. Revisa tu correo y confirma para poder entrar.
 				</Aviso>
@@ -61,8 +61,9 @@ export default function Registro() {
 		);
 	}
 
+	// En PC el formulario se centra; en móvil ocupa la pantalla.
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-4 pt-6 md:mx-auto md:max-w-md">
 			<h1 className="text-2xl font-bold">Crear cuenta</h1>
 			<p className="mt-1 text-sm text-black/60">
 				Con tu cuenta puedes pedir y también vender.

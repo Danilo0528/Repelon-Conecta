@@ -31,8 +31,9 @@ function FormularioEntrar() {
 		}
 	}
 
+	// En PC el formulario se centra; en móvil ocupa la pantalla.
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-4 pt-6 md:mx-auto md:max-w-md">
 			<h1 className="text-2xl font-bold">Entrar</h1>
 			<p className="mt-1 text-sm text-black/60">
 				Usa el correo con el que te registraste.

@@ -81,85 +81,94 @@ export default function DetallePedido() {
 				</div>
 			)}
 
-			<section className="mt-5">
-				<h2 className="text-sm font-semibold uppercase tracking-wide text-black/50">
-					Productos
-				</h2>
-				<ul className="mt-2 divide-y divide-black/10 rounded-2xl border border-black/10">
-					{pedido.items.map((i) => (
-						<li key={i.productoId} className="flex items-center justify-between p-3">
-							<div>
-								<p className="font-medium">
-									{i.cantidad} × {i.nombre}
-								</p>
-								<p className="text-sm text-black/55">{pesos(i.precioUnitario)} c/u</p>
-							</div>
-							<span className="font-semibold">{pesos(i.subtotal)}</span>
-						</li>
-					))}
-				</ul>
-				<div className="mt-2 flex items-center justify-between rounded-2xl bg-black/[.04] px-4 py-3">
-					<span className="text-sm text-black/60">Total</span>
-					<span className="text-lg font-bold">{pesos(pedido.total)}</span>
-				</div>
-			</section>
+			{/*
+			 * En PC, dos columnas: los productos a la izquierda y los
+			 * datos del pedido a la derecha, para que todo se vea sin
+			 * bajar la página.
+			 */}
+			<div className="mt-5 md:grid md:grid-cols-2 md:items-start md:gap-6">
+				<section>
+					<h2 className="text-sm font-semibold uppercase tracking-wide text-black/50">
+						Productos
+					</h2>
+					<ul className="mt-2 divide-y divide-black/10 rounded-2xl border border-black/10">
+						{pedido.items.map((i) => (
+							<li key={i.productoId} className="flex items-center justify-between p-3">
+								<div>
+									<p className="font-medium">
+										{i.cantidad} × {i.nombre}
+									</p>
+									<p className="text-sm text-black/55">{pesos(i.precioUnitario)} c/u</p>
+								</div>
+								<span className="font-semibold">{pesos(i.subtotal)}</span>
+							</li>
+						))}
+					</ul>
+					<div className="mt-2 flex items-center justify-between rounded-2xl bg-black/[.04] px-4 py-3">
+						<span className="text-sm text-black/60">Total</span>
+						<span className="text-lg font-bold">{pesos(pedido.total)}</span>
+					</div>
+				</section>
 
-			<section className="mt-5 space-y-1 rounded-2xl border border-black/10 p-4 text-sm">
-				<p>
-					<span className="text-black/55">Negocio: </span>
-					{pedido.negocioNombre}
-				</p>
-				<p>
-					<span className="text-black/55">Entrega: </span>
-					{ETIQUETA_ENTREGA[pedido.metodoEntrega]}
-				</p>
-				<p>
-					<span className="text-black/55">Pago: </span>
-					{ETIQUETA_PAGO[pedido.metodoPago]}
-					{pedido.pagoConfirmado ? " · Confirmado" : " · Por confirmar"}
-				</p>
-				{pedido.metodoEntrega === "DOMICILIO" && pedido.entregaDireccion && (
+				<section className="mt-5 space-y-1 rounded-2xl border border-black/10 p-4 text-sm md:mt-0">
 					<p>
-						<span className="text-black/55">Dirección: </span>
-						{pedido.entregaDireccion}
-						{pedido.entregaBarrio ? `, ${pedido.entregaBarrio}` : ""}
+						<span className="text-black/55">Negocio: </span>
+						{pedido.negocioNombre}
 					</p>
-				)}
-				{pedido.entregaReferencia && (
 					<p>
-						<span className="text-black/55">Referencia: </span>
-						{pedido.entregaReferencia}
+						<span className="text-black/55">Entrega: </span>
+						{ETIQUETA_ENTREGA[pedido.metodoEntrega]}
 					</p>
-				)}
-				{pedido.notas && (
 					<p>
-						<span className="text-black/55">Notas: </span>
-						{pedido.notas}
+						<span className="text-black/55">Pago: </span>
+						{ETIQUETA_PAGO[pedido.metodoPago]}
+						{pedido.pagoConfirmado ? " · Confirmado" : " · Por confirmar"}
 					</p>
-				)}
-			</section>
+					{pedido.metodoEntrega === "DOMICILIO" && pedido.entregaDireccion && (
+						<p>
+							<span className="text-black/55">Dirección: </span>
+							{pedido.entregaDireccion}
+							{pedido.entregaBarrio ? `, ${pedido.entregaBarrio}` : ""}
+						</p>
+					)}
+					{pedido.entregaReferencia && (
+						<p>
+							<span className="text-black/55">Referencia: </span>
+							{pedido.entregaReferencia}
+						</p>
+					)}
+					{pedido.notas && (
+						<p>
+							<span className="text-black/55">Notas: </span>
+							{pedido.notas}
+						</p>
+					)}
+				</section>
+			</div>
 
-			{pedido.whatsappResumenUrl && (
-				<a
-					href={pedido.whatsappResumenUrl}
-					target="_blank"
-					rel="noreferrer"
-					className="mt-4 block w-full rounded-xl bg-verde py-3 text-center font-semibold text-white"
-				>
-					Escribir al negocio por WhatsApp
-				</a>
-			)}
+			<div className="md:max-w-md">
+				{pedido.whatsappResumenUrl && (
+					<a
+						href={pedido.whatsappResumenUrl}
+						target="_blank"
+						rel="noreferrer"
+						className="mt-4 block w-full rounded-xl bg-verde py-3 text-center font-semibold text-white"
+					>
+						Escribir al negocio por WhatsApp
+					</a>
+				)}
 
-			{sePuedeCancelar && (
-				<button
-					type="button"
-					onClick={cancelar}
-					disabled={accion === "cancelando"}
-					className="mt-3 w-full rounded-xl border border-black/20 py-3 font-semibold text-black/70 disabled:opacity-50"
-				>
-					{accion === "cancelando" ? "Cancelando…" : "Cancelar pedido"}
-				</button>
-			)}
+				{sePuedeCancelar && (
+					<button
+						type="button"
+						onClick={cancelar}
+						disabled={accion === "cancelando"}
+						className="mt-3 w-full rounded-xl border border-black/20 py-3 font-semibold text-black/70 disabled:opacity-50"
+					>
+						{accion === "cancelando" ? "Cancelando…" : "Cancelar pedido"}
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }

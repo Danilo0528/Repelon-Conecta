@@ -47,7 +47,9 @@ export default function GestionNegocio() {
 				{negocio?.nombre ?? "Gestión del negocio"}
 			</h1>
 
-			<div className="mt-4 flex gap-2">
+			{/* En PC las pestañas miden lo que dicen; en móvil reparten el
+			    ancho de la pantalla entre las dos. */}
+			<div className="mt-4 flex gap-2 md:max-w-sm">
 				<button
 					type="button"
 					onClick={() => setPestana("productos")}
@@ -123,7 +125,12 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 	}
 
 	return (
-		<div className="mt-4">
+		/*
+		 * En PC dos columnas: el formulario de alta a la izquierda y la
+		 * lista de productos a la derecha; en móvil siguen apiladas en
+		 * el mismo orden.
+		 */
+		<div className="mt-4 md:grid md:grid-cols-2 md:items-start md:gap-6">
 			<FormularioProducto
 				negocioId={negocioId}
 				categorias={categorias ?? []}
@@ -138,51 +145,53 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 				}
 			/>
 
-			{cargando && <Cargando />}
-			{error && <Aviso tono="error">{error}</Aviso>}
+			<div>
+				{cargando && <Cargando />}
+				{error && <Aviso tono="error">{error}</Aviso>}
 
-			{!cargando && (productos ?? []).length === 0 && (
-				<Vacio titulo="Todavía no tienes productos" texto="Agrega el primero arriba." />
-			)}
+				{!cargando && (productos ?? []).length === 0 && (
+					<Vacio titulo="Todavía no tienes productos" texto="Agrega el primero arriba." />
+				)}
 
-			<ul className="mt-4 space-y-2">
-				{(productos ?? []).map((p) => (
-					<li key={p.id} className="rounded-2xl border border-black/10 p-3">
-						<div className="flex items-start justify-between gap-2">
-							<div>
-								<p className="font-medium">{p.nombre}</p>
-								<p className="text-sm text-black/60">
-									{pesos(p.precio)} · {p.categoriaNombre ?? "Sin categoría"}
-									{p.stock != null ? ` · stock ${p.stock}` : ""}
-								</p>
+				<ul className="mt-4 space-y-2">
+					{(productos ?? []).map((p) => (
+						<li key={p.id} className="rounded-2xl border border-black/10 p-3">
+							<div className="flex items-start justify-between gap-2">
+								<div>
+									<p className="font-medium">{p.nombre}</p>
+									<p className="text-sm text-black/60">
+										{pesos(p.precio)} · {p.categoriaNombre ?? "Sin categoría"}
+										{p.stock != null ? ` · stock ${p.stock}` : ""}
+									</p>
+								</div>
+								<span
+									className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+										p.disponible ? "bg-verde text-white" : "bg-black/60 text-white"
+									}`}
+								>
+									{p.disponible ? "Disponible" : "Agotado"}
+								</span>
 							</div>
-							<span
-								className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
-									p.disponible ? "bg-verde text-white" : "bg-black/60 text-white"
-								}`}
-							>
-								{p.disponible ? "Disponible" : "Agotado"}
-							</span>
-						</div>
-						<div className="mt-2 flex gap-2">
-							<button
-								type="button"
-								onClick={() => alternarDisponible(p)}
-								className="rounded-lg border border-black/15 px-3 py-1 text-sm"
-							>
-								{p.disponible ? "Marcar agotado" : "Marcar disponible"}
-							</button>
-							<button
-								type="button"
-								onClick={() => eliminar(p)}
-								className="rounded-lg border border-black/15 px-3 py-1 text-sm text-black/60"
-							>
-								Eliminar
-							</button>
-						</div>
-					</li>
-				))}
-			</ul>
+							<div className="mt-2 flex gap-2">
+								<button
+									type="button"
+									onClick={() => alternarDisponible(p)}
+									className="rounded-lg border border-black/15 px-3 py-1 text-sm"
+								>
+									{p.disponible ? "Marcar agotado" : "Marcar disponible"}
+								</button>
+								<button
+									type="button"
+									onClick={() => eliminar(p)}
+									className="rounded-lg border border-black/15 px-3 py-1 text-sm text-black/60"
+								>
+									Eliminar
+								</button>
+							</div>
+						</li>
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 }
@@ -352,7 +361,7 @@ function SeccionPedidos({ negocioId }: { negocioId: string }) {
 				<Vacio titulo="Sin pedidos por ahora" texto="Cuando te pidan, aparecerán aquí." />
 			)}
 
-			<ul className="space-y-3">
+			<ul className="grid gap-3 md:grid-cols-2">
 				{(pedidos ?? []).map((p) => {
 					const siguiente = SIGUIENTE[p.estado];
 					const terminal =

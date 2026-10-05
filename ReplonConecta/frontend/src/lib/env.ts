@@ -30,3 +30,13 @@ export const SUPABASE_BUCKET =
  */
 export const supabaseConfigurado =
 	SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "";
+
+/*
+ * Centro del casco urbano de Repelón (Atlántico).
+ *
+ * Es el punto de partida de "Cómo llegar" cuando el negocio no tiene
+ * coordenadas: la ruta nace en el pueblo, que es de donde sale casi
+ * todo el mundo. No hay variable de entorno para el mapa porque el mapa
+ * es OpenStreetMap, que no pide clave.
+ */
+export const CENTRO_REPELON = { lat: 10.4944, lng: -75.1242 };

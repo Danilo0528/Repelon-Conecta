@@ -63,6 +63,8 @@ export interface Negocio {
 	descripcion: string | null;
 	direccion: string;
 	barrio: string | null;
+	latitud: number | null;
+	longitud: number | null;
 	telefono: string | null;
 	whatsapp: string | null;
 	logoUrl: string | null;
@@ -78,6 +80,9 @@ export interface NegocioDetalle {
 	descripcion: string | null;
 	direccion: string;
 	barrio: string | null;
+	latitud: number | null;
+	longitud: number | null;
+	referenciaUbicacion: string | null;
 	telefono: string | null;
 	whatsapp: string | null;
 	logoUrl: string | null;

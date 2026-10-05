@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Aviso, Cargando } from "@/components/ui";
+import { Aviso, Cargando, CLASE_BOTON_AZUL, CLASE_BOTON_NEUTRO } from "@/components/ui";
 import { useSesion } from "@/context/SesionContext";
 import { apiConSesion } from "@/lib/api";
 import type { Direccion, Usuario } from "@/lib/tipos";
@@ -26,24 +26,20 @@ export default function Perfil() {
 		<div className="px-4 pt-4">
 			<h1 className="text-xl font-bold">Mi perfil</h1>
 
-			<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
+			<PanelRol />
 
-			<Direcciones />
+			{/*
+			 * En PC dos columnas: los datos de la cuenta a la izquierda y
+			 * las direcciones a la derecha, para que todo se vea sin
+			 * bajar la página.
+			 */}
+			<div className="md:grid md:grid-cols-2 md:items-start md:gap-8">
+				<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
+				<Direcciones />
+			</div>
 
-			<div className="mt-6 space-y-3">
-				{perfil.rol === "COMPRADOR" && (
-					<Link
-						href="/vendedor"
-						className="block w-full rounded-xl bg-azul py-3 text-center font-semibold text-white"
-					>
-						Quiero vender en Repelón Market
-					</Link>
-				)}
-
-				<Link
-					href="/pedidos"
-					className="block w-full rounded-xl border border-black/15 py-3 text-center font-semibold"
-				>
+			<div className="mt-6 max-w-md space-y-3">
+				<Link href="/pedidos" className={CLASE_BOTON_NEUTRO}>
 					Mis pedidos
 				</Link>
 
@@ -53,12 +49,52 @@ export default function Perfil() {
 						await salir();
 						router.replace("/");
 					}}
-					className="w-full rounded-xl border border-black/15 py-3 font-semibold text-black/70"
+					className={`${CLASE_BOTON_NEUTRO} text-black/70`}
 				>
 					Cerrar sesión
 				</button>
 			</div>
 		</div>
+	);
+}
+
+/*
+ * El panel del vendedor vive en Perfil y no en la barra inferior.
+ *
+ * La barra abajo tiene cuatro destinos y solo cuatro: es la que decide
+ * en qué pantalla se está, y meterle un quinto icono que además solo
+ * aparece para algunos hace que todos los demás la calculen mal. Quien
+ * vende entra por aquí, que además es la pantalla donde ya está mirando
+ * quién es.
+ */
+function PanelRol() {
+	const { perfil } = useSesion();
+	if (!perfil) return null;
+
+	// En PC el botón no se estira al ancho de la pantalla.
+	if (perfil.rol === "ADMIN") {
+		return (
+			<Link
+				href="/admin"
+				className={`${CLASE_BOTON_AZUL} mt-4 md:max-w-md`}
+			>
+				Panel de administrador
+			</Link>
+		);
+	}
+
+	if (perfil.rol === "VENDEDOR") {
+		return (
+			<Link href="/vendedor" className={`${CLASE_BOTON_AZUL} mt-4 md:max-w-md`}>
+				Mi negocio
+			</Link>
+		);
+	}
+
+	return (
+		<Link href="/vendedor" className={`${CLASE_BOTON_AZUL} mt-4 md:max-w-md`}>
+			Quiero vender en Repelón Conecta
+		</Link>
 	);
 }
 
@@ -130,7 +166,7 @@ function DatosPerfil({
 			<button
 				type="submit"
 				disabled={guardando}
-				className="rounded-xl bg-azul px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+				className={CLASE_BOTON_AZUL}
 			>
 				{guardando ? "Guardando…" : "Guardar cambios"}
 			</button>
@@ -235,7 +271,7 @@ function Direcciones() {
 							<button
 								type="button"
 								onClick={() => eliminar(d.id)}
-								className="text-sm text-black/45"
+								className="shrink-0 rounded-lg border border-black/15 px-3 py-2 text-sm text-black/70"
 							>
 								Eliminar
 							</button>
@@ -281,7 +317,7 @@ function Direcciones() {
 				<button
 					type="submit"
 					disabled={guardando}
-					className="rounded-xl border border-azul px-4 py-2 text-sm font-semibold text-azul disabled:opacity-60"
+					className="min-h-12 w-full rounded-xl border border-azul px-4 py-3 font-semibold text-azul disabled:opacity-50"
 				>
 					{guardando ? "Guardando…" : "Agregar dirección"}
 				</button>

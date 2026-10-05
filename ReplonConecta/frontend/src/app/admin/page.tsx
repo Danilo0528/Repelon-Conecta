@@ -84,7 +84,7 @@ export default function PanelAdmin() {
 			<h1 className="text-xl font-bold">Panel de administración</h1>
 
 			{metricas && (
-				<div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+				<div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
 					<Cifra etiqueta="Negocios" valor={metricas.negociosTotales} />
 					<Cifra etiqueta="Pendientes" valor={metricas.negociosPendientes} />
 					<Cifra etiqueta="Usuarios" valor={metricas.usuariosTotales} />
@@ -114,7 +114,9 @@ export default function PanelAdmin() {
 				<Vacio titulo="No hay negocios registrados" />
 			)}
 
-			<ul className="mt-3 space-y-3">
+			{/* En PC los negocios salen en varias columnas; en móvil, uno
+			    debajo del otro como siempre. */}
+			<ul className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
 				{(negocios ?? []).map((n) => (
 					<li key={n.id} className="rounded-2xl border border-black/10 p-4">
 						<div className="flex items-start justify-between gap-2">
