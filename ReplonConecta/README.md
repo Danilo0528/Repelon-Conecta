@@ -14,8 +14,11 @@ recoger en tienda). Un pedido siempre pertenece a **un solo negocio**.
 ## La app en cuatro toques
 
 La pantalla principal (`/`) **es el mapa**, no un extra: se abre la app, se ve
-dónde está cada negocio y se toca un pin. Los cuatro destinos de la barra
-inferior son Mapa, Lista (`/negocios`), Pedidos y Perfil.
+dónde está cada negocio y se toca un pin. Los seis destinos de la barra
+inferior son Inicio, Negocios (`/negocios`), Turismo, Fondo
+(`/fondo-emprender`), Mi tienda y Perfil: el que está encendido se dibuja
+como una píldora verde con la etiqueta en blanco, igual que en la cabecera de
+escritorio.
 
 | Qué se ve | Dónde |
 |---|---|
@@ -24,7 +27,8 @@ inferior son Mapa, Lista (`/negocios`), Pedidos y Perfil.
 | Ficha del negocio: foto grande, mapa chico, productos en rejilla de 2 con botón **+** de ancho completo | `/negocios/[slug]` |
 | Carrito y checkout con total en pesos grandes y botones de 48 px | `/carrito`, `/checkout` |
 | Pedidos con el estado en color y un toque para el detalle | `/pedidos` |
-| Panel del vendedor (con pin arrastrable al crear el negocio) y de admin | `/perfil` → Mi negocio |
+| Fondo Emprender (capital semilla del SENA): qué es, requisitos y cómo postular | `/fondo-emprender` |
+| Panel del vendedor (con pin arrastrable al crear el negocio) y de admin (ubicación con sugerencias y pin arrastrable) | `/perfil` → Mi negocio, `/admin` |
 
 ## Estructura
 
@@ -77,17 +81,26 @@ npm run dev
 
 Variables (`NEXT_PUBLIC_*`, ver `.env.local.example`): `NEXT_PUBLIC_API_URL`,
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (o
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`), `NEXT_PUBLIC_SUPABASE_BUCKET`. Sin
-credenciales la app igual arranca y avisa que Supabase no está configurado.
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`), `NEXT_PUBLIC_SUPABASE_BUCKET` y
+`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Sin credenciales la app igual arranca y
+avisa que Supabase o el mapa no están configurados.
 
-El mapa es **OpenStreetMap** con Leaflet (`src/components/Mapa.tsx`): teselas
-de `tile.openstreetmap.org`, sin clave ni registro. Como los negocios vienen
-sin latitud/longitud, `src/lib/geocodificar.ts` resuelve su dirección con
+El mapa embebido (home, búsqueda, ficha del negocio y selector del vendedor)
+es **Google Maps** con la API de JavaScript (`src/components/Mapa.tsx`), que
+se carga con `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (`src/lib/env.ts`). Esa clave
+es pública y viaja en el bundle a propósito: hay que restringirla en Google
+Cloud Console a los dominios de la app (Credenciales → restricciones de
+referrer) y vigilar la cuota de uso. Como los negocios vienen sin
+latitud/longitud, `src/lib/geocodificar.ts` resuelve su dirección con
 Nominatim a través del proxy `src/app/api/geocode/route.ts` (Nominatim no
 envía cabeceras CORS, así que el navegador no puede pedirle nada directo) y
 guarda el resultado en el navegador para no repetir consultas ni pasar del
-límite de una por segundo. Los botones "Cómo llegar" y "Ver en
-OpenStreetMap" abren la web de OpenStreetMap con la ruta o el punto exacto.
+límite de una por segundo. El botón "Cómo llegar" abre Google Maps con la
+ruta desde el centro del pueblo; "Ver en OpenStreetMap" abre OpenStreetMap
+con el punto exacto. El panel `/admin` usa el mismo proxy para editar la
+ubicación de negocios y zonas (`admin/EditorUbicacion.tsx`): sugerencias
+mientras se escribe (`?n=5`), geocodificación inversa al mover el pin y
+guardado con `PUT /api/negocios/{id}` o `PUT /api/zonas/{id}`.
 
 La altura de la barra de marca y la de la barra inferior están en
 `src/app/globals.css` como tokens `--spacing-cabecera`, `--spacing-nav` y
