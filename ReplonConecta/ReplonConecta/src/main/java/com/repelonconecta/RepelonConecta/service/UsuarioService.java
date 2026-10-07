@@ -30,6 +30,52 @@ public class UsuarioService {
 		return aRespuesta(currentUser.actual());
 	}
 
+	// =====================================================================
+	// ADMINISTRACION DE CUENTAS
+	// =====================================================================
+
+	/** Todos los usuarios, del mas reciente al mas viejo. Solo admin. */
+	public java.util.List<UsuarioDtos.UsuarioResponse> listarTodos() {
+		currentUser.actualAdmin();
+		return usuarios.findAllByOrderByCreadoEnDesc().stream()
+				.map(this::aRespuesta)
+				.toList();
+	}
+
+	/**
+	 * Cambia rol y/o estado de una cuenta desde el panel del admin.
+	 *
+	 * Dos guardas que no son decorativas:
+	 *
+	 * 1. El admin no puede tocarse a si mismo. Cambiar el propio rol o
+	 *    desactivarse dejaria la plataforma sin nadie que la opere, y
+	 *    la recuperacion obligaria a tocar la base a mano.
+	 * 2. Desactivar no es borrar: la fila queda para que sus pedidos y
+	 *    su negocio sigan teniendo historia, pero CurrentUserService
+	 *    ya no deja operar a esa cuenta.
+	 */
+	@Transactional
+	public UsuarioDtos.UsuarioResponse actualizar(UUID usuarioId, Rol rol, Boolean activo) {
+		Usuario admin = currentUser.actualAdmin();
+
+		if (usuarioId.equals(admin.getId())) {
+			throw ApiException.peticionInvalida(
+					"No puedes cambiar tu propia cuenta desde aqui");
+		}
+
+		Usuario usuario = usuarios.findById(usuarioId)
+				.orElseThrow(() -> ApiException.noEncontrado("El usuario"));
+
+		if (rol != null) {
+			usuario.setRol(rol);
+		}
+		if (activo != null) {
+			usuario.setActivo(activo);
+		}
+
+		return aRespuesta(usuarios.save(usuario));
+	}
+
 	/**
 	 * Actualiza nombre y telefono.
 	 *

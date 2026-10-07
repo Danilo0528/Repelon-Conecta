@@ -54,6 +54,19 @@ public class CatalogoService {
 				.toList();
 	}
 
+	/**
+	 * Todas las categorias, incluidas las desactivadas.
+	 *
+	 * El comprador solo ve las activas; el admin necesita ver tambien
+	 * las apagadas para poder reactivar el orden del catalogo sin
+	 * tocar la base.
+	 */
+	public List<CatalogoDtos.CategoriaResponse> categoriasTodas() {
+		return categorias.findAllByOrderByOrdenAsc().stream()
+				.map(CatalogoService::aCategoria)
+				.toList();
+	}
+
 	@Transactional
 	public CatalogoDtos.CategoriaResponse crearCategoria(String nombre, String slug, String icono) {
 		if (nombre == null || nombre.isBlank()) {

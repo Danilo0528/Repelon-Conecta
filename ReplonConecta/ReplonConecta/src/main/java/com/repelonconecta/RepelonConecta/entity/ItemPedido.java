@@ -6,8 +6,6 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -29,8 +27,18 @@ import jakarta.persistence.Table;
 @Table(name = "items_pedido")
 public class ItemPedido {
 
+	/*
+	 * Id asignado a mano, igual que Pedido, Producto y el resto de las
+	 * entidades: NO lleva @GeneratedValue.
+	 *
+	 * Con @GeneratedValue + id precargado, `em.merge` en cascada (el
+	 * camino de `PedidoService.crear`) buscaba la fila por un id que
+	 * aun no existia y reventaba con StaleObjectStateException
+	 * ("Row was already updated or deleted") justo al guardar el
+	 * pedido. Con id asignado, Hibernate lo trata como entidad nueva
+	 * y la inserta.
+	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id", nullable = false, updatable = false)
 	private UUID id = UUID.randomUUID();
 

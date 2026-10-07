@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -44,6 +46,15 @@ public class Producto {
 	/** Valor en pesos colombianos, sin decimales. */
 	@Column(name = "precio", nullable = false)
 	private long precio;
+
+	/**
+	 * Unidad a la que se refiere el precio (kilo o libra). Sin esta
+	 * columna un "$7.500" no dice nada: no se puede comparar un precio
+	 * en kilo con uno en libra.
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "unidad", nullable = false, length = 10)
+	private UnidadProducto unidad = UnidadProducto.KILO;
 
 	@Column(name = "imagen_url", length = 500)
 	private String imagenUrl;
@@ -140,6 +151,14 @@ public class Producto {
 
 	public void setPrecio(long precio) {
 		this.precio = precio;
+	}
+
+	public UnidadProducto getUnidad() {
+		return unidad;
+	}
+
+	public void setUnidad(UnidadProducto unidad) {
+		this.unidad = unidad;
 	}
 
 	public String getImagenUrl() {

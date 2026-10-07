@@ -308,7 +308,14 @@ public class PedidoService {
 	// CONSULTAS
 	// =====================================================================
 
-	/** Historial del comprador. Ve sus propios pedidos y nada mas. */
+	/**
+	 * Historial del comprador. Ve sus propios pedidos y nada mas.
+	 *
+	 * @Transactional(readOnly=true) es necesario, no decorativo: el
+	 * mapeo toca la coleccion `items`, que es lazy, y sin sesion abierta
+	 * (open-in-view=false) revienta con LazyInitializationException.
+	 */
+	@Transactional(readOnly = true)
 	public List<PedidoDtos.PedidoResponse> misPedidos(UUID compradorId) {
 		return pedidos.findByCompradorIdOrderByCreadoEnDesc(compradorId).stream()
 				.map(this::aResumen)
@@ -316,8 +323,18 @@ public class PedidoService {
 	}
 
 	/** Pedidos del negocio, del mas nuevo al mas viejo. */
+	@Transactional(readOnly = true)
 	public List<PedidoDtos.PedidoResponse> pedidosDelNegocio(UUID negocioId) {
 		return pedidos.findByNegocioIdOrderByCreadoEnDesc(negocioId).stream()
+				.map(this::aResumen)
+				.toList();
+	}
+
+	/** Todos los pedidos de la plataforma. Solo el admin. */
+	@Transactional(readOnly = true)
+	public List<PedidoDtos.PedidoResponse> todos() {
+		currentUser.actualAdmin();
+		return pedidos.findAllByOrderByCreadoEnDesc().stream()
 				.map(this::aResumen)
 				.toList();
 	}
@@ -326,6 +343,7 @@ public class PedidoService {
 	 * Detalle de un pedido, verificando que quien pide tiene derecho a
 	 * verlo: el comprador, el dueno del negocio o el admin.
 	 */
+	@Transactional(readOnly = true)
 	public PedidoDtos.PedidoDetalleResponse detalle(UUID pedidoId, Usuario actor) {
 		Pedido pedido = pedidos.findById(pedidoId)
 				.orElseThrow(() -> ApiException.noEncontrado("El pedido"));

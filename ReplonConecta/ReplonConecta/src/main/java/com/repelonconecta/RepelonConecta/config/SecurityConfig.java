@@ -93,9 +93,16 @@ public class SecurityConfig {
 				// poder VER los negocios y sus productos antes de decidir si
 				// le conviene crear una cuenta.
 				.requestMatchers(HttpMethod.GET,
+						"/api/buscar",
 						"/api/negocios/**",
 						"/api/productos/**",
-						"/api/categorias/**")
+						"/api/categorias/**",
+						// Textos del home: el que abre la pagina sin
+						// sesion tiene que poder leerlos.
+						"/api/inicio/textos",
+						// Zonas turisticas del home: mismo motivo que los
+						// textos, el visitante sin sesion las tiene que ver.
+						"/api/zonas")
 					.permitAll()
 				.requestMatchers("/actuator/health").permitAll()
 				// Todo lo demas exige un JWT valido de Supabase.

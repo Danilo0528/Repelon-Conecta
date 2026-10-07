@@ -59,13 +59,24 @@ public class CurrentUserService {
 	public Usuario actual() {
 		UUID id = idActual();
 
-		return usuarios.findById(id).orElseGet(() -> {
+		Usuario usuario = usuarios.findById(id).orElseGet(() -> {
 			Jwt jwt = tokenActual();
 			Usuario nuevo = new Usuario(id,
 					correoDe(jwt),
 					nombreDe(jwt));
 			return usuarios.save(nuevo);
 		});
+
+		// Cuenta desactivada por el admin: no opera en la plataforma.
+		// Se comprueba aqui y no en cada endpoint porque es una regla
+		// unica de toda la app: una cuenta apagada no pide, no vende y
+		// no consulta su perfil.
+		if (!usuario.isActivo()) {
+			throw ApiException.prohibido(
+					"Tu cuenta esta desactivada. Habla con el administrador de la plataforma.");
+		}
+
+		return usuario;
 	}
 
 	/**

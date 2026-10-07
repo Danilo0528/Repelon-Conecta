@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.repelonconecta.RepelonConecta.config.Alcance;
 import com.repelonconecta.RepelonConecta.dto.NegocioDtos;
 import com.repelonconecta.RepelonConecta.dto.ProductoDtos;
 import com.repelonconecta.RepelonConecta.entity.Negocio;
@@ -40,7 +41,9 @@ public class NegocioService {
 
 	/**
 	 * Buscador del home. Los cuatro filtros son opcionales y se pueden
-	 * combinar: texto + barrio + abierto + categoria.
+	 * combinar: texto + barrio + abierto + categoria. Siempre va con el
+	 * alcance del proyecto: los rubros que el cliente dejo fuera no
+	 * aparecen aunque la base los tenga.
 	 */
 	public List<NegocioDtos.NegocioResponse> buscar(String texto, String barrio,
 			Boolean abierto, UUID categoriaId) {
@@ -48,19 +51,20 @@ public class NegocioService {
 				textoVacioANulo(texto),
 				textoVacioANulo(barrio),
 				abierto,
-				categoriaId).stream()
+				categoriaId,
+				Alcance.FAMILIAS).stream()
 				.map(this::aResumen)
 				.toList();
 	}
 
 	public List<NegocioDtos.NegocioResponse> destacados() {
-		return negocios.findByAprobadoTrueAndDestacadoTrueOrderByNombreAsc().stream()
+		return negocios.destacadosPublicos(Alcance.FAMILIAS).stream()
 				.map(this::aResumen)
 				.toList();
 	}
 
 	public List<String> barrios() {
-		return negocios.barriosPublicos();
+		return negocios.barriosPublicos(Alcance.FAMILIAS);
 	}
 
 	/**
@@ -327,6 +331,7 @@ public class NegocioService {
 				producto.getNombre(),
 				producto.getDescripcion(),
 				producto.getPrecio(),
+				producto.getUnidad(),
 				producto.getImagenUrl(),
 				producto.isDisponible(),
 				producto.getStock());

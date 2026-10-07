@@ -14,8 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.repelonconecta.RepelonConecta.dto.NegocioDtos;
+import com.repelonconecta.RepelonConecta.dto.PedidoDtos;
+import com.repelonconecta.RepelonConecta.dto.UsuarioDtos;
+import com.repelonconecta.RepelonConecta.entity.Usuario;
 import com.repelonconecta.RepelonConecta.service.AdminService;
 import com.repelonconecta.RepelonConecta.service.CurrentUserService;
+import com.repelonconecta.RepelonConecta.service.PedidoService;
+import com.repelonconecta.RepelonConecta.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -33,10 +38,15 @@ public class AdminController {
 
 	private final AdminService admin;
 	private final CurrentUserService currentUser;
+	private final UsuarioService usuarios;
+	private final PedidoService pedidos;
 
-	public AdminController(AdminService admin, CurrentUserService currentUser) {
+	public AdminController(AdminService admin, CurrentUserService currentUser,
+			UsuarioService usuarios, PedidoService pedidos) {
 		this.admin = admin;
 		this.currentUser = currentUser;
+		this.usuarios = usuarios;
+		this.pedidos = pedidos;
 	}
 
 	/** Lista completa de negocios con su estado de aprobacion. */
@@ -60,5 +70,44 @@ public class AdminController {
 	public void eliminar(@PathVariable UUID negocioId) {
 		currentUser.actualAdmin();
 		admin.eliminar(negocioId);
+	}
+
+	// =====================================================================
+	// USUARIOS
+	// =====================================================================
+
+	/** Todas las cuentas de la plataforma, mas recientes primero. */
+	@GetMapping("/usuarios")
+	public List<UsuarioDtos.UsuarioResponse> usuarios() {
+		return usuarios.listarTodos();
+	}
+
+	/** Cambia rol y/o estado de una cuenta. El admin no se toca a si mismo. */
+	@PatchMapping("/usuarios/{usuarioId}")
+	public UsuarioDtos.UsuarioResponse actualizarUsuario(@PathVariable UUID usuarioId,
+			@RequestBody UsuarioDtos.AdminActualizarRequest request) {
+		return usuarios.actualizar(usuarioId, request.rol(), request.activo());
+	}
+
+	// =====================================================================
+	// PEDIDOS
+	// =====================================================================
+
+	/** Todos los pedidos de la plataforma, mas recientes primero. */
+	@GetMapping("/pedidos")
+	public List<PedidoDtos.PedidoResponse> pedidos() {
+		currentUser.actualAdmin();
+		return pedidos.todos();
+	}
+
+	/**
+	 * Anula un pedido desde el panel. Va por el mismo cancelar del
+	 * servicio: mismas reglas de estados (no se cancela lo entregado o
+	 * en camino) y devuelve el stock al producto.
+	 */
+	@PatchMapping("/pedidos/{pedidoId}/cancelar")
+	public PedidoDtos.PedidoDetalleResponse cancelarPedido(@PathVariable UUID pedidoId) {
+		Usuario admin = currentUser.actualAdmin();
+		return pedidos.cancelar(pedidoId, admin);
 	}
 }

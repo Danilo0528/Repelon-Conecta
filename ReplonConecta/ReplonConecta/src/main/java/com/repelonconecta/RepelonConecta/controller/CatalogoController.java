@@ -62,6 +62,13 @@ public class CatalogoController {
 		catalogo.eliminarCategoria(categoriaId);
 	}
 
+	/** Todas las categorias (activas y apagadas). Solo para el panel. */
+	@GetMapping("/admin/categorias")
+	public List<CatalogoDtos.CategoriaResponse> categoriasAdmin() {
+		currentUser.actualAdmin();
+		return catalogo.categoriasTodas();
+	}
+
 	// =====================================================================
 	// DIRECCIONES
 	// =====================================================================

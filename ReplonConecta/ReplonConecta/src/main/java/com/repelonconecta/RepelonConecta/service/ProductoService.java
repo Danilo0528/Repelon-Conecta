@@ -80,6 +80,9 @@ public class ProductoService {
 		if (request.precio() != null) {
 			producto.setPrecio(request.precio());
 		}
+		if (request.unidad() != null) {
+			producto.setUnidad(request.unidad());
+		}
 		if (request.imagenUrl() != null) {
 			producto.setImagenUrl(request.imagenUrl().isBlank() ? null : request.imagenUrl().trim());
 		}
@@ -152,6 +155,9 @@ public class ProductoService {
 				? null
 				: request.imagenUrl().trim());
 
+		if (request.unidad() != null) {
+			producto.setUnidad(request.unidad());
+		}
 		if (request.disponible() != null) {
 			producto.setDisponible(request.disponible());
 		}

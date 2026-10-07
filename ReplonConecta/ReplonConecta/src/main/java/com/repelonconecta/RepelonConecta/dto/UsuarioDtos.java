@@ -21,4 +21,13 @@ public final class UsuarioDtos {
 			boolean tieneNegocio,
 			Instant creadoEn) {
 	}
+
+	/**
+	 * Cambio que hace el admin desde el panel: rol, activo, o ambos.
+	 *
+	 * Null = no tocar ese campo: asi un PATCH puede cambiar solo el
+	 * rol sin pisar el estado de la cuenta.
+	 */
+	public record AdminActualizarRequest(Rol rol, Boolean activo) {
+	}
 }

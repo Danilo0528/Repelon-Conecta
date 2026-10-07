@@ -2,6 +2,8 @@ package com.repelonconecta.RepelonConecta.dto;
 
 import java.util.UUID;
 
+import com.repelonconecta.RepelonConecta.entity.UnidadProducto;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +25,7 @@ public final class ProductoDtos {
 			String nombre,
 			String descripcion,
 			long precio,
+			UnidadProducto unidad,
 			String imagenUrl,
 			boolean disponible,
 			Integer stock) {
@@ -46,6 +49,9 @@ public final class ProductoDtos {
 			@NotNull(message = "El precio es obligatorio")
 			@PositiveOrZero(message = "El precio no puede ser negativo")
 			Long precio,
+
+			/** KILO o LIBRA. Si no llega, se asume kilo. */
+			UnidadProducto unidad,
 
 			@Size(max = 500)
 			String imagenUrl,

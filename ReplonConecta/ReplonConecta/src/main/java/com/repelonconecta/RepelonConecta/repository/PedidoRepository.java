@@ -26,6 +26,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
 
 	List<Pedido> findByNegocioIdOrderByCreadoEnDesc(UUID negocioId);
 
+	/** Todos los pedidos de la plataforma, del mas nuevo al mas viejo. Para el admin. */
+	List<Pedido> findAllByOrderByCreadoEnDesc();
+
 	/** Cuantos pedidos ha recibido un negocio en total. Para el admin. */
 	long countByNegocioId(UUID negocioId);
 
