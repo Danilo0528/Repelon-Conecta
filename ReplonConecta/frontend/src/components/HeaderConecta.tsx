@@ -4,26 +4,35 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useCarrito } from "@/context/CarritoContext";
+import { COMPRAS_ACTIVAS } from "@/lib/compras";
 
 /*
  * Cabecera de Repelón Conecta.
  *
  * Una pastilla de vidrio (blanco translúcido con desenfoque) que queda
  * pegada arriba, con el sello de la marca a la izquierda —la R verde y
- * el lema "del pueblo, para el pueblo"— y, a la derecha, el carrito y
- * los destinos que a pantalla ancha no lleva la barra de abajo.
+ * el lema "del pueblo, para el pueblo"— y, a la derecha, los accesos
+ * que a pantalla ancha no lleva la barra de abajo.
  *
  * En móvil la navegación vive abajo, en la barra flotante; aquí solo
- * quedan la marca y el carrito, que es lo que siempre tiene que estar a
- * mano.
+ * quedan la marca y los destinos directos. El carrito y "Pedidos"
+ * están ocultos mientras COMPRAS_ACTIVAS sea false: la app termina en
+ * el WhatsApp del vendedor (se oculta, no se borra).
  */
 
 function Icono({
 	nombre,
 }: {
-	nombre: "carrito" | "perfil" | "comercios" | "pedidos" | "negocio";
+	nombre:
+		| "carrito"
+		| "perfil"
+		| "comercios"
+		| "pedidos"
+		| "negocio"
+		| "turismo"
+		| "fondo";
 }) {
-	const clase = "h-5 w-5";
+	const clase = "h-[21px] w-[21px]";
 	switch (nombre) {
 		case "carrito":
 			return (
@@ -65,12 +74,36 @@ function Icono({
 					<rect x="13.5" y="13.5" width="7" height="7" rx="2" />
 				</svg>
 			);
+		case "turismo":
+			return (
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z" strokeLinejoin="round" />
+					<circle cx="12" cy="10.4" r="2.4" />
+				</svg>
+			);
+		case "fondo":
+			// Brote: "capital semilla", que es lo que ofrece el Fondo.
+			return (
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M12 21v-9" strokeLinecap="round" />
+					<path d="M12 12c4.4 0 8-3.6 8-8-4.4 0-8 3.6-8 8z" strokeLinejoin="round" />
+					<path d="M12 15c-3.3 0-6-2.7-6-6 3.3 0 6 2.7 6 6z" strokeLinejoin="round" />
+				</svg>
+			);
 	}
 }
 
 const DESTINOS: { href: string; etiqueta: string; icono: Parameters<typeof Icono>[0]["nombre"] }[] = [
 	{ href: "/negocios", etiqueta: "Comercios", icono: "comercios" },
-	{ href: "/pedidos", etiqueta: "Pedidos", icono: "pedidos" },
+	// Ancla a la sección de la home: el acceso no queda escondido
+	// abajo del scroll, vive en la barra como los demás destinos.
+	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
+	{ href: "/fondo-emprender", etiqueta: "Fondo Emprender", icono: "fondo" },
+	// Oculto mientras COMPRAS_ACTIVAS sea false: la app es solo
+	// intermediaria. Con el interruptor en true vuelve sin mas cambios.
+	...(COMPRAS_ACTIVAS
+		? [{ href: "/pedidos", etiqueta: "Pedidos", icono: "pedidos" as const }]
+		: []),
 	{ href: "/vendedor", etiqueta: "Mi negocio", icono: "negocio" },
 ];
 
@@ -99,16 +132,21 @@ export default function HeaderConecta() {
 					</span>
 				</Link>
 
-				<div className="ml-2 hidden items-center gap-5 text-sm font-medium md:flex">
+				<div className="ml-2 hidden items-center gap-1 md:flex">
 					{DESTINOS.map(({ href, etiqueta }) => {
-						const activo = pathname === href || pathname.startsWith(`${href}/`);
+						// Las anclas (#...) no son rutas: nunca se marcan.
+						const activo =
+							!href.includes("#") &&
+							(pathname === href || pathname.startsWith(`${href}/`));
 						return (
 							<Link
 								key={href}
 								href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`transition-colors hover:text-leaf ${
-									activo ? "text-ink" : "text-muted-foreground"
+								className={`rounded-full px-3 py-1.5 text-sm leading-none transition-all duration-200 ${
+									activo
+										? "bg-leaf font-semibold text-white shadow-leaf"
+										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
 								}`}
 							>
 								{etiqueta}
@@ -118,6 +156,7 @@ export default function HeaderConecta() {
 				</div>
 
 				<div className="ml-auto flex items-center gap-2">
+					<span aria-hidden className="hidden h-6 w-px bg-black/10 md:block" />
 					<Link
 						href="/perfil"
 						className="glass-soft hidden size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf sm:grid"
@@ -126,22 +165,24 @@ export default function HeaderConecta() {
 						<Icono nombre="perfil" />
 					</Link>
 
-					<Link
-						href="/carrito"
-						className="glass-soft relative grid size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf"
-						aria-label={
-							cantidadTotal > 0
-								? `Carrito, ${cantidadTotal} ítems`
-								: "Carrito vacío"
-						}
-					>
-						<Icono nombre="carrito" />
-						{cantidadTotal > 0 && (
-							<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-leaf px-1 text-[11px] font-bold leading-none text-white">
-								{cantidadTotal}
-							</span>
-						)}
-					</Link>
+					{COMPRAS_ACTIVAS && (
+						<Link
+							href="/carrito"
+							className="glass-soft relative grid size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf"
+							aria-label={
+								cantidadTotal > 0
+									? `Carrito, ${cantidadTotal} ítems`
+									: "Carrito vacío"
+							}
+						>
+							<Icono nombre="carrito" />
+							{cantidadTotal > 0 && (
+								<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-leaf px-1 text-[11px] font-bold leading-none text-white">
+									{cantidadTotal}
+								</span>
+							)}
+						</Link>
+					)}
 				</div>
 			</nav>
 		</header>

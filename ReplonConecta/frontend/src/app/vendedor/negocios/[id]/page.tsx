@@ -13,6 +13,7 @@ import type {
 	Negocio,
 	Pedido,
 	Producto,
+	Unidad,
 } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 
@@ -98,6 +99,13 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 		[],
 	);
 
+	/*
+	 * Producto en edición: null = modo alta. La clave del formulario
+	 * cambia con el id para que al editar se remonte lleno con los
+	 * datos guardados (incluida la unidad seleccionada).
+	 */
+	const [editando, setEditando] = useState<Producto | null>(null);
+
 	async function alternarDisponible(p: Producto) {
 		try {
 			await apiConSesion<Producto>(
@@ -132,8 +140,11 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 		 */
 		<div className="mt-4 md:grid md:grid-cols-2 md:items-start md:gap-6">
 			<FormularioProducto
+				key={editando?.id ?? "alta"}
 				negocioId={negocioId}
 				categorias={categorias ?? []}
+				producto={editando}
+				onCancelar={() => setEditando(null)}
 				onCambio={(nuevo) =>
 					setDatos((actual) => {
 						const lista = actual ?? [];
@@ -175,6 +186,13 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 							<div className="mt-2 flex gap-2">
 								<button
 									type="button"
+									onClick={() => setEditando(p)}
+									className="rounded-lg border border-black/15 px-3 py-1 text-sm"
+								>
+									Editar
+								</button>
+								<button
+									type="button"
 									onClick={() => alternarDisponible(p)}
 									className="rounded-lg border border-black/15 px-3 py-1 text-sm"
 								>
@@ -199,21 +217,31 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 function FormularioProducto({
 	negocioId,
 	categorias,
+	producto,
 	onCambio,
+	onCancelar,
 }: {
 	negocioId: string;
 	categorias: Categoria[];
+	producto: Producto | null;
 	onCambio: (p: Producto) => void;
+	onCancelar: () => void;
 }) {
-	const [nombre, setNombre] = useState("");
-	const [precio, setPrecio] = useState("");
-	const [stock, setStock] = useState("");
-	const [categoriaId, setCategoriaId] = useState("");
-	const [descripcion, setDescripcion] = useState("");
+	const [nombre, setNombre] = useState(producto?.nombre ?? "");
+	const [precio, setPrecio] = useState(producto ? String(producto.precio) : "");
+	const [stock, setStock] = useState(
+		producto?.stock != null ? String(producto.stock) : "",
+	);
+	const [categoriaId, setCategoriaId] = useState(producto?.categoriaId ?? "");
+	// La unidad guardada sale seleccionada al editar; en alta, kilo.
+	const [unidad, setUnidad] = useState<Unidad>(producto?.unidad ?? "KILO");
+	const [descripcion, setDescripcion] = useState(producto?.descripcion ?? "");
 	const [error, setError] = useState<string | null>(null);
 	const [enviando, setEnviando] = useState(false);
 
-	async function crear(e: React.FormEvent) {
+	const etiquetaBoton = producto ? "Guardar cambios" : "Guardar producto";
+
+	async function guardar(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
 
@@ -225,26 +253,39 @@ function FormularioProducto({
 
 		setEnviando(true);
 		try {
-			const creado = await apiConSesion<Producto>(
-				`/api/productos/negocio/${negocioId}`,
-				{
-					method: "POST",
-					body: JSON.stringify({
-						nombre: nombre.trim(),
-						descripcion: descripcion.trim(),
-						precio: Math.round(precioNum),
-						imagenUrl: null,
-						categoriaId: categoriaId || null,
-						disponible: true,
-						stock: stock.trim() === "" ? null : Number(stock),
-					}),
-				},
-			);
-			onCambio(creado);
+			const cuerpo = JSON.stringify({
+				nombre: nombre.trim(),
+				descripcion: descripcion.trim(),
+				precio: Math.round(precioNum),
+				unidad,
+				imagenUrl: producto?.imagenUrl ?? null,
+				categoriaId: categoriaId || null,
+				disponible: producto?.disponible ?? true,
+				stock: stock.trim() === "" ? null : Number(stock),
+			});
+
+			const guardado = producto
+				? await apiConSesion<Producto>(`/api/productos/${producto.id}`, {
+						method: "PUT",
+						body: cuerpo,
+					})
+				: await apiConSesion<Producto>(
+						`/api/productos/negocio/${negocioId}`,
+						{ method: "POST", body: cuerpo },
+					);
+
+			onCambio(guardado);
+
+			if (producto) {
+				onCancelar();
+				return;
+			}
+
 			setNombre("");
 			setPrecio("");
 			setStock("");
 			setDescripcion("");
+			setUnidad("KILO");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "No se pudo guardar.");
 		} finally {
@@ -253,8 +294,10 @@ function FormularioProducto({
 	}
 
 	return (
-		<form onSubmit={crear} className="space-y-2 rounded-2xl border border-black/10 p-4">
-			<h2 className="font-semibold">Agregar producto</h2>
+		<form onSubmit={guardar} className="space-y-2 rounded-2xl border border-black/10 p-4">
+			<h2 className="font-semibold">
+				{producto ? `Editar "${producto.nombre}"` : "Agregar producto"}
+			</h2>
 			{error && <Aviso tono="error">{error}</Aviso>}
 			<input
 				value={nombre}
@@ -290,6 +333,15 @@ function FormularioProducto({
 					</option>
 				))}
 			</select>
+			<select
+				value={unidad}
+				onChange={(e) => setUnidad(e.target.value as Unidad)}
+				aria-label="Unidad de venta"
+				className="w-full rounded-xl border border-black/15 bg-white px-3 py-2"
+			>
+				<option value="KILO">Kilo</option>
+				<option value="LIBRA">Libra</option>
+			</select>
 			<textarea
 				value={descripcion}
 				onChange={(e) => setDescripcion(e.target.value)}
@@ -302,8 +354,17 @@ function FormularioProducto({
 				disabled={enviando}
 				className="w-full rounded-xl bg-azul py-2 font-semibold text-white disabled:opacity-60"
 			>
-				{enviando ? "Guardando…" : "Guardar producto"}
+				{enviando ? "Guardando…" : etiquetaBoton}
 			</button>
+			{producto && (
+				<button
+					type="button"
+					onClick={onCancelar}
+					className="w-full rounded-xl border border-black/15 py-2 text-sm text-black/60"
+				>
+					Cancelar
+				</button>
+			)}
 		</form>
 	);
 }

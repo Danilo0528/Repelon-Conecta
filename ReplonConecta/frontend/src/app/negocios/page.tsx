@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Aviso, Cargando, Chip, Foto, InsigniaAbierto, Vacio } from "@/components/ui";
 import { api } from "@/lib/api";
+import { PISTA_SIN_PRODUCTOS, enAlcance } from "@/lib/alcance";
 import { fotoNegocio } from "@/lib/imagenes";
 import type { Categoria, Negocio } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
@@ -45,6 +46,23 @@ export default function ListaNegocios() {
 	const hayFiltros =
 		texto.trim() !== "" || categoriaId != null || barrio !== "" || soloAbiertos;
 
+	/*
+	 * La pista de la categoría vacía: si el filtro elegido es turismo
+	 * (que no tiene productos con precio) se explica el porqué en vez
+	 * de dejar un vacío mudo. Cualquier otro filtro vacío sigue con el
+	 * mensaje genérico de siempre.
+	 */
+	const categoriaActual = (categorias.datos ?? []).find((c) => c.id === categoriaId);
+	const pista = categoriaActual ? PISTA_SIN_PRODUCTOS[categoriaActual.slug] : undefined;
+
+	let textoVacio = "Todavía no hay negocios registrados.";
+	if (hayFiltros) {
+		textoVacio = "Prueba con otra búsqueda o quita los filtros.";
+	}
+	if (pista) {
+		textoVacio = pista;
+	}
+
 	return (
 		<div className="px-4 pt-4">
 			<div className="flex items-baseline justify-between gap-2">
@@ -58,7 +76,7 @@ export default function ListaNegocios() {
 				type="search"
 				value={texto}
 				onChange={(e) => setTexto(e.target.value)}
-				placeholder="Busca pan, mercado, droguería…"
+				placeholder="Busca yuca, pescado, mojarra…"
 				className="mt-3 w-full rounded-xl border border-black/15 bg-white px-4 py-3 text-base outline-none focus:border-azul md:max-w-xl"
 				aria-label="Buscar negocios o productos"
 			/>
@@ -70,15 +88,17 @@ export default function ListaNegocios() {
 				<Chip activo={categoriaId === null} onClick={() => setCategoriaId(null)}>
 					Todo
 				</Chip>
-				{(categorias.datos ?? []).map((c) => (
-					<Chip
-						key={c.id}
-						activo={categoriaId === c.id}
-						onClick={() => setCategoriaId(c.id)}
-					>
-						{c.nombre}
-					</Chip>
-				))}
+				{(categorias.datos ?? [])
+					.filter((c) => enAlcance(c.slug))
+					.map((c) => (
+						<Chip
+							key={c.id}
+							activo={categoriaId === c.id}
+							onClick={() => setCategoriaId(c.id)}
+						>
+							{c.nombre}
+						</Chip>
+					))}
 			</div>
 
 			{(barrios.datos ?? []).length > 0 && (
@@ -108,14 +128,7 @@ export default function ListaNegocios() {
 			{negocios.cargando && <Cargando />}
 
 			{!negocios.cargando && !negocios.error && (negocios.datos ?? []).length === 0 && (
-				<Vacio
-					titulo="No hay negocios con ese filtro"
-					texto={
-						hayFiltros
-							? "Prueba con otra búsqueda o quita los filtros."
-							: "Todavía no hay negocios registrados."
-					}
-				>
+				<Vacio titulo="No hay negocios con ese filtro" texto={textoVacio}>
 					{hayFiltros && (
 						<button
 							type="button"

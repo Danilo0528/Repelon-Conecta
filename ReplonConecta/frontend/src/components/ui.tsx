@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { CLASE_ESTADO, ETIQUETA_ESTADO } from "@/lib/format";
 import type { EstadoPedido } from "@/lib/tipos";
 
@@ -20,6 +22,15 @@ export const CLASE_BOTON_AZUL =
 
 export const CLASE_BOTON_NEUTRO =
 	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-black/15 px-4 py-3 text-center font-semibold disabled:opacity-50";
+
+/*
+ * Botón verde principal: el de WhatsApp en la ficha del vendedor. Es la
+ * ÚLTIMA acción de toda la app (ahí cierra el trato), así que lleva el
+ * verde de la marca y sombra para que se vea como lo que es: el botón
+ * grande de la pantalla.
+ */
+export const CLASE_BOTON_VERDE =
+	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-center font-semibold text-white shadow-leaf disabled:opacity-50";
 
 /*
  * Botones de la fila de acciones de la hoja del mapa ("Ver negocio" /
@@ -173,7 +184,16 @@ export function Foto({
 	alt: string;
 	className?: string;
 }) {
-	if (!src) {
+	/*
+	 * Si la URL dejó de servir (foto subida hace rato, archivo borrado,
+	 * dominio que cambió) el navegador dibujaría el icono de imagen
+	 * rota. Acá se cae en el mismo "sin foto" que cuando no hay URL,
+	 * y se recuerda cuál falló: si más adelante llega otra foto, se
+	 * vuelve a intentar con ella.
+	 */
+	const [fallaEn, setFallaEn] = useState<string | null>(null);
+
+	if (!src || fallaEn === src) {
 		return (
 			<div
 				className={`flex items-center justify-center bg-black/[.05] ${className}`}
@@ -197,6 +217,12 @@ export function Foto({
 
 	return (
 		// eslint-disable-next-line @next/next/no-img-element
-		<img src={src} alt={alt} loading="lazy" className={`object-cover ${className}`} />
+		<img
+			src={src}
+			alt={alt}
+			loading="lazy"
+			onError={() => setFallaEn(src)}
+			className={`object-cover ${className}`}
+		/>
 	);
 }

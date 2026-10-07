@@ -3,32 +3,56 @@
 /*
  * Enlaces y utilidades de mapa.
  *
- * El mapa de la app es OpenStreetMap (Leaflet + teselas de
- * tile.openstreetmap.org): no lleva clave, no lleva factura y no exige
- * registrar un proyecto para ver calles reales. Aquí viven solo las
- * utilidades que las pantallas comparten: el pin de los negocios y los
- * dos enlaces que salen hacia OpenStreetMap.
+ * Los mapas embebidos en la app (home, búsqueda, ficha de negocio y
+ * selector del vendedor) son la API de JavaScript de Google Maps, que
+ * se carga con la clave de GOOGLE_MAPS_API_KEY. Aquí viven las
+ * utilidades que las pantallas comparten: la carga de esa API, el pin
+ * de los negocios y los enlaces salientes (Google Maps para "Cómo
+ * llegar", OpenStreetMap como alternativa que no pide nada).
  */
 
-import { CENTRO_REPELON } from "./env";
+import { CENTRO_REPELON, GOOGLE_MAPS_API_KEY, mapasGoogleConfigurado } from "./env";
 
 const OSM = "https://www.openstreetmap.org";
 
 /** Dirección con la que se busca cualquier negocio fuera del mapa. */
 function direccionDe(n: { direccion: string }): string {
-	return `${n.direccion}, Repelón, Atlántico, Colombia`;
+	// Algunas direcciones (las de turismo) ya traen pueblo y
+	// departamento: no hace falta repetirlos.
+	return n.direccion.includes("Repelón")
+		? `${n.direccion}, Colombia`
+		: `${n.direccion}, Repelón, Atlántico, Colombia`;
 }
 
 /*
- * "Cómo llegar": ruta en OpenStreetMap.
+ * "Cómo llegar": ruta desde el centro del pueblo, abierta en Google Maps.
  *
- * El origen es el centro del pueblo, que es de donde sale casi todo el
- * mundo en Repelón; el destino es la coordenada si el negocio la tiene y
- * la dirección escrita si no (OpenStreetMap geocodifica sola). El origen
- * se puede editar en la página a la que llega, así que quien venga de
- * otro lado cambia un campo y listo.
+ * El origen es el centro de Repelón, que es de donde sale casi todo el
+ * mundo; el destino es la coordenada si el negocio la tiene y la dirección
+ * escrita si no (Google geocodifica sola). Es el mismo Google Maps que el
+ * mapa embebido y que la mayoría tiene en el celular, así que la ruta
+ * continúa en la app de quien abre el enlace. Viaja en pestaña nueva como
+ * los demás enlaces externos.
+ *
+ * `enlaceVerEnMapa` (más abajo) sigue siendo OpenStreetMap: es para quien
+ * solo quiere mirar el punto sin que nadie le proponga una ruta.
  */
 export function enlaceComoLlegar(n: {
+	latitud: number | null;
+	longitud: number | null;
+	direccion: string;
+}): string {
+	return enlaceGoogleMaps(n);
+}
+
+/*
+ * "Cómo llegar" en Google Maps: ruta desde el centro del pueblo.
+ *
+ * El mapa embebido de la app es Google Maps (con clave), pero este enlace
+ * sale hacia la web pública de Google: no necesita clave ni pasar por la
+ * API, solo abrir la URL con origen, destino y modo de viaje.
+ */
+export function enlaceGoogleMaps(n: {
 	latitud: number | null;
 	longitud: number | null;
 	direccion: string;
@@ -38,7 +62,7 @@ export function enlaceComoLlegar(n: {
 			? `${n.latitud},${n.longitud}`
 			: direccionDe(n);
 	const origen = `${CENTRO_REPELON.lat},${CENTRO_REPELON.lng}`;
-	return `${OSM}/directions?from=${encodeURIComponent(origen)}&to=${encodeURIComponent(destino)}`;
+	return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origen)}&destination=${encodeURIComponent(destino)}&travelmode=driving`;
 }
 
 /*
@@ -62,8 +86,8 @@ export function enlaceVerEnMapa(n: {
  * ==================================================================== */
 
 /*
- * Pin como SVG en un data-URI, usado por Leaflet (divIcon) y por
- * cualquier otra vista que quiera el mismo marcador.
+ * Pin como SVG en un data-URI: es lo que dibuja Google Maps en el mapa
+ * y lo mismo que verá quien abra la imagen suelta en otra vista.
  *
  * Antes de tocar un pin hay que leer una cosa: si el negocio está
  * abierto. Por eso el color es el dato, no un adorno: verde si está
@@ -88,4 +112,90 @@ function pinSvg(color: string): string {
 
 export function iconoMarcador(abierto: boolean): string {
 	return pinSvg(abierto ? COLOR_PIN_ABIERTO : COLOR_PIN_CERRADO);
+}
+
+/* ====================================================================
+ * Carga de la API de JavaScript de Google Maps
+ * ==================================================================== */
+
+export type MotivoFalloMapas = "sin-clave" | "sin-ventana" | "carga";
+
+/**
+ * Fallo de carga del mapa, con el motivo a mano para que la pantalla
+ * pueda decirle al usuario qué salió mal en vez de dejar un hueco gris.
+ */
+export class ErrorMapas extends Error {
+	readonly motivo: MotivoFalloMapas;
+
+	constructor(motivo: MotivoFalloMapas) {
+		super(
+			motivo === "sin-clave"
+				? "Falta la clave de Google Maps (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)."
+				: motivo === "sin-ventana"
+					? "Google Maps solo se carga en el navegador."
+					: "No se pudo cargar la API de Google Maps.",
+		);
+		this.name = "ErrorMapas";
+		this.motivo = motivo;
+	}
+}
+
+const VERSION_API = "weekly";
+const TIEMPO_ESPERA = 20000;
+const CALL_MAPAS = "__repelonMapasCargado";
+
+/** Única promesa de carga: si dos mapas piden la API a la vez, solo hay una petición. */
+let promesaCarga: Promise<void> | null = null;
+
+/**
+ * Carga la API de Google Maps una sola vez, sin importar cuántos mapas
+ * haya en la pantalla.
+ *
+ * La API toca `window` al cargarse, así que va por un `<script>` puesto
+ * aquí y no por un import estático: estas pantallas también se pintan en
+ * el servidor durante el prerender y ahí no hay `window`. El `callback`
+ * es la forma que Google ofrece para saber cuándo quedó lista la API
+ * (el simple `onload` puede llegar antes que `google.maps`), con un
+ * reloj de seguridad por si el navegador se queda esperando.
+ */
+export function cargarGoogleMaps(): Promise<void> {
+	if (!mapasGoogleConfigurado) return Promise.reject(new ErrorMapas("sin-clave"));
+	if (typeof window === "undefined") return Promise.reject(new ErrorMapas("sin-ventana"));
+	if (typeof google !== "undefined" && google.maps) return Promise.resolve();
+	if (promesaCarga) return promesaCarga;
+
+	promesaCarga = new Promise<void>((resolver, rechazar) => {
+		const ventana = window as unknown as Record<string, unknown>;
+
+		const limpiar = () => {
+			window.clearTimeout(reloj);
+			delete ventana[CALL_MAPAS];
+		};
+
+		const reloj = window.setTimeout(() => {
+			limpiar();
+			promesaCarga = null;
+			rechazar(new ErrorMapas("carga"));
+		}, TIEMPO_ESPERA);
+
+		ventana[CALL_MAPAS] = () => {
+			limpiar();
+			resolver();
+		};
+
+		const script = document.createElement("script");
+		script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+			GOOGLE_MAPS_API_KEY,
+		)}&v=${VERSION_API}&callback=${CALL_MAPAS}`;
+		script.async = true;
+		script.defer = true;
+		script.onerror = () => {
+			limpiar();
+			promesaCarga = null;
+			rechazar(new ErrorMapas("carga"));
+		};
+		document.head.appendChild(script);
+	});
+
+	return promesaCarga;
 }

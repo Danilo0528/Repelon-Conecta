@@ -1,186 +1,151 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 
-import { Aviso, Cargando, Vacio } from "@/components/ui";
-import { useSesion } from "@/context/SesionContext";
+import { Aviso, Cargando } from "@/components/ui";
 import { apiConSesion } from "@/lib/api";
-import { fecha, pesos } from "@/lib/format";
-import type { MetricasAdmin, NegocioAdmin } from "@/lib/tipos";
+import { pesos } from "@/lib/format";
+import type { MetricasAdmin } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
+import { SeccionAdmin, TARJETA } from "./ui-admin";
 
-export default function PanelAdmin() {
-	const router = useRouter();
-	const { perfil, cargando: cargandoSesion } = useSesion();
+/*
+ * Resumen del panel: la puerta de entrada. Las cifras son botones que
+ * llevan a la lista que las produce (Pendientes abre Negocios con el
+ * filtro ya puesto), y abajo están los accesos a cada módulo — el
+ * panel completo se ve de un vistazo, sin scrollear.
+ */
 
-	useEffect(() => {
-		if (!cargandoSesion && !perfil) {
-			router.replace("/entrar?next=/admin");
-		}
-	}, [cargandoSesion, perfil, router]);
+const ACCESOS: { href: string; etiqueta: string; texto: string }[] = [
+	{
+		href: "/admin/negocios",
+		etiqueta: "Negocios",
+		texto: "Aprueba, destaca y carga fotos",
+	},
+	{ href: "/admin/usuarios", etiqueta: "Usuarios", texto: "Roles y cuentas" },
+	{
+		href: "/admin/pedidos",
+		etiqueta: "Pedidos",
+		texto: "Listado global y anulaciones",
+	},
+	{
+		href: "/admin/contenido",
+		etiqueta: "Contenido",
+		texto: "Categorías y textos del home",
+	},
+	{
+		href: "/admin/zonas",
+		etiqueta: "Zonas turísticas",
+		texto: "Atractivos del home con mapa",
+	},
+];
 
-	const { datos: metricas } = useDatos<MetricasAdmin>(
-		() => apiConSesion<MetricasAdmin>("/api/admin/metricas"),
-		[perfil?.id],
-	);
-
-	const {
-		datos: negocios,
-		cargando,
-		error,
-		setDatos,
-	} = useDatos<NegocioAdmin[]>(
-		() => apiConSesion<NegocioAdmin[]>("/api/admin/negocios"),
-		[perfil?.id],
-	);
-
-	const [errorAccion, setErrorAccion] = useState<string | null>(null);
-
-	if (cargandoSesion) return <Cargando />;
-	if (!perfil) return null;
-
-	if (perfil.rol !== "ADMIN") {
-		return (
-			<div className="px-4 pt-4">
-				<Aviso tono="error">Esta sección es solo para administradores.</Aviso>
-			</div>
-		);
-	}
-
-	async function cambiar(
-		n: NegocioAdmin,
-		cambios: { aprobado?: boolean; destacado?: boolean },
-	) {
-		setErrorAccion(null);
-		try {
-			const actualizado = await apiConSesion<NegocioAdmin>(
-				`/api/admin/negocios/${n.id}`,
-				{ method: "PATCH", body: JSON.stringify(cambios) },
-			);
-			setDatos((actual) =>
-				(actual ?? []).map((x) => (x.id === n.id ? actualizado : x)),
-			);
-		} catch (e) {
-			setErrorAccion(e instanceof Error ? e.message : "No se pudo actualizar.");
-		}
-	}
-
-	async function eliminar(n: NegocioAdmin) {
-		if (!window.confirm(`¿Eliminar "${n.nombre}"? Los pedidos impiden borrarlo.`)) {
-			return;
-		}
-		setErrorAccion(null);
-		try {
-			await apiConSesion(`/api/admin/negocios/${n.id}`, { method: "DELETE" });
-			setDatos((actual) => (actual ?? []).filter((x) => x.id !== n.id));
-		} catch (e) {
-			setErrorAccion(e instanceof Error ? e.message : "No se pudo eliminar.");
-		}
-	}
-
+function Cifra({
+	etiqueta,
+	valor,
+	nota,
+	href,
+}: {
+	etiqueta: string;
+	valor: string | number;
+	nota?: string;
+	href: string;
+}) {
 	return (
-		<div className="px-4 pt-4">
-			<h1 className="text-xl font-bold">Panel de administración</h1>
-
-			{metricas && (
-				<div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-					<Cifra etiqueta="Negocios" valor={metricas.negociosTotales} />
-					<Cifra etiqueta="Pendientes" valor={metricas.negociosPendientes} />
-					<Cifra etiqueta="Usuarios" valor={metricas.usuariosTotales} />
-					<Cifra etiqueta="Pedidos" valor={metricas.pedidosTotales} />
-					<Cifra etiqueta="Ventas totales" valor={pesos(metricas.ventasTotales)} />
-					<Cifra etiqueta="Ventas hoy" valor={pesos(metricas.ventasHoy)} />
-				</div>
-			)}
-
-			<h2 className="mt-6 text-sm font-semibold uppercase tracking-wide text-black/50">
-				Negocios
-			</h2>
-
-			{errorAccion && (
-				<div className="mt-2">
-					<Aviso tono="error">{errorAccion}</Aviso>
-				</div>
-			)}
-			{error && (
-				<div className="mt-2">
-					<Aviso tono="error">{error}</Aviso>
-				</div>
-			)}
-
-			{cargando && <Cargando />}
-			{!cargando && (negocios ?? []).length === 0 && (
-				<Vacio titulo="No hay negocios registrados" />
-			)}
-
-			{/* En PC los negocios salen en varias columnas; en móvil, uno
-			    debajo del otro como siempre. */}
-			<ul className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-				{(negocios ?? []).map((n) => (
-					<li key={n.id} className="rounded-2xl border border-black/10 p-4">
-						<div className="flex items-start justify-between gap-2">
-							<div>
-								<p className="font-semibold">{n.nombre}</p>
-								<p className="text-xs text-black/55">
-									{n.barrio ?? "Repelón"} · {n.cantidadProductos} productos ·{" "}
-									{n.pedidosRecibidos} pedidos
-								</p>
-								<p className="text-xs text-black/45">
-									Dueño: {n.duenoNombre} ({n.duenoEmail}) · {fecha(n.creadoEn)}
-								</p>
-							</div>
-							<div className="flex shrink-0 flex-col items-end gap-1">
-								<span
-									className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-										n.aprobado ? "bg-verde text-white" : "bg-black/60 text-white"
-									}`}
-								>
-									{n.aprobado ? "Aprobado" : "Pendiente"}
-								</span>
-								{n.destacado && (
-									<span className="rounded-full bg-azul px-2 py-0.5 text-xs font-semibold text-white">
-										Destacado
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="mt-3 flex flex-wrap gap-2">
-							<button
-								type="button"
-								onClick={() => cambiar(n, { aprobado: !n.aprobado })}
-								className="rounded-lg border border-black/15 px-3 py-1.5 text-sm"
-							>
-								{n.aprobado ? "Suspender" : "Aprobar"}
-							</button>
-							<button
-								type="button"
-								onClick={() => cambiar(n, { destacado: !n.destacado })}
-								className="rounded-lg border border-black/15 px-3 py-1.5 text-sm"
-							>
-								{n.destacado ? "Quitar destacado" : "Destacar"}
-							</button>
-							<button
-								type="button"
-								onClick={() => eliminar(n)}
-								className="rounded-lg border border-black/15 px-3 py-1.5 text-sm text-black/60"
-							>
-								Eliminar
-							</button>
-						</div>
-					</li>
-				))}
-			</ul>
-		</div>
+		<Link
+			href={href}
+			className={`${TARJETA} block transition hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2`}
+		>
+			<p className="text-lg font-bold leading-tight">{valor}</p>
+			<p className="text-[11px] font-medium text-black/55">{etiqueta}</p>
+			{nota && <p className="text-[11px] text-black/40">{nota}</p>}
+		</Link>
 	);
 }
 
-function Cifra({ etiqueta, valor }: { etiqueta: string; valor: string | number }) {
+export default function PaginaResumen() {
+	const { datos: metricas, cargando, error } = useDatos<MetricasAdmin>(
+		() => apiConSesion<MetricasAdmin>("/api/admin/metricas"),
+		[],
+	);
+
 	return (
-		<div className="rounded-xl bg-black/[.04] px-3 py-3">
-			<p className="text-sm font-bold">{valor}</p>
-			<p className="text-[11px] text-black/55">{etiqueta}</p>
+		<div>
+			<h1 className="text-xl font-bold">Resumen</h1>
+			<p className="mt-1 text-xs text-black/55">
+				La plataforma de un vistazo. Toca una cifra para ir a su lista.
+			</p>
+
+			{error && (
+				<div className="mt-3">
+					<Aviso tono="error">{error}</Aviso>
+				</div>
+			)}
+			{cargando && !metricas && (
+				<div className="mt-3">
+					<Cargando />
+				</div>
+			)}
+
+			{metricas && (
+				<div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+					<Cifra
+						etiqueta="Negocios"
+						valor={metricas.negociosTotales}
+						nota={`${metricas.negociosAprobados} aprobados`}
+						href="/admin/negocios"
+					/>
+					<Cifra
+						etiqueta="Pendientes"
+						valor={metricas.negociosPendientes}
+						nota="por revisar"
+						href="/admin/negocios?filtro=pendientes"
+					/>
+					<Cifra
+						etiqueta="Usuarios"
+						valor={metricas.usuariosTotales}
+						href="/admin/usuarios"
+					/>
+					<Cifra
+						etiqueta="Pedidos"
+						valor={metricas.pedidosTotales}
+						href="/admin/pedidos"
+					/>
+					<Cifra
+						etiqueta="Ventas totales"
+						valor={pesos(metricas.ventasTotales)}
+						href="/admin/pedidos"
+					/>
+					<Cifra
+						etiqueta="Ventas hoy"
+						valor={pesos(metricas.ventasHoy)}
+						href="/admin/pedidos"
+					/>
+				</div>
+			)}
+
+			<SeccionAdmin
+				titulo="Módulos del panel"
+				descripcion="Cada módulo vive en su propia dirección; el menú de la izquierda siempre está a mano."
+			>
+				<div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+					{ACCESOS.map(({ href, etiqueta, texto }) => (
+						<Link
+							key={href}
+							href={href}
+							className={`${TARJETA} flex items-center justify-between gap-3 transition hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2`}
+						>
+							<div>
+								<p className="font-semibold">{etiqueta}</p>
+								<p className="text-xs text-black/55">{texto}</p>
+							</div>
+							<span aria-hidden className="text-black/40">
+								→
+							</span>
+						</Link>
+					))}
+				</div>
+			</SeccionAdmin>
 		</div>
 	);
 }

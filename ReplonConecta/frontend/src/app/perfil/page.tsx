@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Aviso, Cargando, CLASE_BOTON_AZUL, CLASE_BOTON_NEUTRO } from "@/components/ui";
 import { useSesion } from "@/context/SesionContext";
+import { COMPRAS_ACTIVAS } from "@/lib/compras";
 import { apiConSesion } from "@/lib/api";
 import type { Direccion, Usuario } from "@/lib/tipos";
 
@@ -28,20 +29,26 @@ export default function Perfil() {
 
 			<PanelRol />
 
-			{/*
-			 * En PC dos columnas: los datos de la cuenta a la izquierda y
-			 * las direcciones a la derecha, para que todo se vea sin
-			 * bajar la página.
-			 */}
-			<div className="md:grid md:grid-cols-2 md:items-start md:gap-8">
-				<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
-				<Direcciones />
-			</div>
+		{/*
+		 * En PC dos columnas: los datos de la cuenta a la izquierda y
+		 * las direcciones a la derecha, para que todo se vea sin
+		 * bajar la página.
+		 *
+		 * Las direcciones (y "Mis pedidos") están ocultas mientras
+		 * COMPRAS_ACTIVAS sea false: la app es solo intermediaria y
+		 * no pide entregas. El código sigue aquí, no se borró.
+		 */}
+		<div className="md:grid md:grid-cols-2 md:items-start md:gap-8">
+			<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
+			{COMPRAS_ACTIVAS && <Direcciones />}
+		</div>
 
-			<div className="mt-6 max-w-md space-y-3">
+		<div className="mt-6 max-w-md space-y-3">
+			{COMPRAS_ACTIVAS && (
 				<Link href="/pedidos" className={CLASE_BOTON_NEUTRO}>
 					Mis pedidos
 				</Link>
+			)}
 
 				<button
 					type="button"

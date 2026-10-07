@@ -57,6 +57,19 @@ function dibujo(categoria: Categoria): React.ReactNode {
 				<path d="M12 13c0-3.3 2.4-5.7 5.7-5.7C17.7 10.6 15.3 13 12 13z" />
 			</>
 		),
+		pesca: (
+			<>
+				<path d="M3.5 12c2.6-3.4 6.1-5.1 10.5-5.1 3 0 5.4 1.5 6.5 4.4-1.1 2.9-3.5 4.4-6.5 4.4-4.4 0-7.9-1.7-10.5-3.7z" />
+				<path d="M20.5 11.3 22.5 8v8l-2-3.3" strokeLinejoin="round" />
+				<circle cx="8.3" cy="11.2" r="0.9" fill="currentColor" stroke="none" />
+			</>
+		),
+		turismo: (
+			<>
+				<path d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z" />
+				<circle cx="12" cy="10.4" r="2.4" />
+			</>
+		),
 		aseo: (
 			<>
 				<path d="M12 3.5 13.7 8l4.5 1.7-4.5 1.7L12 16l-1.7-4.6L5.8 9.7 10.3 8z" />

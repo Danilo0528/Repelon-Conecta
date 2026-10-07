@@ -45,6 +45,18 @@ export interface Categoria {
 	activa: boolean;
 }
 
+export interface ZonaTuristica {
+	id: string;
+	nombre: string;
+	descripcion: string | null;
+	direccion: string;
+	latitud: number | null;
+	longitud: number | null;
+	imagenUrl: string | null;
+	motivo: string;
+	orden: number;
+}
+
 export interface Direccion {
 	id: string;
 	alias: string | null;
@@ -101,6 +113,9 @@ export interface NegocioAdmin {
 	slug: string;
 	barrio: string | null;
 	direccion: string;
+	latitud: number | null;
+	longitud: number | null;
+	logoUrl: string | null;
 	aprobado: boolean;
 	destacado: boolean;
 	abierto: boolean;
@@ -121,9 +136,38 @@ export interface Producto {
 	nombre: string;
 	descripcion: string | null;
 	precio: number;
+	unidad: Unidad;
 	imagenUrl: string | null;
 	disponible: boolean;
 	stock: number | null;
+}
+
+/** Unidad en que se vende el producto: lo que el pueblo usa. */
+export type Unidad = "KILO" | "LIBRA";
+
+/**
+ * Un resultado de `GET /api/buscar`: el producto junto a los datos del
+ * negocio que lo tiene, todo en la misma llamada para pintar la lista
+ * y poner el pin del mapa sin volver a pedir nada.
+ */
+export interface ResultadoBusqueda {
+	productoId: string;
+	productoNombre: string;
+	productoDescripcion: string | null;
+	precio: number;
+	unidad: Unidad;
+	imagenUrl: string | null;
+	disponible: boolean;
+	negocioId: string;
+	negocioNombre: string;
+	negocioSlug: string;
+	direccion: string;
+	barrio: string | null;
+	latitud: number | null;
+	longitud: number | null;
+	whatsapp: string | null;
+	abierto: boolean;
+	categoriaNombre: string | null;
 }
 
 export interface LineaPedido {

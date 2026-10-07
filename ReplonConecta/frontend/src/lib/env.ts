@@ -32,11 +32,25 @@ export const supabaseConfigurado =
 	SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "";
 
 /*
+ * Google Maps: los mapas embebidos de la app (home, búsqueda, ficha de
+ * negocio y selector de ubicación del vendedor) usan la API de
+ * JavaScript con esta clave.
+ *
+ * NEXT_PUBLIC_* se incrusta en el bundle, así que la clave es pública
+ * por diseño: lo que hay que hacer es restringirla en Google Cloud
+ * Console (Credenciales → restricciones de referrer) al dominio donde
+ * corre la app; sin eso cualquiera que la lea del bundle gasta cuota
+ * del proyecto.
+ */
+export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+export const mapasGoogleConfigurado = GOOGLE_MAPS_API_KEY !== "";
+
+/*
  * Centro del casco urbano de Repelón (Atlántico).
  *
  * Es el punto de partida de "Cómo llegar" cuando el negocio no tiene
- * coordenadas: la ruta nace en el pueblo, que es de donde sale casi
- * todo el mundo. No hay variable de entorno para el mapa porque el mapa
- * es OpenStreetMap, que no pide clave.
+ * coordenadas: la ruta nace en el pueblo, que es de donde sale todo
+ * el mundo. También es el encuadre inicial del mapa, antes de que
+ * entren los pines de los negocios.
  */
 export const CENTRO_REPELON = { lat: 10.4944, lng: -75.1242 };

@@ -8,23 +8,31 @@ import HeaderConecta from "@/components/HeaderConecta";
 /*
  * Navegación de la app.
  *
- * Arriba, la pastilla de vidrio con la marca y el carrito
- * (HeaderConecta). Abajo, cuatro destinos y solo cuatro, en una barra
- * que FLOTA sobre el fondo (12 px separada del borde) con acabado de
+ * Arriba, la pastilla de vidrio con la marca y los accesos
+ * directos (HeaderConecta). Abajo, seis destinos en una barra que
+ * FLOTA sobre el fondo (12 px separada del borde) con acabado de
  * vidrio: ya no es una caja blanca pegada abajo, es una pastilla que
  * descansa sobre el contenido.
  *
- * El destino encendido se marca en verde y en negrita, que es la señal
- * que usa la plantilla. En pantallas anchas la barra se oculta porque
- * los mismos destinos ya están en la cabecera.
+ * El destino encendido no se marca solo con color de texto: se dibuja
+ * una píldora verde con el icono y la etiqueta en blanco, que es la
+ * señal que se espera de una barra de pestañas (y la que menos se
+ * discute a la hora de saber "dónde estoy"). En pantallas anchas la
+ * barra se oculta porque los mismos destinos ya están en la
+ * cabecera.
  *
  * El acceso del vendedor y del administrador NO vive aquí: meter un
- * quinto destino descuadra la barra para todos. "Mi negocio" sí entra,
- * porque es de todos.
+ * séptimo destino descuadra la barra para todos. "Mi negocio" sí entra,
+ * porque es de todos. "Turismo" es una ancla (#turismo) a la sección
+ * de la home, así que nunca se marca como activo.
  */
 
-function Icono({ nombre }: { nombre: "inicio" | "negocios" | "negocio" | "perfil" }) {
-	const clase = "h-5 w-5";
+function Icono({
+	nombre,
+}: {
+	nombre: "inicio" | "negocios" | "negocio" | "perfil" | "turismo" | "fondo";
+}) {
+	const clase = "h-[21px] w-[21px]";
 	switch (nombre) {
 		case "inicio":
 			return (
@@ -58,6 +66,22 @@ function Icono({ nombre }: { nombre: "inicio" | "negocios" | "negocio" | "perfil
 					<path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
 				</svg>
 			);
+		case "turismo":
+			return (
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z" strokeLinejoin="round" />
+					<circle cx="12" cy="10.4" r="2.4" />
+				</svg>
+			);
+		case "fondo":
+			// Brote: "capital semilla", que es lo que ofrece el Fondo.
+			return (
+				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<path d="M12 21v-9" strokeLinecap="round" />
+					<path d="M12 12c4.4 0 8-3.6 8-8-4.4 0-8 3.6-8 8z" strokeLinejoin="round" />
+					<path d="M12 15c-3.3 0-6-2.7-6-6 3.3 0 6 2.7 6 6z" strokeLinejoin="round" />
+				</svg>
+			);
 	}
 }
 
@@ -68,41 +92,54 @@ const ENLACES: {
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
 	{ href: "/negocios", etiqueta: "Negocios", icono: "negocios" },
-	{ href: "/vendedor", etiqueta: "Mi negocio", icono: "negocio" },
+	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
+	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
+	{ href: "/vendedor", etiqueta: "Mi tienda", icono: "negocio" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
 ];
 
 export default function BarraNavegacion() {
 	const pathname = usePathname();
 
+	// El panel /admin tiene su propio cromo (sidebar, barra superior y
+	// menú): la navegación pública no se pinta ahí.
+	if (pathname.startsWith("/admin")) return null;
+
 	return (
 		<>
 			<HeaderConecta />
 
-			<nav className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 md:hidden">
-				<div className="glass grid grid-cols-4 rounded-2xl px-1 py-1.5">
+			<nav
+				aria-label="Navegación principal"
+				className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 md:hidden"
+			>
+				<div className="glass grid grid-cols-6 gap-0.5 rounded-[22px] px-1.5 py-1.5">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por
 						// prefijo, para que /negocios/[slug] deje "Negocios"
-						// encendido dentro de la ficha.
+						// encendido dentro de la ficha. Las anclas (#...) no
+						// son rutas, nunca se marcan.
 						const activo =
 							href === "/"
 								? pathname === "/"
-								: pathname === href || pathname.startsWith(`${href}/`);
+								: !href.includes("#") &&
+										(pathname === href || pathname.startsWith(`${href}/`));
 						return (
 							<Link
 								key={href}
 								href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`flex flex-col items-center gap-0.5 rounded-xl py-1 text-[11px] transition-colors ${
+								className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 py-1.5 transition-all duration-200 ${
 									activo
-										? "font-bold text-leaf"
-										: "font-medium text-muted-foreground hover:text-leaf"
+										? "bg-leaf font-semibold text-white shadow-leaf"
+										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
 								}`}
 							>
 								<Icono nombre={icono} />
-								{etiqueta}
+								<span className="w-full truncate text-center text-[10px] leading-none tracking-tighter">
+									{etiqueta}
+								</span>
 							</Link>
 						);
 					})}

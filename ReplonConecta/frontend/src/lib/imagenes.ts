@@ -21,6 +21,16 @@ const FALLAS: { prueba: RegExp; imagen: string }[] = [
 const GENERICA = "/img/tienda.jpg";
 
 /**
+ * Foto de respaldo: la del oficio si se reconoce el nombre, la tienda
+ * genérica si no. Es la que se usa cuando el negocio no tiene logo y
+ * también cuando el logo existe pero la URL ya no responde.
+ */
+export function fotoRespaldo(nombre: string): string {
+	const casa = FALLAS.find((f) => f.prueba.test(nombre));
+	return casa?.imagen ?? GENERICA;
+}
+
+/**
  * Foto que le toca a un negocio: su logo si lo tiene, la foto de su
  * oficio si se reconoce el nombre, y la tienda genérica si no.
  */
@@ -31,6 +41,5 @@ export function fotoNegocio(n: {
 	const logo = n.logoUrl?.trim();
 	if (logo && (/^https?:\/\//.test(logo) || logo.startsWith("/"))) return logo;
 
-	const casa = FALLAS.find((f) => f.prueba.test(n.nombre));
-	return casa?.imagen ?? GENERICA;
+	return fotoRespaldo(n.nombre);
 }

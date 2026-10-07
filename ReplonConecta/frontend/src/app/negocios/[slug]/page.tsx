@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { MapaMini } from "@/components/Mapa";
 import {
 	CLASE_BOTON_AZUL,
 	CLASE_BOTON_NEUTRO,
+	CLASE_BOTON_VERDE,
 	Cargando,
 	Foto,
 	InsigniaAbierto,
@@ -14,30 +16,46 @@ import {
 } from "@/components/ui";
 import { useCarrito } from "@/context/CarritoContext";
 import { api } from "@/lib/api";
+import { COMPRAS_ACTIVAS } from "@/lib/compras";
 import { pesos } from "@/lib/format";
 import { useCoordenadas } from "@/lib/geocodificar";
 import { fotoNegocio } from "@/lib/imagenes";
 import { enlaceComoLlegar, enlaceVerEnMapa } from "@/lib/maps";
 import type { NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
+import { enlaceWhatsApp, mensajeConsulta } from "@/lib/whatsapp";
 
 /*
  * Ficha del negocio ("/negocios/[slug]").
  *
  * El orden de la pantalla es el orden en que se decide: foto grande, qué
  * es, si está abierto, cómo llegar, qué vende y cuánto. Ese último par
- * (qué vende / cuánto) es lo único que hay que ver para tocar el botón,
- * así que la rejilla de productos pone la foto, el nombre y el precio
- * juntos, y el botón ocupa todo el ancho de la tarjeta: con un pulgar, un
- * botón pequeño a un lado de la fila se falla.
+ * (qué vende / cuánto) es lo único que hay que ver para decidir, así que
+ * la rejilla de productos pone la foto, el nombre y el precio juntos.
  *
- * La barra de "Ver carrito" solo aparece si lo que hay en el carrito es
- * de ESTE negocio. Un pedido es de un solo negocio, así que ofrecer el
- * carrito de otro aquí sería llevar al comprador a una pantalla donde
- * tendrá que vaciar lo que acaba de armar.
+ * El botón "Agregar", el contador "N en el carrito" y la barra de
+ * "Ver carrito" están ocultos mientras COMPRAS_ACTIVAS sea false: la
+ * app es solo intermediaria y el contacto termina en el WhatsApp del
+ * vendedor. El código sigue aquí, no se borró (con el interruptor en
+ * true vuelven, y la barra solo aparece si lo que hay en el carrito es
+ * de ESTE negocio, porque un pedido es de un solo negocio).
  */
 export default function FichaNegocio() {
+	/*
+	 * ?producto=<nombre> viene de un resultado de búsqueda: con él el
+	 * botón de WhatsApp precarga el mensaje nombrando lo que el vecino
+	 * vino buscando. Ese searchParam exige Suspense para poder buildear.
+	 */
+	return (
+		<Suspense fallback={<Cargando texto="Abriendo el comercio…" />}>
+			<Ficha />
+		</Suspense>
+	);
+}
+
+function Ficha() {
 	const { slug } = useParams<{ slug: string }>();
+	const productoInteres = useSearchParams().get("producto");
 	const { agregar, carrito, vaciar, cantidadTotal, total } = useCarrito();
 
 	const { datos: negocio, cargando, error } = useDatos<NegocioDetalle>(
@@ -128,12 +146,17 @@ export default function FichaNegocio() {
 						<p className="mt-3 text-sm text-black/70">{negocio.descripcion}</p>
 					)}
 
+					<Horario json={negocio.horario} />
+
 					{negocio.whatsapp && (
 						<a
-							href={`https://wa.me/${negocio.whatsapp.replace(/\D/g, "")}`}
+							href={enlaceWhatsApp(
+								negocio.whatsapp,
+								mensajeConsulta(negocio.nombre, productoInteres),
+							)}
 							target="_blank"
 							rel="noreferrer"
-							className={`${CLASE_BOTON_NEUTRO} mt-4 justify-start`}
+							className={`${CLASE_BOTON_VERDE} mt-4`}
 						>
 							<svg
 								className="h-5 w-5 shrink-0"
@@ -202,12 +225,14 @@ export default function FichaNegocio() {
 					)}
 				</div>
 
-				{!negocio.abierto && disponibles.length > 0 && (
-					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-sm text-black/70">
-						El negocio está cerrado ahora. Puedes armar el pedido, pero confirma
-						antes de enviarlo.
-					</p>
-				)}
+			{!negocio.abierto && disponibles.length > 0 && (
+				<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-sm text-black/70">
+					El negocio está cerrado ahora.{" "}
+					{COMPRAS_ACTIVAS
+						? "Puedes armar el pedido, pero confirma antes de enviarlo."
+						: "Si quieres ir, confirma antes con el dueño."}
+				</p>
+			)}
 
 				{disponibles.length === 0 ? (
 					<Vacio titulo="Este negocio aún no tiene productos" />
@@ -226,7 +251,15 @@ export default function FichaNegocio() {
 											{p.nombre}
 										</p>
 
-										<p className="mt-1 text-base font-bold">{pesos(p.precio)}</p>
+										<p className="mt-1 text-base font-bold">
+										{pesos(p.precio)}
+										{p.unidad && (
+											<span className="text-xs font-medium text-black/50">
+												{" "}
+												/ {p.unidad === "LIBRA" ? "libra" : "kilo"}
+											</span>
+										)}
+									</p>
 
 										{p.stock != null && p.stock <= 5 && (
 											<p className="text-xs text-black/50">
@@ -234,12 +267,13 @@ export default function FichaNegocio() {
 											</p>
 										)}
 
-										{unidades > 0 && (
-											<p className="text-xs font-medium text-azul">
-												{unidades === 1 ? "1 en el carrito" : `${unidades} en el carrito`}
-											</p>
-										)}
+									{COMPRAS_ACTIVAS && unidades > 0 && (
+										<p className="text-xs font-medium text-azul">
+											{unidades === 1 ? "1 en el carrito" : `${unidades} en el carrito`}
+										</p>
+									)}
 
+									{COMPRAS_ACTIVAS && (
 										<button
 											type="button"
 											onClick={() => agregarProducto(p)}
@@ -252,6 +286,7 @@ export default function FichaNegocio() {
 											</span>
 											Agregar
 										</button>
+									)}
 									</div>
 								</li>
 							);
@@ -260,7 +295,7 @@ export default function FichaNegocio() {
 				)}
 			</section>
 
-			{enCarrito && cantidadTotal > 0 && (
+			{COMPRAS_ACTIVAS && enCarrito && cantidadTotal > 0 && (
 				<div className="fixed inset-x-0 bottom-nav-total z-20 px-4 pb-2">
 					<Link
 						href="/carrito"
@@ -272,5 +307,77 @@ export default function FichaNegocio() {
 				</div>
 			)}
 		</div>
+	);
+}
+
+/* ====================================================================
+ * Horario de la semana
+ * ==================================================================== */
+
+const DIAS_HORARIO: { clave: string; nombre: string }[] = [
+	{ clave: "lunes", nombre: "Lun" },
+	{ clave: "martes", nombre: "Mar" },
+	{ clave: "miercoles", nombre: "Mié" },
+	{ clave: "jueves", nombre: "Jue" },
+	{ clave: "viernes", nombre: "Vie" },
+	{ clave: "sabado", nombre: "Sáb" },
+	{ clave: "domingo", nombre: "Dom" },
+];
+
+/*
+ * El horario llega de la base como el JSON armado en el alta del
+ * negocio ({"lunes":{"abre":"07:00","cierra":"19:00"},...}). Se lee a
+ * mano y se pinta compacto, con el día de hoy en negrita: eso es lo
+ * que la gente consulta antes de salir de casa. Si el JSON viene roto
+ * o vacío no se pinta nada en vez de romper la pantalla.
+ */
+function Horario({ json }: { json: string | null }) {
+	if (!json) return null;
+
+	let datos: Record<string, { abre: string; cierra: string } | null> | null = null;
+	try {
+		datos = JSON.parse(json);
+	} catch {
+		datos = null;
+	}
+
+	const horario = datos;
+	if (!horario || typeof horario !== "object") return null;
+
+	const hoyClave = [
+		"domingo",
+		"lunes",
+		"martes",
+		"miercoles",
+		"jueves",
+		"viernes",
+		"sabado",
+	][new Date().getDay()];
+
+	return (
+		<section className="mt-3">
+			<h2 className="text-sm font-semibold uppercase tracking-wide text-black/50">
+				Horario
+			</h2>
+			<ul className="mt-1.5 grid grid-cols-2 gap-x-5 text-sm">
+				{DIAS_HORARIO.map(({ clave, nombre }) => {
+					const dia = horario[clave];
+					const esHoy = clave === hoyClave;
+					return (
+						<li
+							key={clave}
+							className={`flex items-baseline justify-between gap-2 ${
+								esHoy ? "font-semibold text-ink" : "text-black/55"
+							}`}
+						>
+							<span>{nombre}</span>
+							<span className="tabular-nums">
+								{dia ? `${dia.abre}–${dia.cierra}` : "Cerrado"}
+							</span>
+						</li>
+					);
+				})}
+			</ul>
+		</section>
 	);
 }

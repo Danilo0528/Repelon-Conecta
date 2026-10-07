@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 import { InsigniaAbierto } from "@/components/ui";
-import { fotoNegocio } from "@/lib/imagenes";
+import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
 import type { Negocio } from "@/lib/tipos";
 
 /*
@@ -13,15 +16,25 @@ import type { Negocio } from "@/lib/tipos";
  * WhatsApp queda aparte y encima, porque es una acción y no una lectura.
  */
 export function StoreCard({ n }: { n: Negocio }) {
+	/*
+	 * El logo viene de la base y puede apuntar a un archivo que ya no
+	 * existe: en ese caso se cambia por la foto del oficio en vez de
+	 * dejar la imagen rota.
+	 */
+	const logo = fotoNegocio(n);
+	const [fallaEn, setFallaEn] = useState<string | null>(null);
+	const foto = fallaEn === logo ? fotoRespaldo(n.nombre) : logo;
+
 	return (
 		<article className="glass group rounded-3xl p-4 transition-transform hover:-translate-y-1">
 			<Link href={`/negocios/${n.slug}`} className="block">
 				<div className="overflow-hidden rounded-2xl">
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
-						src={fotoNegocio(n)}
+						src={foto}
 						alt={`Foto de ${n.nombre}`}
 						loading="lazy"
+						onError={() => setFallaEn(logo)}
 						className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
 					/>
 				</div>

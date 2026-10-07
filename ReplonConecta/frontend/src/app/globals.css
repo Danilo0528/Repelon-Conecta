@@ -91,6 +91,26 @@ body {
 }
 
 /* ====================================================================
+ * Ventana flotante de turismo: la info de un lugar al presionar su
+ * ficha, estilo botón flotante (sube desde abajo en el celular)
+ * ==================================================================== */
+
+@keyframes ventana-entra {
+	from {
+		opacity: 0;
+		transform: translateY(16px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.ventana-flotante {
+	animation: ventana-entra 0.18s ease-out;
+}
+
+/* ====================================================================
  * Blobs: las manchas de color que respiran detrás de todo
  * ==================================================================== */
 

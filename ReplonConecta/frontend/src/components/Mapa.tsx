@@ -2,99 +2,139 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { CENTRO_REPELON } from "@/lib/env";
-import { iconoMarcador } from "@/lib/maps";
+import { CENTRO_REPELON, mapasGoogleConfigurado } from "@/lib/env";
+import { ErrorMapas, cargarGoogleMaps, iconoMarcador } from "@/lib/maps";
+import type { MotivoFalloMapas } from "@/lib/maps";
 import type { Negocio } from "@/lib/tipos";
 
-import "leaflet/dist/leaflet.css";
-
 /*
- * Mapas de la app con Leaflet y teselas de OpenStreetMap.
+ * Mapas de la app con la API de JavaScript de Google Maps.
  *
- * Se usa Leaflet y no la API de Google porque OpenStreetMap no pide
- * clave ni registro: la app abre y hay calles de verdad sin configurar
- * nada. Leaflet se importa dentro de los efectos (y no arriba) porque
- * toca `window` al cargar y estas pantallas también se pintan en el
- * servidor durante el prerender.
+ * Google Maps pide una clave (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, ver
+ * `lib/env.ts`), se paga por uso y hay que restringirla por dominio,
+ * pero da calles, satélite y rutas completas: es lo que el vecino ya
+ * tiene en el celular. La clave viaja pública a propósito, igual que la
+ * de Supabase.
  *
- * Los pines no son los cuadros azules de Leaflet: es el pin de
- * `iconoMarcador` (verde si está abierto, gris si no, con la tienda
- * adentro) metido en un divIcon, que es la forma que tiene Leaflet de
- * dibujar lo que uno quiera en la coordenada.
+ * La API toca `window` al cargarse, así que se pide dentro de los
+ * efectos y no arriba: estas pantallas también se pintan en el servidor
+ * durante el prerender. El mapa se crea una sola vez y se destruye al
+ * desmontar; los pines se rehacen cuando cambia la lista filtrada.
+ *
+ * Tres pantallas y una sección comparten este archivo: el mapa grande
+ * con todos los negocios (home y búsqueda), el mapa chico de la ficha
+ * y el selector arrastrable del vendedor. Todas reciben y devuelven lo
+ * mismo, así que la pantalla que las monta no distingue un mapa de otro.
  */
 
-type Leaflet = typeof import("leaflet");
-type MapaLeaflet = import("leaflet").Map;
-type MarcadorLeaflet = import("leaflet").Marker;
-type CapaLeaflet = import("leaflet").LayerGroup;
+/**
+ * Lo mínimo que el mapa necesita para dibujar un pin: el negocio
+ * completo (home) o el recorte que trae un resultado de búsqueda,
+ * cumplen el mismo contrato y el componente no distingue.
+ */
+export type NegocioMapa = Pick<
+	Negocio,
+	"id" | "nombre" | "slug" | "abierto" | "barrio" | "direccion" | "latitud" | "longitud"
+>;
 
-const TESELAS = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ZOOM_MIN = 11;
 const ZOOM_MAX = 19;
+const ZOOM_PIN = 16;
 
-async function cargarLeaflet(): Promise<Leaflet> {
-	const modulo = (await import("leaflet")) as unknown as { default?: Leaflet } & Leaflet;
-	return modulo.default ?? modulo;
-}
+type Marcador = google.maps.Marker;
 
-function pin(L: Leaflet, abierto: boolean, destacado: boolean): import("leaflet").DivIcon {
-	const escala = destacado ? 1.25 : 1;
-	return L.divIcon({
-		// Sin la clase por defecto: si no, Leaflet le pinta un cuadro
-		// blanco con borde detrás del pin.
-		className: "",
-		iconSize: [28, 40],
-		iconAnchor: [14, 40],
-		html: `<img src="${iconoMarcador(abierto)}" alt="" width="28" height="40" style="display:block;transform:scale(${escala});transform-origin:50% 100%;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))">`,
-	});
-}
-
-function territorio(L: Leaflet, mapa: MapaLeaflet) {
-	L.tileLayer(TESELAS, { minZoom: ZOOM_MIN, maxZoom: ZOOM_MAX }).addTo(mapa);
+/*
+ * Base común de los tres mapas: sin la interfaz de Google (los controles
+ * los pinta la pantalla que monta el mapa, para que queden arriba del
+ * todo y nunca debajo de la tarjeta), sin la rueda del ratón (le toca a
+ * la página, no al mapa) y sin que un POI de Google se coma el click
+ * que va para un pin.
+ */
+function mapaBase(center: google.maps.LatLngLiteral, zoom: number): google.maps.MapOptions {
+	return {
+		center,
+		zoom,
+		minZoom: ZOOM_MIN,
+		maxZoom: ZOOM_MAX,
+		disableDefaultUI: true,
+		scrollwheel: false,
+		clickableIcons: false,
+	};
 }
 
 /*
- * Globo de hover de un pin: nombre del negocio, estado y barrio.
- *
- * Se arma con nodos de verdad y no con un string armado a mano por dos
- * motivos: el nombre del negocio viene de la base y no se le va a
- * inyectar HTML, y `textContent` hace el escape solo. Es lo que se ve
- * antes de tocar el pin: pasar el dedo por ahí y saber qué tienda es.
+ * El pin de `iconoMarcador` (verde si está abierto, gris si no, con la
+ * tienda adentro) como icono de Google: `scaledSize` es el tamaño en
+ * pantalla y `anchor` dónde se clava al suelo — la punta del pin, no el
+ * centro de la imagen, o el pin queda flotando sobre la calle.
  */
-function tooltipDe(n: {
+function iconoDe(abierto: boolean, destacado: boolean): google.maps.Icon {
+	const alto = destacado ? 50 : 40;
+	const ancho = (28 * alto) / 40;
+	return {
+		url: iconoMarcador(abierto),
+		scaledSize: new google.maps.Size(ancho, alto),
+		anchor: new google.maps.Point(ancho / 2, alto),
+	};
+}
+
+/*
+ * Globo de hover de un pin: nombre, estado y barrio en una línea.
+ *
+ * Google lo pinta con el `title` del marcador, así que es texto plano y
+ * no HTML armado a mano: el nombre viene de la base y no se le puede
+ * inyectar nada. Es lo que se ve antes de tocar el pin: pasar el cursor
+ * por ahí y saber qué tienda es.
+ */
+function tituloDe(n: {
 	nombre: string;
 	abierto: boolean;
 	barrio?: string | null;
 	direccion: string;
 }): string {
-	const caja = document.createElement("div");
-
-	const nombre = document.createElement("span");
-	nombre.className = "tn-nombre";
-	nombre.textContent = n.nombre;
-	caja.appendChild(nombre);
-
-	const fila = document.createElement("span");
-	fila.className = "tn-fila";
-	const punto = document.createElement("span");
-	punto.className = n.abierto ? "tn-punto abierto" : "tn-punto";
-	punto.setAttribute("aria-hidden", "true");
-	fila.appendChild(punto);
-	fila.append(`${n.abierto ? "Abierto" : "Cerrado"} · ${n.barrio || n.direccion}`);
-	caja.appendChild(fila);
-
-	return caja.outerHTML;
+	return `${n.nombre} · ${n.abierto ? "Abierto" : "Cerrado"} · ${n.barrio || n.direccion}`;
 }
 
-function controlDeZoom(mapa: MapaLeaflet): (direccion: 1 | -1) => void {
-	return (direccion) => {
-		const actual = mapa.getZoom();
-		mapa.setZoom(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, actual + direccion)));
+/*
+ * "Tú estás aquí": azul con borde blanco, para que no se confunda con
+ * los verdes/grises de los negocios.
+ *
+ * Va en una función y no en una constante del módulo:
+ * `google.maps.SymbolPath` solo existe DESPUÉS de cargar la API, y este
+ * archivo también se evalúa en el servidor, donde `google` todavía no
+ * existe — leerlo arriba de todo revienta cada pantalla que monta un mapa.
+ */
+function pinYo(): google.maps.Symbol {
+	return {
+		path: google.maps.SymbolPath.CIRCLE,
+		scale: 8,
+		fillColor: "#2563eb",
+		fillOpacity: 1,
+		strokeColor: "#ffffff",
+		strokeWeight: 3,
 	};
 }
 
+function encuadrar(mapa: google.maps.Map, puntos: google.maps.LatLngLiteral[]) {
+	if (puntos.length === 1) {
+		mapa.setCenter(puntos[0]);
+		mapa.setZoom(ZOOM_PIN);
+		return;
+	}
+	if (puntos.length < 2) return;
+
+	const limites = new google.maps.LatLngBounds();
+	for (const punto of puntos) limites.extend(punto);
+
+	/*
+	 * El padding de abajo es el alto de la tarjeta del comercio: sin él,
+	 * los pines del sur quedan debajo de la tarjeta y parecen perdidos.
+	 */
+	mapa.fitBounds(limites, { top: 70, bottom: 170, left: 36, right: 36 });
+}
+
 /* ====================================================================
- * Mapa con todos los negocios (pantalla principal "/")
+ * Mapa con todos los negocios (home y pantalla de búsqueda)
  * ==================================================================== */
 
 export function MapaNegocios({
@@ -102,167 +142,183 @@ export function MapaNegocios({
 	onSeleccionar,
 	seleccionadoId = null,
 	controlRef,
+	resaltar = false,
+	miUbicacion = null,
 }: {
-	negocios: Negocio[];
-	onSeleccionar: (n: Negocio) => void;
+	negocios: NegocioMapa[];
+	onSeleccionar: (n: NegocioMapa) => void;
 	seleccionadoId?: string | null;
 	/*
-	 * Los controles de zoom no los pinta Leaflet: los pinta la pantalla
+	 * Los controles de zoom no los pinta Google: los pinta la pantalla
 	 * que monta el mapa, para que queden arriba del todo y nunca debajo
 	 * de la ficha. Este ref es la mano que esos controles le tienden al
 	 * mapa cuando ya existe.
 	 */
 	controlRef?: { current: ((direccion: 1 | -1) => void) | null };
+	/*
+	 * En la pantalla de búsqueda TODOS los pines son resultados: con
+	 * esto se pintan un poco más grandes que los del mapa general, que
+	 * muestran el pueblo entero.
+	 */
+	resaltar?: boolean;
+	/*
+	 * "Tú estás aquí" (botón Usar mi ubicación de /buscar). Va fuera de
+	 * la capa de negocios para que refiltrar la lista no lo borre.
+	 */
+	miUbicacion?: { lat: number; lng: number } | null;
 }) {
 	const contenedorRef = useRef<HTMLDivElement>(null);
-	const leafletRef = useRef<Leaflet | null>(null);
-	const mapaRef = useRef<MapaLeaflet | null>(null);
-	const capaRef = useRef<CapaLeaflet | null>(null);
-	const marcadoresRef = useRef<Record<string, MarcadorLeaflet>>({});
+	const mapaRef = useRef<google.maps.Map | null>(null);
+	const marcadoresRef = useRef<Record<string, Marcador>>({});
+	const yoRef = useRef<Marcador | null>(null);
 	const alSeleccionarRef = useRef(onSeleccionar);
-	const [error, setError] = useState(false);
+
+	/*
+	 * `listo` es la señal de que el mapa ya existe. La API de Google se
+	 * carga en segundo plano, así que sin este estado el primer efecto de
+	 * pines correría antes de tener mapa y se quedaría sin pintar hasta
+	 * la siguiente vez que cambie la lista (justo lo que no se quiere en
+	 * una pantalla que filtra en vivo).
+	 */
+	const [listo, setListo] = useState(false);
+	/*
+	 * Si falta la clave no se intenta cargar nada: el motivo se calcula
+	 * al pintar, no con un setState dentro del efecto.
+	 */
+	const [falloDeCarga, setFalloDeCarga] = useState<ErrorMapas | null>(null);
+	const motivoFallo: MotivoFalloMapas | null = mapasGoogleConfigurado
+		? (falloDeCarga?.motivo ?? null)
+		: "sin-clave";
 
 	useEffect(() => {
 		alSeleccionarRef.current = onSeleccionar;
 	}, [onSeleccionar]);
 
-	/* El mapa se crea una sola vez y se destruye al desmontar. */
 	useEffect(() => {
+		if (!mapasGoogleConfigurado) return;
 		let vivo = true;
 
-		cargarLeaflet()
-			.then((L) => {
+		cargarGoogleMaps()
+			.then(() => {
 				if (!vivo || !contenedorRef.current || mapaRef.current) return;
 
-				const mapa = L.map(contenedorRef.current, {
-					center: [CENTRO_REPELON.lat, CENTRO_REPELON.lng],
-					zoom: 15,
-					zoomControl: false,
-					attributionControl: false,
-					// Sin zoom con la rueda: la hoja de abajo y el scroll
-					// de la página compiten con el mapa, y el mapa pierde.
-					scrollWheelZoom: false,
-					minZoom: ZOOM_MIN,
-					maxZoom: ZOOM_MAX,
-				});
-				territorio(L, mapa);
-
-				leafletRef.current = L;
+				const mapa = new google.maps.Map(contenedorRef.current, mapaBase(CENTRO_REPELON, 15));
 				mapaRef.current = mapa;
-				capaRef.current = L.layerGroup().addTo(mapa);
-				if (controlRef) controlRef.current = controlDeZoom(mapa);
+
+				if (controlRef) {
+					controlRef.current = (direccion) => {
+						const actual = mapa.getZoom() ?? 15;
+						mapa.setZoom(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, actual + direccion)));
+					};
+				}
+				setListo(true);
 			})
-			.catch(() => {
-				if (vivo) setError(true);
+			.catch((error: unknown) => {
+				if (vivo) setFalloDeCarga(error instanceof ErrorMapas ? error : new ErrorMapas("carga"));
 			});
 
 		return () => {
 			vivo = false;
 			if (controlRef) controlRef.current = null;
-			mapaRef.current?.remove();
-			mapaRef.current = null;
-			capaRef.current = null;
-			leafletRef.current = null;
+			for (const marcador of Object.values(marcadoresRef.current)) marcador.setMap(null);
 			marcadoresRef.current = {};
+			yoRef.current?.setMap(null);
+			yoRef.current = null;
+			mapaRef.current = null;
 		};
 	}, [controlRef]);
 
 	/* Pines y encuadre: se rehacen cuando cambia la lista filtrada. */
 	useEffect(() => {
-		const L = leafletRef.current;
 		const mapa = mapaRef.current;
-		const capa = capaRef.current;
-		if (!L || !mapa || !capa) return;
+		if (!listo || !mapa) return;
 
-		capa.clearLayers();
+		for (const marcador of Object.values(marcadoresRef.current)) marcador.setMap(null);
 		marcadoresRef.current = {};
 
-		const puntos: [number, number][] = [];
+		const puntos: google.maps.LatLngLiteral[] = [];
 		for (const n of negocios) {
 			if (n.latitud == null || n.longitud == null) continue;
-			const posicion: [number, number] = [n.latitud, n.longitud];
-			const marcador = L.marker(posicion, {
-				icon: pin(L, n.abierto, false),
-				keyboard: true,
+			const posicion = { lat: n.latitud, lng: n.longitud };
+			const marcador = new google.maps.Marker({
+				position: posicion,
+				map: mapa,
+				icon: iconoDe(n.abierto, resaltar),
+				title: tituloDe(n),
+				zIndex: resaltar ? 1000 : n.abierto ? 100 : 0,
 			});
-			marcador.on("click", () => {
-				/*
-				 * En celular tocar el pin también abre el globo: Leaflet
-				 * asocia `click`, no solo `mouseover`. La hoja de abajo ya
-				 * trae toda esa información, así que el globo se cierra en
-				 * cuanto se abre la hoja para que no quede una tarjeta
-				 * pegada sobre el mapa. Va con setTimeout: Leaflet abre el
-				 * suyo después de los listeners del click.
-				 */
-				window.setTimeout(() => marcador.closeTooltip(), 0);
-				alSeleccionarRef.current(n);
-			});
-			// Hover: el globo con el nombre y el estado, 34 px por encima
-			// del pin para que no lo tape la punta. Va sin `title` en el
-			// marcador a propósito: si no, además del globo este aparece
-			// el tooltip nativo del navegador y salen dos.
-			marcador.bindTooltip(tooltipDe(n), {
-				direction: "top",
-				offset: [0, -34],
-				className: "tooltip-negocio",
-			});
-			marcador.addTo(capa);
+			/*
+			 * Al tocar el pin se abre la tarjeta del negocio (el globo de
+			 * hover no hace falta: la hoja de abajo ya trae esa misma
+			 * información y queda pegada al mapa).
+			 */
+			marcador.addListener("click", () => alSeleccionarRef.current(n));
 			marcadoresRef.current[n.id] = marcador;
 			puntos.push(posicion);
 		}
 
-		if (puntos.length === 1) {
-			mapa.setView(puntos[0], 16, { animate: false });
-		} else if (puntos.length > 1) {
-			// El padding de abajo es el alto de la ficha del comercio: sin
-			// él, los pines del sur quedan debajo de la tarjeta y parecen
-			// perdidos.
-			mapa.fitBounds(L.latLngBounds(puntos), {
-				paddingTopLeft: [36, 70],
-				paddingBottomRight: [36, 170],
-				animate: false,
-			});
-		}
-	}, [negocios]);
+		encuadrar(mapa, puntos);
+	}, [negocios, resaltar, listo]);
 
 	/*
 	 * Resalte y desplazamiento al negocio elegido. Va aparte del efecto
 	 * de arriba a propósito: recrear los pines para agrandar uno
-	 * reharía el fitBounds y devolvería la cámara al pueblo entero,
+	 * reharía el encuadre y devolvería la cámara al pueblo entero,
 	 * justo lo contrario de lo que se quiere al tocar un pin.
 	 */
 	useEffect(() => {
-		const L = leafletRef.current;
 		const mapa = mapaRef.current;
-		if (!L || !mapa) return;
+		if (!listo || !mapa) return;
 
 		const porId = new Map(negocios.map((n) => [n.id, n]));
 
 		for (const [id, marcador] of Object.entries(marcadoresRef.current)) {
 			const negocio = porId.get(id);
 			if (!negocio) continue;
-			const destacado = id === seleccionadoId;
-			marcador.setIcon(pin(L, negocio.abierto, destacado));
-			marcador.setZIndexOffset(destacado ? 1000 : negocio.abierto ? 100 : 0);
+			const destacado = resaltar || id === seleccionadoId;
+			marcador.setIcon(iconoDe(negocio.abierto, destacado));
+			marcador.setZIndex(destacado ? 1000 : negocio.abierto ? 100 : 0);
 		}
 
 		if (seleccionadoId) {
 			const elegido = porId.get(seleccionadoId);
 			if (elegido?.latitud != null && elegido.longitud != null) {
-				mapa.setView(
-					[elegido.latitud, elegido.longitud],
-					Math.max(mapa.getZoom(), 16),
-					{ animate: true },
-				);
+				mapa.panTo({ lat: elegido.latitud, lng: elegido.longitud });
+				if ((mapa.getZoom() ?? 15) < ZOOM_PIN) mapa.setZoom(ZOOM_PIN);
 			}
 		}
-	}, [negocios, seleccionadoId]);
+	}, [negocios, seleccionadoId, resaltar, listo]);
 
-	if (error) {
+	/*
+	 * El pin del usuario: aparte del efecto de arriba a propósito.
+	 * Refiltra la lista (nuevos negocios) y el pin sigue ahí; si
+	 * quitamos la ubicación, se borra solo.
+	 */
+	useEffect(() => {
+		const mapa = mapaRef.current;
+		if (!listo || !mapa) return;
+
+		yoRef.current?.setMap(null);
+		yoRef.current = null;
+		if (!miUbicacion) return;
+
+		yoRef.current = new google.maps.Marker({
+			position: miUbicacion,
+			map: mapa,
+			icon: pinYo(),
+			title: "Tu ubicación",
+			zIndex: 2000,
+		});
+		mapa.panTo(miUbicacion);
+		if ((mapa.getZoom() ?? 15) < ZOOM_PIN) mapa.setZoom(ZOOM_PIN);
+	}, [miUbicacion, listo]);
+
+	if (motivoFallo) {
 		return (
 			<div className="flex h-full w-full items-center justify-center px-6 text-center text-sm text-black/60">
-				No se pudieron cargar las teselas de OpenStreetMap. Revisa la conexión a
-				internet.
+				{motivoFallo === "sin-clave"
+					? "El mapa no está configurado: falta la clave de Google Maps en .env.local."
+					: "No se pudo cargar Google Maps. Revisa la conexión a internet."}
 			</div>
 		);
 	}
@@ -288,24 +344,26 @@ export function MapaMini({
 	const contenedorRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		if (!mapasGoogleConfigurado) return;
 		let vivo = true;
-		let mapa: MapaLeaflet | null = null;
+		let mapa: google.maps.Map | null = null;
+		let marcador: Marcador | null = null;
 
-		cargarLeaflet()
-			.then((L) => {
+		cargarGoogleMaps()
+			.then(() => {
 				if (!vivo || !contenedorRef.current) return;
-				mapa = L.map(contenedorRef.current, {
-					center: [lat, lng],
-					zoom: 16,
-					scrollWheelZoom: false,
-					minZoom: ZOOM_MIN,
-					maxZoom: ZOOM_MAX,
-				});
-				territorio(L, mapa);
-				L.marker([lat, lng], {
-					icon: pin(L, abierto ?? true, true),
+				const opciones = mapaBase({ lat, lng }, ZOOM_PIN);
+				// En la ficha los controles de Google sí ayudan: no hay
+				// tarjeta que los tape y el mapa es chico.
+				opciones.disableDefaultUI = false;
+				opciones.zoomControl = true;
+				mapa = new google.maps.Map(contenedorRef.current, opciones);
+				marcador = new google.maps.Marker({
+					position: { lat, lng },
+					map: mapa,
+					icon: iconoDe(abierto ?? true, true),
 					title: nombre,
-				}).addTo(mapa);
+				});
 			})
 			.catch(() => {
 				// Sin mapa la ficha se queda con la dirección escrita.
@@ -313,7 +371,8 @@ export function MapaMini({
 
 		return () => {
 			vivo = false;
-			mapa?.remove();
+			marcador?.setMap(null);
+			mapa = null;
 		};
 		// El mapa se rehace solo si cambian los datos del pin.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -336,8 +395,8 @@ export function MapaSelector({
 	onCambiar: (lat: number, lng: number) => void;
 }) {
 	const contenedorRef = useRef<HTMLDivElement>(null);
-	const mapaRef = useRef<MapaLeaflet | null>(null);
-	const marcadorRef = useRef<MarcadorLeaflet | null>(null);
+	const mapaRef = useRef<google.maps.Map | null>(null);
+	const marcadorRef = useRef<Marcador | null>(null);
 	const alCambiarRef = useRef(onCambiar);
 
 	useEffect(() => {
@@ -345,38 +404,37 @@ export function MapaSelector({
 	}, [onCambiar]);
 
 	useEffect(() => {
+		if (!mapasGoogleConfigurado) return;
 		let vivo = true;
 
-		cargarLeaflet()
-			.then((L) => {
+		cargarGoogleMaps()
+			.then(() => {
 				if (!vivo || !contenedorRef.current || mapaRef.current) return;
 
-				const centro: [number, number] = [
-					lat ?? CENTRO_REPELON.lat,
-					lng ?? CENTRO_REPELON.lng,
-				];
-				const mapa = L.map(contenedorRef.current, {
-					center: centro,
-					zoom: lat != null ? 17 : 15,
-					scrollWheelZoom: false,
-					minZoom: ZOOM_MIN,
-					maxZoom: ZOOM_MAX,
-				});
-				territorio(L, mapa);
+				const opciones = mapaBase(
+					{ lat: lat ?? CENTRO_REPELON.lat, lng: lng ?? CENTRO_REPELON.lng },
+					lat != null ? ZOOM_PIN : 15,
+				);
+				opciones.disableDefaultUI = false;
+				opciones.zoomControl = true;
+				const mapa = new google.maps.Map(contenedorRef.current, opciones);
 
-				const marcador = L.marker(centro, {
-					icon: pin(L, true, true),
+				const marcador = new google.maps.Marker({
+					position: { lat: lat ?? CENTRO_REPELON.lat, lng: lng ?? CENTRO_REPELON.lng },
+					map: mapa,
+					icon: iconoDe(true, true),
 					draggable: true,
 					title: "Arrastra el pin a tu negocio",
-				}).addTo(mapa);
-
-				marcador.on("dragend", () => {
-					const punto = marcador.getLatLng();
-					alCambiarRef.current(punto.lat, punto.lng);
 				});
-				mapa.on("click", (evento: { latlng: { lat: number; lng: number } }) => {
-					marcador.setLatLng(evento.latlng);
-					alCambiarRef.current(evento.latlng.lat, evento.latlng.lng);
+
+				marcador.addListener("dragend", () => {
+					const punto = marcador.getPosition();
+					if (punto) alCambiarRef.current(punto.lat(), punto.lng());
+				});
+				mapa.addListener("click", (evento: google.maps.MapMouseEvent) => {
+					if (!evento.latLng) return;
+					marcador.setPosition(evento.latLng);
+					alCambiarRef.current(evento.latLng.lat(), evento.latLng.lng());
 				});
 
 				mapaRef.current = mapa;
@@ -388,7 +446,7 @@ export function MapaSelector({
 
 		return () => {
 			vivo = false;
-			mapaRef.current?.remove();
+			marcadorRef.current?.setMap(null);
 			mapaRef.current = null;
 			marcadorRef.current = null;
 		};
@@ -397,8 +455,16 @@ export function MapaSelector({
 	}, []);
 
 	useEffect(() => {
-		if (lat == null || lng == null || !marcadorRef.current) return;
-		marcadorRef.current.setLatLng([lat, lng]);
+		const marcador = marcadorRef.current;
+		if (!marcador) return;
+		// "Quitar pin" deja el punto vacío: el marcador se esconde para
+		// que el mapa no muestre una coordenada que ya no existe.
+		if (lat == null || lng == null) {
+			marcador.setMap(null);
+			return;
+		}
+		marcador.setMap(mapaRef.current);
+		marcador.setPosition({ lat, lng });
 	}, [lat, lng]);
 
 	return <div ref={contenedorRef} className="h-56 w-full rounded-2xl bg-black/[.03]" />;
