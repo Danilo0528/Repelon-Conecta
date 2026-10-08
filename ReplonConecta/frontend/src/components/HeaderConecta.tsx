@@ -119,12 +119,13 @@ export default function HeaderConecta() {
 					className="flex shrink-0 items-center gap-2"
 					aria-label="Repelón Conecta, inicio"
 				>
-					<span className="grid size-9 shrink-0 place-items-center rounded-xl bg-leaf font-display text-lg font-semibold text-white">
-						R
+					<span className="brand-mark" aria-hidden="true">
+						<span className="brand-mark__sun" />
+						<span className="brand-mark__letter">R</span>
 					</span>
 					<span className="leading-tight">
 						<span className="block font-display text-base font-semibold tracking-tight text-ink">
-							Repelón Conecta
+							Repelón <span className="text-azul">Conecta</span>
 						</span>
 						<span className="block text-[9px] font-semibold uppercase tracking-wide text-leaf">
 							del pueblo, para el pueblo
