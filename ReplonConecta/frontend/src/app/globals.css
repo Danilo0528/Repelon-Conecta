@@ -20,20 +20,22 @@
 	--font-display: var(--font-fraunces);
 	--font-sans: var(--font-manrope);
 
-	--color-verde: #16a34a;
-	--color-azul: #2563eb;
+	/* Bandera de Repelón: azul profundo, amarillo cálido y verde vivo. */
+	--color-verde: #16834b;
+	--color-azul: #124b82;
+	--color-amarillo: #f4c542;
 
-	--color-leaf: #16a34a;
-	--color-cielo: #7dd3fc;
-	--color-mist: #eef4f0;
-	--color-ink: #101c2b;
-	--color-muted-foreground: #64748b;
+	--color-leaf: #16834b;
+	--color-cielo: #8ccbe8;
+	--color-mist: #edf6f4;
+	--color-ink: #10243a;
+	--color-muted-foreground: #5f7180;
 	--color-glass: #ffffff;
-	--color-background: #f7faf9;
+	--color-background: #f8fbfa;
 
-	--color-blob-1: #d1fae5;
-	--color-blob-2: #dbeafe;
-	--color-blob-3: #e0f2fe;
+	--color-blob-1: #d7f0df;
+	--color-blob-2: #dcecf8;
+	--color-blob-3: #fff1bf;
 
 	/*
 	 * Altura reservada para la barra inferior de destinos: la barra va

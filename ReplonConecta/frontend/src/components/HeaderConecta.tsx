@@ -113,7 +113,7 @@ export default function HeaderConecta() {
 
 	return (
 		<header className="sticky top-0 z-50 mx-auto w-full max-w-6xl px-4 pt-3">
-			<nav className="glass flex items-center gap-3 rounded-2xl px-3 py-2.5">
+			<nav className="glass flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
 				<Link
 					href="/"
 					className="flex shrink-0 items-center gap-2"
