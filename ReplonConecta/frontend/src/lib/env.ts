@@ -43,7 +43,10 @@ export const supabaseConfigurado =
  * del proyecto.
  */
 export const GOOGLE_MAPS_API_KEY =
-	process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? process.env.GCP_API_KEY ?? "";
+	process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ??
+	process.env.GCP_API_KEY_2 ??
+	process.env.GCP_API_KEY ??
+	"";
 export const mapasGoogleConfigurado = GOOGLE_MAPS_API_KEY !== "";
 
 /*
