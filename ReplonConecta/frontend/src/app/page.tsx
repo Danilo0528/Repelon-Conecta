@@ -264,7 +264,7 @@ export default function Inicio() {
 			<div className="m-0 p-0">
 				{/* ============================ Hero ============================ */}
 				<section
-					className="relative m-0 min-h-[calc(100svh-5rem)] w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+					className="relative left-1/2 m-0 min-h-[calc(100svh-5rem)] w-screen -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
 					style={{
 						backgroundImage: 'url(/img/hero-campo.png)',
 					}}
@@ -274,7 +274,7 @@ export default function Inicio() {
 				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 				
 				{/* Contenido superpuesto */}
-				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[1500px] items-center gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-16 xl:px-24">
+				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[1500px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
 					<div className="max-w-2xl">
 						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
 							<span className="h-px w-8 bg-yellow-300" />
@@ -336,7 +336,7 @@ export default function Inicio() {
 						</div>
 						</div>
 
-						<div className="hidden lg:block">
+						<div className="hidden md:block">
 							<div className="overflow-hidden rounded-3xl border border-white/50 bg-white/90 shadow-2xl backdrop-blur-md">
 								<div className="relative h-48 overflow-hidden bg-[#d8eadc]">
 									<div className="absolute inset-0 bg-[url('/img/hero-campo.png')] bg-cover bg-center" />
