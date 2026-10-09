@@ -326,9 +326,9 @@ export default function Inicio() {
 						<div className="glass shadow-float overflow-hidden rounded-[28px] p-2">
 							{/* eslint-disable-next-line @next/next/no-img-element */}
 							<img
-								src="/img/hero.jpg"
-								alt="Mostrador de una tienda del pueblo con pan y frutas"
-								className="aspect-[6/5] w-full rounded-[22px] object-cover"
+								src="/img/hero-campo.png"
+								alt="Paisaje rural de Repelón con montañas, río, cultivos y comunidad local"
+								className="h-96 w-full rounded-[22px] object-cover md:h-[500px]"
 							/>
 						</div>
 					</div>
