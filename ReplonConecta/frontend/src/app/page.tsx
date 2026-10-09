@@ -263,22 +263,31 @@ export default function Inicio() {
 	return (
 		<div className="pb-6">
 			{/* ============================ Hero ============================ */}
-			<section className="mx-auto max-w-6xl px-4 pt-6 md:pt-10">
-				<div className="grid items-center gap-8 md:grid-cols-2">
-					<div>
+			<section 
+				className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat"
+				style={{
+					backgroundImage: 'url(/img/hero-campo.png)',
+				}}
+			>
+				{/* Overlay oscuro para mejorar legibilidad del texto */}
+				<div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
+				
+				{/* Contenido superpuesto */}
+				<div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center px-4">
+					<div className="max-w-xl">
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
 							<span className="size-2 rounded-full bg-leaf" aria-hidden />
 							Comercio local, digitalizado
 						</span>
 
-						<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink md:text-5xl">
+						<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
 							{T("inicio.hero.titulo1")}{" "}
-							<span className="italic text-leaf">
+							<span className="italic text-yellow-300">
 								{T("inicio.hero.titulo2")}
 							</span>
 						</h1>
 
-						<p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+						<p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/90">
 							{T("inicio.hero.texto")}
 						</p>
 
@@ -319,17 +328,6 @@ export default function Inicio() {
 									{c.nombre}
 								</Link>
 							))}
-						</div>
-					</div>
-
-					<div className="relative">
-						<div className="glass shadow-float overflow-hidden rounded-[28px] p-2">
-							{/* eslint-disable-next-line @next/next/no-img-element */}
-							<img
-								src="/img/hero-campo.png"
-								alt="Paisaje rural de Repelón con montañas, río, cultivos y comunidad local"
-								className="h-96 w-full rounded-[22px] object-cover md:h-[500px]"
-							/>
 						</div>
 					</div>
 				</div>
