@@ -112,7 +112,7 @@ export default function HeaderConecta() {
 	const pathname = usePathname();
 
 	return (
-		<header className="sticky top-0 z-50 mx-auto w-full max-w-6xl px-4 pt-3">
+		<header className="sticky top-0 z-50 w-full px-4 pt-3 sm:px-6 lg:px-8">
 			<nav className="glass flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
 				<Link
 					href="/"

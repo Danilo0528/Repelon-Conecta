@@ -264,16 +264,16 @@ export default function Inicio() {
 			<div className="m-0 p-0">
 				{/* ============================ Hero ============================ */}
 				<section
-					className="relative m-0 min-h-[100svh] w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+					className="relative m-0 min-h-[calc(100svh-5rem)] w-full overflow-hidden bg-cover bg-center bg-no-repeat"
 				style={{
 					backgroundImage: 'url(/img/hero-campo.png)',
 				}}
 			>
 				{/* Overlay oscuro para mejorar legibilidad del texto */}
-				<div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
+				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/80 via-[#0b3550]/45 to-[#0b3550]/10" />
 				
 				{/* Contenido superpuesto */}
-					<div className="relative z-10 flex min-h-[100svh] w-full items-center px-6 sm:px-10 lg:px-16 xl:px-24">
+					<div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-7xl items-center px-6 py-16 sm:px-10 lg:px-16 xl:px-20">
 					<div className="max-w-xl">
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
 							<span className="size-2 rounded-full bg-leaf" aria-hidden />
