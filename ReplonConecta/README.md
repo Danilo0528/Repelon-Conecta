@@ -52,7 +52,7 @@ Variables de entorno (ver `src/main/resources/application.properties`):
 |---|---|
 | `DB_URL` | JDBC de Supabase. Lleva `?sslmode=require` y la clave URL-encoded. |
 | `DB_USER` / `DB_PASSWORD` | credenciales de la base |
-| `SUPABASE_JWT_SECRET` | Project Settings > API > JWT Secret (obligatorio) |
+| `SUPABASE_JWT_SECRET` | solo proyectos HS256 clásicos; los proyectos nuevos (JWT signing keys) validan con JWKS vía `SUPABASE_URL` |
 | `SUPABASE_JWT_ISSUER` | p. ej. `https://<proyecto>.supabase.co/auth/v1` |
 | `SUPABASE_URL` / `SUPABASE_STORAGE_BUCKET` | Storage de fotos de productos |
 | `CORS_ORIGINS` | orígenes permitidos (por defecto `http://localhost:3000`) |
@@ -63,8 +63,9 @@ Variables de entorno (ver `src/main/resources/application.properties`):
 mvn -B spring-boot:run
 ```
 
-Sin `SUPABASE_JWT_SECRET` el arranque real no sirve para probar login. Los
-tests usan H2 (`src/test/resources/application-test.properties`) y no
+Sin `SUPABASE_URL` (proyectos nuevos con JWKS) ni `SUPABASE_JWT_SECRET`
+(proyectos clásicos con HS256) el arranque real no sirve para probar login.
+Los tests usan H2 (`src/test/resources/application-test.properties`) y no
 necesitan Supabase:
 
 ```powershell
@@ -129,6 +130,60 @@ Precios siempre visibles y en grande.
   automáticamente.
 - **Admin**: no hay UI para asignarlo. Marca el `rol` de un usuario como
   `ADMIN` directamente en la base y entra a `/admin`.
+
+## Despliegue
+
+Producción corre en dos servicios conectados:
+
+| Pieza | Dónde | Cómo |
+|---|---|---|
+| Backend (Spring Boot) | **Render** (Web Service, plan free) | Blueprint: `New > Blueprint` sobre este repo, usando el `render.yaml` de la raíz |
+| Frontend (Next.js) | **Vercel** | Root Directory `ReplonConecta/frontend` (integración con el repo: redespliega en cada push) |
+
+### Render — backend
+
+El blueprint define `rootDir: ReplonConecta/ReplonConecta`, build
+`sh mvnw -B clean package -DskipTests`, arranque
+`java -jar target/RepelonConecta-0.0.1-SNAPSHOT.jar`, health check
+`/actuator/health` y `DDL_AUTO=update`, `AUTO_APPROVE=true`, `SEED=true`
+(`SEED` solo importa en la primera arrancada sobre base vacía; después se
+cambia a `false` en el archivo). El puerto lo inyecta Render en `PORT` y la
+aplicación lo lee antes de `SERVER_PORT`.
+
+El panel pide estas variables (van con `sync: false`, es decir, los valores
+reales viven en el panel y **nunca** en el archivo ni en git):
+
+| Variable | Valor |
+|---|---|
+| `DB_URL` | `jdbc:postgresql://db.<proyecto>.supabase.co:5432/postgres?sslmode=require` |
+| `DB_USER` / `DB_PASSWORD` | credenciales del proyecto Supabase |
+| `SUPABASE_URL` | `https://<proyecto>.supabase.co` |
+| `SUPABASE_JWT_ISSUER` | `https://<proyecto>.supabase.co/auth/v1` |
+| `CORS_ORIGINS` | URL exacta del front, p. ej. `https://repelon-conecta.vercel.app` |
+
+### Vercel — frontend
+
+Variables de la consola (las `NEXT_PUBLIC_*` se compilan en el build:
+cambiar una obliga a **redesplegar**):
+
+| Variable | Valor |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | URL pública del servicio de Render |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://<proyecto>.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | publishable key del proyecto |
+| `NEXT_PUBLIC_SUPABASE_BUCKET` | `productos` |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | clave de Maps (o `GCP_API_KEY`, `GCP_API_KEY_2`, `GCP_API_KEY_3` como respaldos) |
+
+### Notas
+
+- El backend debe validar el JWT del **mismo** proyecto Supabase con el que
+  el front inicia sesión (JWT signing keys → JWKS automático, sin secreto).
+- El plan gratuito de Render **se duerme** tras ~15 min sin peticiones: la
+  primera llamada tarda 30-60 s en despertar el servicio.
+- Restringir la clave de Google Maps por referrer a `https://<dominio>/*`
+  en Google Cloud Console.
+- `/abrir-admin` (firma de sesión admin de pruebas) solo funciona en
+  `localhost`; no llevarla a producción.
 
 ## Mejoras para la fase 2
 
