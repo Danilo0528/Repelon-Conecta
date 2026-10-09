@@ -265,16 +265,21 @@ export default function Inicio() {
 				{/* ============================ Hero ============================ */}
 				<section
 					className="relative m-0 min-h-[calc(100svh-5rem)] w-full overflow-hidden bg-cover bg-center bg-no-repeat"
-				style={{
-					backgroundImage: 'url(/img/hero-campo.png)',
-				}}
-			>
+					style={{
+						backgroundImage: 'url(/img/hero-campo.png)',
+					}}
+				>
 				{/* Overlay oscuro para mejorar legibilidad del texto */}
-				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/80 via-[#0b3550]/45 to-[#0b3550]/10" />
+				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
+				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 				
 				{/* Contenido superpuesto */}
-					<div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-7xl items-center px-6 py-16 sm:px-10 lg:px-16 xl:px-20">
-					<div className="max-w-xl">
+				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[1500px] items-center gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-16 xl:px-24">
+					<div className="max-w-2xl">
+						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
+							<span className="h-px w-8 bg-yellow-300" />
+							Repelón, Atlántico
+						</div>
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
 							<span className="size-2 rounded-full bg-leaf" aria-hidden />
 							Comercio local, digitalizado
@@ -329,11 +334,34 @@ export default function Inicio() {
 								</Link>
 							))}
 						</div>
-					</div>
-				</div>
-			</section>
+						</div>
 
-			{/* ======================= El pueblo en el mapa ======================= */}
+						<div className="hidden lg:block">
+							<div className="overflow-hidden rounded-3xl border border-white/50 bg-white/90 shadow-2xl backdrop-blur-md">
+								<div className="relative h-48 overflow-hidden bg-[#d8eadc]">
+									<div className="absolute inset-0 bg-[url('/img/hero-campo.png')] bg-cover bg-center" />
+									<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/65 to-transparent" />
+									<div className="absolute bottom-4 left-4 right-4 text-white">
+										<p className="text-xs font-semibold uppercase tracking-[0.16em] text-yellow-300">Historias que conectan</p>
+										<p className="mt-1 font-display text-xl font-semibold">Tu negocio merece ser encontrado</p>
+									</div>
+								</div>
+								<div className="p-5">
+									<div className="flex items-start gap-3">
+										<div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-leaf text-lg text-white">R</div>
+										<div>
+											<p className="font-semibold text-ink">Crece con Repelón Conecta</p>
+											<p className="mt-1 text-sm leading-relaxed text-muted-foreground">Haz visible lo que haces y conecta con nuevos clientes del pueblo.</p>
+										</div>
+									</div>
+									<Link href="/vendedor" className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white transition hover:bg-azul/90">Registrar mi negocio</Link>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* ======================= El pueblo en el mapa ======================= */}
 			<section className="mx-auto max-w-6xl px-4 pt-12">
 				<div className="mb-5">
 					<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
