@@ -26,16 +26,16 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-	title: "Repelón Conecta",
+	title: "Repelón Conecta | Encuentra lo que necesitas",
 	description:
-		"El mercado de Repelón, en tu celular. Pide a los negocios del pueblo y recibe en tu casa.",
+		"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
 };
 
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
 	viewportFit: "cover",
-	themeColor: "#16A34A",
+	themeColor: "#124B82",
 };
 
 export default function RootLayout({

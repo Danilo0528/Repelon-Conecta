@@ -261,24 +261,38 @@ export default function Inicio() {
 		: null;
 
 	return (
-		<div className="pb-6">
-			{/* ============================ Hero ============================ */}
-			<section className="mx-auto max-w-6xl px-4 pt-6 md:pt-10">
-				<div className="grid items-center gap-8 md:grid-cols-2">
-					<div>
+			<div className="m-0 p-0">
+				{/* ============================ Hero ============================ */}
+				<section
+					className="relative left-1/2 m-0 min-h-[calc(100svh-5rem)] w-screen -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
+					style={{
+						backgroundImage: 'url(/img/hero-campo.png)',
+					}}
+				>
+				{/* Overlay oscuro para mejorar legibilidad del texto */}
+				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
+				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
+				
+				{/* Contenido superpuesto */}
+				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[1500px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
+					<div className="max-w-2xl">
+						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
+							<span className="h-px w-8 bg-yellow-300" />
+							Repelón, Atlántico
+						</div>
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
 							<span className="size-2 rounded-full bg-leaf" aria-hidden />
 							Comercio local, digitalizado
 						</span>
 
-						<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink md:text-5xl">
+						<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
 							{T("inicio.hero.titulo1")}{" "}
-							<span className="italic text-leaf">
+							<span className="italic text-yellow-300">
 								{T("inicio.hero.titulo2")}
 							</span>
 						</h1>
 
-						<p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+						<p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/90">
 							{T("inicio.hero.texto")}
 						</p>
 
@@ -320,22 +334,34 @@ export default function Inicio() {
 								</Link>
 							))}
 						</div>
-					</div>
+						</div>
 
-					<div className="relative">
-						<div className="glass shadow-float overflow-hidden rounded-[28px] p-2">
-							{/* eslint-disable-next-line @next/next/no-img-element */}
-							<img
-								src="/img/hero.jpg"
-								alt="Mostrador de una tienda del pueblo con pan y frutas"
-								className="aspect-[6/5] w-full rounded-[22px] object-cover"
-							/>
+						<div className="hidden md:block">
+							<div className="overflow-hidden rounded-3xl border border-white/50 bg-white/90 shadow-2xl backdrop-blur-md">
+								<div className="relative h-48 overflow-hidden bg-[#d8eadc]">
+									<div className="absolute inset-0 bg-[url('/img/hero-campo.png')] bg-cover bg-center" />
+									<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/65 to-transparent" />
+									<div className="absolute bottom-4 left-4 right-4 text-white">
+										<p className="text-xs font-semibold uppercase tracking-[0.16em] text-yellow-300">Historias que conectan</p>
+										<p className="mt-1 font-display text-xl font-semibold">Tu negocio merece ser encontrado</p>
+									</div>
+								</div>
+								<div className="p-5">
+									<div className="flex items-start gap-3">
+										<div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-leaf text-lg text-white">R</div>
+										<div>
+											<p className="font-semibold text-ink">Crece con Repelón Conecta</p>
+											<p className="mt-1 text-sm leading-relaxed text-muted-foreground">Haz visible lo que haces y conecta con nuevos clientes del pueblo.</p>
+										</div>
+									</div>
+									<Link href="/vendedor" className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white transition hover:bg-azul/90">Registrar mi negocio</Link>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</section>
+				</section>
 
-			{/* ======================= El pueblo en el mapa ======================= */}
+				{/* ======================= El pueblo en el mapa ======================= */}
 			<section className="mx-auto max-w-6xl px-4 pt-12">
 				<div className="mb-5">
 					<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
