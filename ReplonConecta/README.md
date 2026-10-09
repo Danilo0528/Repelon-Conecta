@@ -142,13 +142,15 @@ Producción corre en dos servicios conectados:
 
 ### Render — backend
 
-El blueprint define `rootDir: ReplonConecta/ReplonConecta`, build
-`sh mvnw -B clean package -DskipTests`, arranque
-`java -jar target/RepelonConecta-0.0.1-SNAPSHOT.jar`, health check
-`/actuator/health` y `DDL_AUTO=update`, `AUTO_APPROVE=true`, `SEED=true`
-(`SEED` solo importa en la primera arrancada sobre base vacía; después se
-cambia a `false` en el archivo). El puerto lo inyecta Render en `PORT` y la
-aplicación lo lee antes de `SERVER_PORT`.
+El blueprint usa `runtime: docker` (Render ya no acepta `java` en
+blueprints) con un Dockerfile multi-stage en
+`ReplonConecta/ReplonConecta/Dockerfile`: Maven 3.9 + JDK 17 compilan el
+jar y una imagen JRE mínima lo ejecuta. También define
+`rootDir: ReplonConecta/ReplonConecta`, health check `/actuator/health` y
+`DDL_AUTO=update`, `AUTO_APPROVE=true`, `SEED=true` (`SEED` solo importa
+en la primera arrancada sobre base vacía; después se cambia a `false` en
+el archivo). El puerto lo inyecta Render en `PORT` y la aplicación lo lee
+antes de `SERVER_PORT`.
 
 El panel pide estas variables (van con `sync: false`, es decir, los valores
 reales viven en el panel y **nunca** en el archivo ni en git):

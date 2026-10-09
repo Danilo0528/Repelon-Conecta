@@ -1,0 +1,6 @@
+# No mandar los artefactos locales al contexto de build de Docker.
+target/
+*.log
+.idea/
+.vscode/
+.settings/
