@@ -264,9 +264,9 @@ export default function Inicio() {
 			<div className="m-0 p-0">
 				{/* ============================ Hero ============================ */}
 				<section
-					className="relative left-1/2 m-0 min-h-[calc(100svh-5rem)] w-screen -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
+					className="relative left-1/2 m-0 min-h-[calc(100svh-4rem)] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
 					style={{
-						backgroundImage: 'url(/img/hero-campo.png)',
+						backgroundImage: 'linear-gradient(90deg, rgba(7,27,47,.46), rgba(7,27,47,.08)), url(/img/hero-campo.png)',
 					}}
 				>
 				{/* Overlay oscuro para mejorar legibilidad del texto */}
@@ -274,7 +274,7 @@ export default function Inicio() {
 				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 				
 				{/* Contenido superpuesto */}
-				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[1500px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
+				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
 					<div className="max-w-2xl">
 						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
 							<span className="h-px w-8 bg-yellow-300" />

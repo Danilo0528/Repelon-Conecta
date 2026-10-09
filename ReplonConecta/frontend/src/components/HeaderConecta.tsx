@@ -119,18 +119,11 @@ export default function HeaderConecta() {
 					className="flex shrink-0 items-center gap-2"
 					aria-label="Repelón Conecta, inicio"
 				>
-					<span className="brand-mark" aria-hidden="true">
-						<span className="brand-mark__sun" />
-						<span className="brand-mark__letter">R</span>
-					</span>
-					<span className="leading-tight">
-						<span className="block font-display text-base font-semibold tracking-tight text-ink">
-							Repelón <span className="text-azul">Conecta</span>
-						</span>
-						<span className="block text-[9px] font-semibold uppercase tracking-wide text-leaf">
-							del pueblo, para el pueblo
-						</span>
-					</span>
+					<img
+						src="/img/logo-repelon-conecta.png"
+						alt="Repelón Conecta"
+						className="h-12 w-40 object-contain object-center sm:h-14 sm:w-48"
+					/>
 				</Link>
 
 				<div className="ml-2 hidden items-center gap-1 md:flex">
