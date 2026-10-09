@@ -264,7 +264,7 @@ export default function Inicio() {
 		<div className="pb-6">
 			{/* ============================ Hero ============================ */}
 			<section 
-				className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat"
+				className="relative h-screen w-full bg-cover bg-center bg-no-repeat"
 				style={{
 					backgroundImage: 'url(/img/hero-campo.png)',
 				}}
@@ -273,7 +273,7 @@ export default function Inicio() {
 				<div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
 				
 				{/* Contenido superpuesto */}
-				<div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center px-4">
+				<div className="relative z-10 mx-auto flex h-screen max-w-6xl items-center px-4">
 					<div className="max-w-xl">
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
 							<span className="size-2 rounded-full bg-leaf" aria-hidden />
