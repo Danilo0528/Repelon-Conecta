@@ -1,0 +1,46 @@
+# Despliegue del backend Spring Boot en Render.
+# Uso: desde la raiz del repo -> New > Blueprint > apuntar a este repo.
+#
+# NO subas los valores reales de las variables sync: false. Se piden en el
+# panel de Render la primera vez y quedan guardadas ahi.
+
+services:
+  - type: web
+    name: replonconecta-api
+    runtime: java
+    plan: free
+    region: oregon
+    rootDir: ReplonConecta/ReplonConecta
+    # sh + mvnw porque el wrapper no tiene bit de ejecucion en el repo
+    # (se creo en Windows) y ./mvnw fallaria con "Permission denied" en Linux.
+    buildCommand: sh mvnw -B clean package -DskipTests
+    startCommand: java -jar target/RepelonConecta-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /actuator/health
+
+    # Render inyecta estas variables desde el panel. Se dejan marked
+    # sync:false para que el valor real nunca viva en este archivo.
+    # (El puerto NO va aqui: Render lo inyecta en PORT y la app lo lee.)
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_JWT_ISSUER
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      # update = Hibernate crea/actualiza las tablas al arrancar.
+      # Poner en "none" cuando haya migraciones(Flyway/Liquibase).
+      - key: DDL_AUTO
+        value: update
+      - key: AUTO_APPROVE
+        value: "true"
+      # true solo para la primera arrancada (base nueva vacia); despues
+      # cambiar a false. La siembra es idempotente: si ya hay categorias
+      # se omite sola.
+      - key: SEED
+        value: "true"

@@ -1,0 +1,42 @@
+# Dependencias
+node_modules/
+
+# Builds
+target/
+.next/
+out/
+build/
+dist/
+*.class
+
+# Secretos — NUNCA versionar
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Credenciales en scripts de arranque local
+run-backend.ps1
+iniciar-backend.ps1
+
+# Logs
+*.log
+.run-backend.log
+.run-frontend.log
+logs/
+
+# Capturas de demo (2.5 MB que no aportan al repo)
+demo-*.png
+frontend.rar
+
+# Sistema
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Herramientas de agentes — no son parte del portafolio
+.archify/
+.scratch/
