@@ -15,10 +15,17 @@ services:
     runtime: docker
     plan: free
     region: oregon
-    rootDir: ReplonConecta/ReplonConecta
-    # Rutas relativas a la raiz del repo (asi las documenta Render).
+    # SIN rootDir: con runtime docker, Render une rootDir + dockerContext y
+    # la ruta se triplicaba (error "lstat .../ReplonConecta/ReplonConecta/
+    # ReplonConecta: no such file"). dockerfilePath/dockerContext van
+    # relativos a la raiz del repo y listo. buildFilter conserva el efecto
+    # de rootDir: solo los cambios del backend disparan el build.
     dockerfilePath: ./ReplonConecta/ReplonConecta/Dockerfile
     dockerContext: ./ReplonConecta/ReplonConecta
+    buildFilter:
+      paths:
+        - ReplonConecta/ReplonConecta/**
+        - render.yaml
     healthCheckPath: /actuator/health
 
     # Render inyecta estas variables desde el panel. Se dejan marked
