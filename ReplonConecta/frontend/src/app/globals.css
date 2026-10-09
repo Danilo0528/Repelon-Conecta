@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss/theme.css";
+@import "tailwindcss/preflight.css";
+@import "tailwindcss/utilities.css";
 
 /*
  * Sistema de diseño de Repelón Conecta.
@@ -20,20 +22,22 @@
 	--font-display: var(--font-fraunces);
 	--font-sans: var(--font-manrope);
 
-	--color-verde: #16a34a;
-	--color-azul: #2563eb;
+	/* Bandera de Repelón: azul profundo, amarillo cálido y verde vivo. */
+	--color-verde: #16834b;
+	--color-azul: #124b82;
+	--color-amarillo: #f4c542;
 
-	--color-leaf: #16a34a;
-	--color-cielo: #7dd3fc;
-	--color-mist: #eef4f0;
-	--color-ink: #101c2b;
-	--color-muted-foreground: #64748b;
+	--color-leaf: #16834b;
+	--color-cielo: #8ccbe8;
+	--color-mist: #edf6f4;
+	--color-ink: #10243a;
+	--color-muted-foreground: #5f7180;
 	--color-glass: #ffffff;
-	--color-background: #f7faf9;
+	--color-background: #f8fbfa;
 
-	--color-blob-1: #d1fae5;
-	--color-blob-2: #dbeafe;
-	--color-blob-3: #e0f2fe;
+	--color-blob-1: #d7f0df;
+	--color-blob-2: #dcecf8;
+	--color-blob-3: #fff1bf;
 
 	/*
 	 * Altura reservada para la barra inferior de destinos: la barra va
@@ -52,6 +56,8 @@
 
 html,
 body {
+	margin: 0;
+	padding: 0;
 	background: var(--color-background);
 	color: var(--color-ink);
 }
@@ -88,6 +94,48 @@ body {
 
 @utility shadow-leaf {
 	box-shadow: var(--shadow-leaf);
+}
+
+/* Sello de marca: azul del río, amarillo del sol y verde del campo. */
+.brand-mark {
+	position: relative;
+	display: grid;
+	height: 2.25rem;
+	width: 2.25rem;
+	flex-shrink: 0;
+	place-items: center;
+	overflow: hidden;
+	border-radius: 0.75rem;
+	background: linear-gradient(145deg, var(--color-azul) 0 47%, var(--color-leaf) 47% 100%);
+	box-shadow: 0 8px 18px -8px rgba(18, 75, 130, 0.65);
+}
+
+.brand-mark::after {
+	position: absolute;
+	inset: auto 0 0;
+	height: 0.24rem;
+	background: var(--color-amarillo);
+	content: "";
+}
+
+.brand-mark__sun {
+	position: absolute;
+	top: 0.35rem;
+	right: 0.35rem;
+	height: 0.4rem;
+	width: 0.4rem;
+	border-radius: 999px;
+	background: var(--color-amarillo);
+}
+
+.brand-mark__letter {
+	position: relative;
+	z-index: 1;
+	font-family: var(--font-display);
+	font-size: 1.2rem;
+	font-weight: 700;
+	line-height: 1;
+	color: white;
 }
 
 /* ====================================================================

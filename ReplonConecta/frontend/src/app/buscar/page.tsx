@@ -163,38 +163,54 @@ function Busqueda() {
 	const negociosEnLista = new Set(lista.map((r) => r.negocioId)).size;
 
 	return (
-		<div className="mx-auto max-w-6xl px-4 pb-8 pt-4">
-			<h1 className="text-xl font-bold text-ink md:text-2xl">
-				¿Dónde consigo <span className="italic text-leaf">eso</span>?
-			</h1>
+<div className="mx-auto max-w-6xl px-4 pb-8 pt-6">
+				<section className="rounded-[2rem] bg-azul px-5 py-7 text-white shadow-float md:px-8 md:py-9">
+					<div className="max-w-2xl">
+						<p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-amarillo">Repelón Conecta</p>
+						<h1 className="font-display text-3xl font-semibold leading-tight md:text-5xl">
+							Encuentra lo que necesitas en Repelón
+						</h1>
+						<p className="mt-3 max-w-xl text-sm leading-6 text-white/80 md:text-base">
+							Conectamos vecinos y visitantes con negocios agrícolas, pesqueros y turísticos del pueblo.
+						</p>
+					</div>
 
-			{/* --------------------------- La caja --------------------------- */}
-			<label className="glass-soft mt-4 flex items-center gap-3 rounded-xl px-4 py-3 text-ink">
-				<svg
-					viewBox="0 0 24 24"
-					className="size-5 shrink-0 text-leaf"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					aria-hidden
-				>
-					<circle cx="11" cy="11" r="7" />
-					<path d="m16.5 16.5 4 4" strokeLinecap="round" />
-				</svg>
-				<span className="sr-only">Buscar productos</span>
-				<input
-					type="search"
-					autoFocus
-					value={texto}
-					onChange={(e) => setTexto(e.target.value)}
-					placeholder="Escribe lo que buscas: yuca, pescado, mango…"
-					enterKeyHint="search"
-					className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground"
-				/>
-			</label>
+					{/* --------------------------- La caja --------------------------- */}
+					<label className="mt-6 flex items-center gap-3 rounded-2xl bg-white px-4 py-4 text-ink shadow-lg">
+						<svg
+							viewBox="0 0 24 24"
+							className="size-5 shrink-0 text-leaf"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							aria-hidden
+						>
+							<circle cx="11" cy="11" r="7" />
+							<path d="m16.5 16.5 4 4" strokeLinecap="round" />
+						</svg>
+						<span className="sr-only">Buscar productos</span>
+						<input
+							type="search"
+							autoFocus
+							value={texto}
+							onChange={(e) => setTexto(e.target.value)}
+							placeholder="Ej: 20 kilos de yuca, pescado fresco o una finca para visitar"
+							enterKeyHint="search"
+							className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground"
+						/>
+					</label>
+				</section>
 
-			{/* -------------------------- Filtros ---------------------------- */}
-			<div className="mt-3 flex flex-wrap items-center gap-2">
+				<div className="mt-6 flex flex-wrap gap-2" aria-label="Búsquedas sugeridas">
+					{["Yuca", "Pescado", "Plátano", "Fincas", "Cabañas"].map((sugerencia) => (
+						<button key={sugerencia} type="button" onClick={() => setTexto(sugerencia)} className="rounded-full border border-azul/15 bg-white px-4 py-2 text-sm font-semibold text-azul shadow-sm transition hover:border-amarillo hover:bg-amarillo/20">
+							{sugerencia}
+						</button>
+					))}
+				</div>
+
+				{/* -------------------------- Filtros ---------------------------- */}
+				<div className="mt-4 flex flex-wrap items-center gap-2">
 				<div className="flex flex-wrap gap-2 text-xs font-semibold">
 					{CATEGORIAS_BUSQUEDA.map(({ slug, nombre }) => (
 						<button

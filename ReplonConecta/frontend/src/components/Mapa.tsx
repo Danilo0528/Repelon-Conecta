@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { CENTRO_REPELON, mapasGoogleConfigurado } from "@/lib/env";
 import { ErrorMapas, cargarGoogleMaps, iconoMarcador } from "@/lib/maps";
@@ -186,9 +186,22 @@ export function MapaNegocios({
 	 * al pintar, no con un setState dentro del efecto.
 	 */
 	const [falloDeCarga, setFalloDeCarga] = useState<ErrorMapas | null>(null);
-	const motivoFallo: MotivoFalloMapas | null = mapasGoogleConfigurado
-		? (falloDeCarga?.motivo ?? null)
-		: "sin-clave";
+	/*
+	 * La disponibilidad de las variables públicas puede ser distinta entre
+	 * el prerender y el navegador. Esperar a montar antes de mostrar el
+	 * estado de configuración mantiene idéntico el HTML inicial y evita un
+	 * error de hidratación.
+	 */
+	const configuracionVerificada = useSyncExternalStore(
+		() => () => {},
+		() => true,
+		() => false,
+	);
+	const motivoFallo: MotivoFalloMapas | null = !configuracionVerificada
+		? null
+		: mapasGoogleConfigurado
+			? (falloDeCarga?.motivo ?? null)
+			: "sin-clave";
 
 	useEffect(() => {
 		alSeleccionarRef.current = onSeleccionar;

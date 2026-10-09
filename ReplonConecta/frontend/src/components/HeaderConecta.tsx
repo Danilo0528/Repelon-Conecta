@@ -112,19 +112,20 @@ export default function HeaderConecta() {
 	const pathname = usePathname();
 
 	return (
-		<header className="sticky top-0 z-50 mx-auto w-full max-w-6xl px-4 pt-3">
-			<nav className="glass flex items-center gap-3 rounded-2xl px-3 py-2.5">
+		<header className="sticky top-0 z-50 w-full px-4 pt-3 sm:px-6 lg:px-8">
+			<nav className="glass flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
 				<Link
 					href="/"
 					className="flex shrink-0 items-center gap-2"
 					aria-label="Repelón Conecta, inicio"
 				>
-					<span className="grid size-9 shrink-0 place-items-center rounded-xl bg-leaf font-display text-lg font-semibold text-white">
-						R
+					<span className="brand-mark" aria-hidden="true">
+						<span className="brand-mark__sun" />
+						<span className="brand-mark__letter">R</span>
 					</span>
 					<span className="leading-tight">
 						<span className="block font-display text-base font-semibold tracking-tight text-ink">
-							Repelón Conecta
+							Repelón <span className="text-azul">Conecta</span>
 						</span>
 						<span className="block text-[9px] font-semibold uppercase tracking-wide text-leaf">
 							del pueblo, para el pueblo
