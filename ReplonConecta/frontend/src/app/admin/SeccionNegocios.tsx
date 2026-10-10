@@ -10,38 +10,34 @@ import { subirImagen } from "@/lib/subirImagen";
 import type { NegocioAdmin, NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 import { CampoUrlImagen } from "./CampoUrlImagen";
-import { EditorUbicacion, type UbicacionEditada } from "./EditorUbicacion";
+import { EditorUbicacion } from "./EditorUbicacion";
 import {
 	AvisosSeccion,
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	CeldaTabla,
+	FilaTabla,
 	INPUT,
 	PuntoEstado,
 	SeccionAdmin,
-	TARJETA,
+	TablaDensa,
+	ThDensa,
+	VentanaAdmin,
 } from "./ui-admin";
 
 /*
- * Sección "Negocios" del panel: aprobación, destacados, borrado y
- * fotos (logo y productos) — antes vivía entera dentro de page.tsx
- * (580 líneas mezclando layout con esta lógica).
- *
- * Las fotos las suben los estudiantes (decisión 5 del cuestionario):
- * el archivo va al bucket de Supabase y la URL al backend con la
- * sesión de la app; con "Poner URL" se salta Supabase y se pega
- * cualquier enlace. Con el buscador y los chips, la cola de trabajo
- * (pendientes) es un clic: el link del resumen llega con
- * `?filtro=pendientes` ya puesto.
+ * Sección "Negocios" — lista densa + ventana flotante grande para
+ * crear y editar (datos, ubicación con mapa, logo y fotos de
+ * productos). El formulario sale de la API: RegistroNegocioRequest
+ * para alta, NegocioUpdateRequest para edición.
  */
 
 export type FiltroNegocios = "todos" | "pendientes" | "aprobados";
 
-/*
- * ProductoRequest exige nombre y precio (@Valid), así que el PUT va con
- * el producto completo y solo cambia la foto. Este cuerpo estaba
- * escrito dos veces (subir archivo y poner URL); ahora es uno solo.
- */
+const BTN_SUBIR =
+	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
+
 function cuerpoFotoProducto(p: Producto, imagenUrl: string) {
 	return JSON.stringify({
 		nombre: p.nombre,
@@ -55,8 +51,37 @@ function cuerpoFotoProducto(p: Producto, imagenUrl: string) {
 	});
 }
 
-const BTN_SUBIR =
-	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
+/** Datos del formulario del modal (compartido entre crear y editar). */
+type FormNegocio = {
+	nombre: string;
+	descripcion: string;
+	direccion: string;
+	barrio: string;
+	latitud: string;
+	longitud: string;
+	telefono: string;
+	whatsapp: string;
+	horario: string;
+};
+
+const FORM_VACIO: FormNegocio = {
+	nombre: "",
+	descripcion: "",
+	direccion: "",
+	barrio: "",
+	latitud: "",
+	longitud: "",
+	telefono: "",
+	whatsapp: "",
+	horario: "",
+};
+
+function aNumero(texto: string): number | null {
+	const t = texto.trim();
+	if (!t) return null;
+	const n = Number(t);
+	return Number.isFinite(n) ? n : null;
+}
 
 export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegocios }) {
 	const { datos: negocios, cargando, error, setDatos } = useDatos<NegocioAdmin[]>(
@@ -69,22 +94,18 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [aviso, setAviso] = useState<string | null>(null);
 
-	// Ubicación: qué negocio tiene el editor abierto y el borrador de
-	// cada uno (dirección + pin), que se guarda aparte del resto de la
-	// ficha con su propio botón.
-	const [ubicacionAbierta, setUbicacionAbierta] = useState<string | null>(null);
-	const [borradores, setBorradores] = useState<Record<string, UbicacionEditada>>({});
-	const [guardandoUbicacion, setGuardandoUbicacion] = useState<string | null>(null);
+	// Modal: null = cerrado; "crear" = alta; id de negocio = edición.
+	const [modo, setModo] = useState<"crear" | string | null>(null);
+	const [form, setForm] = useState<FormNegocio>(FORM_VACIO);
+	const [guardando, setGuardando] = useState(false);
+	const [cargandoDetalle, setCargandoDetalle] = useState(false);
 
-	// Fotos: qué archivo se está subiendo (llave = "logo-{id}" o
-	// "foto-{productoId}"), qué negocio tiene sus productos abiertos y
-	// los productos ya cargados para no pedirlos dos veces.
+	// Detalle completo del negocio en edición (descripción, tel, etc.).
+	const [detalle, setDetalle] = useState<NegocioDetalle | null>(null);
+
+	// Fotos del negocio en edición.
 	const [subiendo, setSubiendo] = useState<string | null>(null);
-	const [abiertoFotos, setAbiertoFotos] = useState<string | null>(null);
-	const [productosPorNegocio, setProductosPorNegocio] = useState<
-		Record<string, Producto[]>
-	>({});
-	const [cargandoFotos, setCargandoFotos] = useState<string | null>(null);
+	const [productos, setProductos] = useState<Producto[]>([]);
 
 	const termino = texto.trim().toLocaleLowerCase("es");
 	const filtrados = (negocios ?? []).filter(
@@ -97,10 +118,152 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				n.duenoNombre.toLocaleLowerCase("es").includes(termino)),
 	);
 
-	async function cambiar(
-		n: NegocioAdmin,
-		cambios: { aprobado?: boolean; destacado?: boolean },
-	) {
+	function campo<K extends keyof FormNegocio>(k: K, v: FormNegocio[K]) {
+		setForm((f) => ({ ...f, [k]: v }));
+	}
+
+	function limpiar() {
+		setForm(FORM_VACIO);
+		setDetalle(null);
+		setProductos([]);
+		setSubiendo(null);
+		setErrorAccion(null);
+		setAviso(null);
+	}
+
+	function abrirCrear() {
+		limpiar();
+		setModo("crear");
+	}
+
+	function abrirEditar(n: NegocioAdmin) {
+		limpiar();
+		setModo(n.id);
+		cargarDetalle(n.id);
+	}
+
+	function cerrarModal() {
+		setModo(null);
+		limpiar();
+	}
+
+	/** Carga el detalle completo y los productos para el modal de edición. */
+	async function cargarDetalle(id: string) {
+		setCargandoDetalle(true);
+		setErrorAccion(null);
+		try {
+			const [d, ps] = await Promise.all([
+				apiConSesion<NegocioDetalle>(`/api/negocios/${id}`),
+				api<Producto[]>(`/api/productos/negocio/${id}`),
+			]);
+			setDetalle(d);
+			setProductos(ps);
+			setForm({
+				nombre: d.nombre,
+				descripcion: d.descripcion ?? "",
+				direccion: d.direccion,
+				barrio: d.barrio ?? "",
+				latitud: d.latitud != null ? String(d.latitud) : "",
+				longitud: d.longitud != null ? String(d.longitud) : "",
+				telefono: d.telefono ?? "",
+				whatsapp: d.whatsapp ?? "",
+				horario: d.horario ?? "",
+			});
+		} catch (e) {
+			setErrorAccion(e instanceof Error ? e.message : "No se pudo cargar el negocio.");
+		} finally {
+			setCargandoDetalle(false);
+		}
+	}
+
+	function coordenadas(): { lat: number | null; lng: number | null } {
+		return { lat: aNumero(form.latitud), lng: aNumero(form.longitud) };
+	}
+
+	async function guardar(e: React.FormEvent) {
+		e.preventDefault();
+		setErrorAccion(null);
+		setAviso(null);
+
+		if (!form.nombre.trim()) {
+			setErrorAccion("El nombre es obligatorio.");
+			return;
+		}
+		if (!form.direccion.trim()) {
+			setErrorAccion("La dirección es obligatoria.");
+			return;
+		}
+		const { lat, lng } = coordenadas();
+		if ((lat == null) !== (lng == null)) {
+			setErrorAccion("Falta un valor del par de coordenadas.");
+			return;
+		}
+
+		setGuardando(true);
+		try {
+			if (modo === "crear") {
+				const cuerpo = JSON.stringify({
+					nombre: form.nombre.trim(),
+					descripcion: form.descripcion.trim() || null,
+					direccion: form.direccion.trim(),
+					barrio: form.barrio.trim() || null,
+					latitud: lat,
+					longitud: lng,
+					telefono: form.telefono.trim() || null,
+					whatsapp: form.whatsapp.trim() || null,
+					horario: form.horario.trim() || null,
+				});
+				const nuevo = await apiConSesion<NegocioDetalle>("/api/negocios", {
+					method: "POST",
+					body: cuerpo,
+				});
+				// Refrescar la lista para ver el negocio nuevo.
+				const lista = await apiConSesion<NegocioAdmin[]>("/api/admin/negocios");
+				setDatos(lista);
+				setAviso(`Negocio "${nuevo.nombre}" creado. Ya puedes cargar su logo y productos.`);
+				cerrarModal();
+			} else {
+				const id = modo;
+				const cuerpo = JSON.stringify({
+					nombre: form.nombre.trim(),
+					descripcion: form.descripcion.trim() || null,
+					direccion: form.direccion.trim(),
+					barrio: form.barrio.trim() || null,
+					latitud: lat,
+					longitud: lng,
+					telefono: form.telefono.trim() || null,
+					whatsapp: form.whatsapp.trim() || null,
+					horario: form.horario.trim() || null,
+				});
+				const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${id}`, {
+					method: "PUT",
+					body: cuerpo,
+				});
+				setDatos((actual) =>
+					(actual ?? []).map((x) =>
+						x.id === id
+							? {
+									...x,
+									nombre: actualizado.nombre,
+									direccion: actualizado.direccion,
+									barrio: actualizado.barrio,
+									latitud: actualizado.latitud,
+									longitud: actualizado.longitud,
+									logoUrl: actualizado.logoUrl,
+								}
+							: x,
+					),
+				);
+				setAviso(`Negocio "${actualizado.nombre}" actualizado.`);
+			}
+		} catch (e2) {
+			setErrorAccion(e2 instanceof Error ? e2.message : "No se pudo guardar.");
+		} finally {
+			setGuardando(false);
+		}
+	}
+
+	async function cambiarEstado(n: NegocioAdmin, cambios: { aprobado?: boolean; destacado?: boolean }) {
 		setErrorAccion(null);
 		try {
 			const actualizado = await apiConSesion<NegocioAdmin>(
@@ -110,6 +273,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 			setDatos((actual) =>
 				(actual ?? []).map((x) => (x.id === n.id ? actualizado : x)),
 			);
+			setAviso(`"${n.nombre}" ${actualizado.aprobado ? "aprobado" : "suspendido"}.`);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo actualizar.");
 		}
@@ -123,114 +287,23 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		try {
 			await apiConSesion(`/api/admin/negocios/${n.id}`, { method: "DELETE" });
 			setDatos((actual) => (actual ?? []).filter((x) => x.id !== n.id));
+			setAviso(`Negocio "${n.nombre}" eliminado.`);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo eliminar.");
 		}
 	}
 
-	/*
-	 * Ubicación: dirección escrita + pin del mapa, con borrador por
-	 * negocio para que se pueda corregir sin afectar a los demás. El
-	 * guardado va por PUT /api/negocios/{id}, que el backend acepta para
-	 * el rol ADMIN (NegocioService.actualizar → actualVendedorOAdmin) y
-	 * que solo pisa los campos informados.
-	 */
-	function alternarUbicacion(n: NegocioAdmin) {
-		if (ubicacionAbierta === n.id) {
-			setUbicacionAbierta(null);
-			return;
-		}
-		setErrorAccion(null);
-		setAviso(null);
-		setBorradores((b) => ({
-			...b,
-			[n.id]: b[n.id] ?? { direccion: n.direccion, lat: n.latitud, lng: n.longitud },
-		}));
-		setUbicacionAbierta(n.id);
-	}
+	// --- Fotos (solo en modo edición) ---
 
-	function editarUbicacion(id: string, cambios: Partial<UbicacionEditada>) {
-		setBorradores((b) => {
-			const actual = b[id] ?? { direccion: "", lat: null, lng: null };
-			return { ...b, [id]: { ...actual, ...cambios } };
-		});
-	}
-
-	async function guardarUbicacion(n: NegocioAdmin) {
-		const b = borradores[n.id];
-		if (!b) return;
-		if (!b.direccion.trim()) {
-			setErrorAccion("La dirección es obligatoria.");
-			return;
-		}
-		if ((b.lat == null) !== (b.lng == null)) {
-			setErrorAccion("Falta un valor del par de coordenadas.");
-			return;
-		}
-
-		setGuardandoUbicacion(n.id);
-		setErrorAccion(null);
-		setAviso(null);
-		try {
-			const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${n.id}`, {
-				method: "PUT",
-				body: JSON.stringify({
-					direccion: b.direccion.trim(),
-					latitud: b.lat,
-					longitud: b.lng,
-				}),
-			});
-			setDatos((actual) =>
-				(actual ?? []).map((x) =>
-					x.id === n.id
-						? {
-								...x,
-								direccion: actualizado.direccion,
-								latitud: actualizado.latitud,
-								longitud: actualizado.longitud,
-							}
-						: x,
-				),
-			);
-			setBorradores((bd) => ({
-				...bd,
-				[n.id]: {
-					direccion: actualizado.direccion,
-					lat: actualizado.latitud,
-					lng: actualizado.longitud,
-				},
-			}));
-			setAviso(`Ubicación de "${n.nombre}" guardada.`);
-		} catch (e) {
-			setErrorAccion(e instanceof Error ? e.message : "No se pudo guardar la ubicación.");
-		} finally {
-			setGuardandoUbicacion(null);
-		}
-	}
-
-	/*
-	 * Fotos. Sube el archivo al bucket con la sesión de Supabase y
-	 * después le pega la URL al negocio/producto con la sesión de la
-	 * app: son dos pasos porque el storage no escribe en la base.
-	 */
-	async function subirLogo(n: NegocioAdmin, evento: ChangeEvent<HTMLInputElement>) {
+	async function subirLogo(id: string, evento: ChangeEvent<HTMLInputElement>) {
 		const archivo = evento.target.files?.[0];
 		evento.target.value = "";
 		if (!archivo) return;
-
 		setErrorAccion(null);
-		setSubiendo(`logo-${n.id}`);
+		setSubiendo(`logo-${id}`);
 		try {
-			const url = await subirImagen("negocios", n.id, archivo);
-			const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${n.id}`, {
-				method: "PUT",
-				body: JSON.stringify({ logoUrl: url }),
-			});
-			setDatos((actual) =>
-				(actual ?? []).map((x) =>
-					x.id === n.id ? { ...x, logoUrl: actualizado.logoUrl } : x,
-				),
-			);
+			const url = await subirImagen("negocios", id, archivo);
+			await aplicarLogo(id, url);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo subir el logo.");
 		} finally {
@@ -238,59 +311,26 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		}
 	}
 
-	async function abrirFotos(n: NegocioAdmin) {
-		if (abiertoFotos === n.id) {
-			setAbiertoFotos(null);
-			return;
-		}
-		setAbiertoFotos(n.id);
-		if (productosPorNegocio[n.id]) return;
-
-		setCargandoFotos(n.id);
-		setErrorAccion(null);
-		try {
-			const productos = await api<Producto[]>(`/api/productos/negocio/${n.id}`);
-			setProductosPorNegocio((m) => ({ ...m, [n.id]: productos }));
-		} catch (e) {
-			setErrorAccion(
-				e instanceof Error ? e.message : "No se pudieron cargar los productos.",
-			);
-			setAbiertoFotos(null);
-		} finally {
-			setCargandoFotos(null);
-		}
-	}
-
-	/** Único PUT de producto con foto nueva: lo comparten subir archivo y URL. */
-	async function actualizarFotoProducto(
-		n: NegocioAdmin,
-		p: Producto,
-		imagenUrl: string,
-	) {
-		const actualizado = await apiConSesion<Producto>(`/api/productos/${p.id}`, {
+	async function aplicarLogo(id: string, url: string) {
+		const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${id}`, {
 			method: "PUT",
-			body: cuerpoFotoProducto(p, imagenUrl),
+			body: JSON.stringify({ logoUrl: url }),
 		});
-		setProductosPorNegocio((m) => ({
-			...m,
-			[n.id]: (m[n.id] ?? []).map((x) => (x.id === p.id ? actualizado : x)),
-		}));
+		setDetalle((d) => (d ? { ...d, logoUrl: actualizado.logoUrl } : d));
+		setDatos((actual) =>
+			(actual ?? []).map((x) => (x.id === id ? { ...x, logoUrl: actualizado.logoUrl } : x)),
+		);
 	}
 
-	async function subirFotoProducto(
-		n: NegocioAdmin,
-		p: Producto,
-		evento: ChangeEvent<HTMLInputElement>,
-	) {
+	async function subirFotoProducto(p: Producto, evento: ChangeEvent<HTMLInputElement>) {
 		const archivo = evento.target.files?.[0];
 		evento.target.value = "";
 		if (!archivo) return;
-
 		setErrorAccion(null);
 		setSubiendo(`foto-${p.id}`);
 		try {
 			const url = await subirImagen("productos", p.id, archivo);
-			await actualizarFotoProducto(n, p, url);
+			await actualizarFotoProducto(p, url);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo subir la foto.");
 		} finally {
@@ -298,31 +338,21 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		}
 	}
 
-	/*
-	 * Imágenes por URL: mismo destino que subir archivo (el backend
-	 * guarda el texto en `logoUrl`/`imagenUrl`), pero sin pasar por
-	 * Supabase. url vacía = quitar la imagen que había.
-	 */
-	async function ponerLogoUrl(n: NegocioAdmin, url: string) {
-		const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${n.id}`, {
+	async function actualizarFotoProducto(p: Producto, imagenUrl: string) {
+		const actualizado = await apiConSesion<Producto>(`/api/productos/${p.id}`, {
 			method: "PUT",
-			body: JSON.stringify({ logoUrl: url }),
+			body: cuerpoFotoProducto(p, imagenUrl),
 		});
-		setDatos((actual) =>
-			(actual ?? []).map((x) =>
-				x.id === n.id ? { ...x, logoUrl: actualizado.logoUrl } : x,
-			),
-		);
+		setProductos((ps) => ps.map((x) => (x.id === p.id ? actualizado : x)));
 	}
 
-	function ponerFotoUrl(n: NegocioAdmin, p: Producto, url: string) {
-		return actualizarFotoProducto(n, p, url);
-	}
+	const editando = modo !== null && modo !== "crear";
+	const negocioEditando = editando ? (negocios ?? []).find((n) => n.id === modo) : null;
 
 	return (
 		<SeccionAdmin
 			titulo="Negocios"
-			descripcion="Aprueba, destaca o elimina negocios, carga sus fotos y corrige su dirección en el mapa."
+			descripcion="Aprueba, destaca o elimina negocios; crea nuevos y edita sus datos en una ventana."
 		>
 			<AvisosSeccion accion={errorAccion} exito={aviso} carga={error} />
 
@@ -338,16 +368,10 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				<Chip activo={filtro === "todos"} onClick={() => setFiltro("todos")}>
 					Todos
 				</Chip>
-				<Chip
-					activo={filtro === "pendientes"}
-					onClick={() => setFiltro("pendientes")}
-				>
+				<Chip activo={filtro === "pendientes"} onClick={() => setFiltro("pendientes")}>
 					Pendientes
 				</Chip>
-				<Chip
-					activo={filtro === "aprobados"}
-					onClick={() => setFiltro("aprobados")}
-				>
+				<Chip activo={filtro === "aprobados"} onClick={() => setFiltro("aprobados")}>
 					Aprobados
 				</Chip>
 				{filtrados.length < (negocios ?? []).length && (
@@ -356,233 +380,403 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 						<span className="tabular">{(negocios ?? []).length}</span>
 					</span>
 				)}
+				<button type="button" onClick={abrirCrear} className={`${BTN_PRIMARIO} ml-auto`}>
+					+ Nuevo negocio
+				</button>
 			</div>
 
 			<BloqueEstado
 				cargando={cargando}
 				vacio={(negocios ?? []).length === 0}
 				vacioTitulo="No hay negocios registrados"
+				skeletonColumnas={5}
 			>
-				{filtrados.length === 0 && (
-					<p className="mt-4 text-sm text-black/55">
+				{filtrados.length === 0 ? (
+					<p className="mt-3 text-[13px] text-black/50">
 						Ningún negocio coincide con el filtro.
 					</p>
+				) : (
+					<TablaDensa>
+						<table className="w-full min-w-[680px] border-collapse">
+							<thead className="sticky top-0 z-10 bg-white">
+								<tr className="border-b border-black/10">
+									<ThDensa>Negocio</ThDensa>
+									<ThDensa>Dueño</ThDensa>
+									<ThDensa>Estado</ThDensa>
+									<ThDensa num>Productos</ThDensa>
+									<ThDensa num>Pedidos</ThDensa>
+									<ThDensa>Creado</ThDensa>
+									<ThDensa className="text-right">Acción</ThDensa>
+								</tr>
+							</thead>
+							<tbody>
+								{filtrados.map((n) => (
+									<FilaTabla key={n.id}>
+										<CeldaTabla className="max-w-[200px]">
+											<p className="truncate font-medium">{n.nombre}</p>
+											<p className="truncate text-[11px] text-black/45">
+												{n.barrio ?? "Repelón"} · {n.direccion}
+											</p>
+											{n.destacado && (
+												<span className="text-[11px] text-azul">★ Destacado</span>
+											)}
+										</CeldaTabla>
+										<CeldaTabla className="max-w-[160px]">
+											<p className="truncate text-[12px]">{n.duenoNombre}</p>
+											<p className="truncate font-mono text-[11px] text-black/45">
+												{n.duenoEmail}
+											</p>
+										</CeldaTabla>
+										<CeldaTabla>
+											<PuntoEstado
+												color={n.aprobado ? "exito" : "advertencia"}
+												etiqueta={n.aprobado ? "Aprobado" : "Pendiente"}
+											/>
+										</CeldaTabla>
+										<CeldaTabla num>{n.cantidadProductos}</CeldaTabla>
+										<CeldaTabla num>{n.pedidosRecibidos}</CeldaTabla>
+										<CeldaTabla mono>{fecha(n.creadoEn)}</CeldaTabla>
+										<CeldaTabla className="text-right">
+											<span className="inline-flex gap-1.5">
+												<button
+													type="button"
+													onClick={() => abrirEditar(n)}
+													className={BTN_SECUNDARIO}
+												>
+													Editar
+												</button>
+												<button
+													type="button"
+													onClick={() => void cambiarEstado(n, { aprobado: !n.aprobado })}
+													className={BTN_SECUNDARIO}
+												>
+													{n.aprobado ? "Suspender" : "Aprobar"}
+												</button>
+												<button
+													type="button"
+													onClick={() => void cambiarEstado(n, { destacado: !n.destacado })}
+													className={BTN_SECUNDARIO}
+												>
+													{n.destacado ? "★" : "☆"}
+												</button>
+												<button
+													type="button"
+													onClick={() => void eliminar(n)}
+													className={BTN_SECUNDARIO}
+												>
+													Eliminar
+												</button>
+											</span>
+										</CeldaTabla>
+									</FilaTabla>
+								))}
+							</tbody>
+						</table>
+					</TablaDensa>
+				)}
+			</BloqueEstado>
+
+			{/*
+			 * Ventana grande: datos + ubicación + fotos (solo edición).
+			 * Crear no trae fotos todavía — el logo se carga después de
+			 * guardar, desde el propio modal de edición.
+			 */}
+			<VentanaAdmin
+				abierto={modo !== null}
+				onCerrar={cerrarModal}
+				titulo={modo === "crear" ? "Nuevo negocio" : `Editar: ${negocioEditando?.nombre ?? ""}`}
+				ancho="ancho"
+			>
+				{editando && cargandoDetalle && (
+					<p className="text-[13px] text-black/50">Cargando negocio…</p>
 				)}
 
-				{/* En PC los negocios salen en varias columnas; en móvil, uno
-				    debajo del otro como siempre. */}
-				<ul className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-					{filtrados.map((n) => (
-						<li key={n.id} className={TARJETA}>
-							<div className="flex items-start justify-between gap-2">
-								<div className="min-w-0 flex-1">
-									<p className="truncate font-medium">{n.nombre}</p>
-									<p className="truncate text-[12px] text-black/50">
-										{n.barrio ?? "Repelón"} ·{" "}
-										<span className="tabular">{n.cantidadProductos}</span> productos ·{" "}
-										<span className="tabular">{n.pedidosRecibidos}</span> pedidos
-									</p>
-									<p className="truncate text-[11px] text-black/40">
-										Dueño: {n.duenoNombre}{" "}
-										<span className="font-mono">({n.duenoEmail})</span> ·{" "}
-										<span className="font-mono">{fecha(n.creadoEn)}</span>
-									</p>
-								</div>
-								<div className="flex shrink-0 flex-col items-end gap-1">
-									<PuntoEstado
-										color={n.aprobado ? "exito" : "advertencia"}
-										etiqueta={n.aprobado ? "Aprobado" : "Pendiente"}
+				{editando && !cargandoDetalle && (
+					<form onSubmit={(e) => void guardar(e)}>
+						{/* Datos básicos */}
+						<fieldset className="space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">Datos</legend>
+							<label className="block text-[12px] text-black/55">
+								Nombre *
+								<input
+									value={form.nombre}
+									onChange={(e) => campo("nombre", e.target.value)}
+									required
+									maxLength={120}
+									className={INPUT}
+								/>
+							</label>
+							<label className="block text-[12px] text-black/55">
+								Descripción
+								<textarea
+									value={form.descripcion}
+									onChange={(e) => campo("descripcion", e.target.value)}
+									maxLength={1000}
+									rows={2}
+									className={INPUT}
+								/>
+							</label>
+							<div className="grid gap-2 sm:grid-cols-2">
+								<label className="block text-[12px] text-black/55">
+									Barrio
+									<input
+										value={form.barrio}
+										onChange={(e) => campo("barrio", e.target.value)}
+										maxLength={100}
+										className={INPUT}
 									/>
-									{n.destacado && (
-										<span className="inline-flex items-center gap-1.5 text-[12px] text-azul">
-											<span className="size-1.5 shrink-0 rounded-full bg-azul" aria-hidden />
-											Destacado
-										</span>
-									)}
-								</div>
-							</div>
-
-							<div className="mt-3 flex flex-wrap gap-2">
-								<button
-									type="button"
-									onClick={() => cambiar(n, { aprobado: !n.aprobado })}
-									className={BTN_SECUNDARIO}
-								>
-									{n.aprobado ? "Suspender" : "Aprobar"}
-								</button>
-								<button
-									type="button"
-									onClick={() => cambiar(n, { destacado: !n.destacado })}
-									className={BTN_SECUNDARIO}
-								>
-									{n.destacado ? "Quitar destacado" : "Destacar"}
-								</button>
-								<button
-									type="button"
-									onClick={() => alternarUbicacion(n)}
-									aria-expanded={ubicacionAbierta === n.id}
-									className={BTN_SECUNDARIO}
-								>
-									{ubicacionAbierta === n.id ? "Ocultar ubicación" : "Ubicación"}
-								</button>
-								<button
-									type="button"
-									onClick={() => eliminar(n)}
-									className={BTN_SECUNDARIO}
-								>
-									Eliminar
-								</button>
-							</div>
-
-							{/*
-							 * Ubicación: la dirección exacta y el pin. Se busca por
-							 * sugerencias, se afina arrastrando el pin y se guarda con
-							 * su propio botón, sin tocar el resto de la ficha.
-							 */}
-							{ubicacionAbierta === n.id && (
-								<div className="mt-3 border-t border-black/10 pt-3">
-									<p className="text-xs text-black/55">
-										Escribe la dirección para ver sugerencias —o usa Usar mi
-										ubicación— y afina el punto arrastrando el pin. El pin es
-										lo que usan &quot;Cómo llegar&quot; y el mapa del home.
-									</p>
-
-									<EditorUbicacion
-										direccion={borradores[n.id]?.direccion ?? ""}
-										lat={borradores[n.id]?.lat ?? null}
-										lng={borradores[n.id]?.lng ?? null}
-										onDireccion={(t) => editarUbicacion(n.id, { direccion: t })}
-										onPunto={(la, ln) => editarUbicacion(n.id, { lat: la, lng: ln })}
-										onAviso={setAviso}
-										onError={setErrorAccion}
+								</label>
+								<label className="block text-[12px] text-black/55">
+									Horario
+									<input
+										value={form.horario}
+										onChange={(e) => campo("horario", e.target.value)}
+										maxLength={60}
+										placeholder="Ej. 7am – 5pm"
+										className={INPUT}
 									/>
+								</label>
+							</div>
+							<div className="grid gap-2 sm:grid-cols-2">
+								<label className="block text-[12px] text-black/55">
+									Teléfono
+									<input
+										value={form.telefono}
+										onChange={(e) => campo("telefono", e.target.value)}
+										pattern="[0-9+\s-]{7,20}"
+										className={INPUT}
+									/>
+								</label>
+								<label className="block text-[12px] text-black/55">
+									WhatsApp
+									<input
+										value={form.whatsapp}
+										onChange={(e) => campo("whatsapp", e.target.value)}
+										pattern="[0-9+\s-]{7,20}"
+										className={INPUT}
+									/>
+								</label>
+							</div>
+						</fieldset>
 
-									<button
-										type="button"
-										onClick={() => void guardarUbicacion(n)}
-										disabled={guardandoUbicacion === n.id}
-										className={`${BTN_PRIMARIO} mt-3`}
-									>
-										{guardandoUbicacion === n.id
-											? "Guardando…"
-											: "Guardar ubicación"}
-									</button>
-								</div>
+						{/* Ubicación */}
+						<fieldset className="mt-4 space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">Ubicación</legend>
+							<EditorUbicacion
+								direccion={form.direccion}
+								lat={aNumero(form.latitud)}
+								lng={aNumero(form.longitud)}
+								onDireccion={(t) => campo("direccion", t)}
+								onPunto={(la, ln) => {
+									campo("latitud", la != null ? String(la) : "");
+									campo("longitud", ln != null ? String(ln) : "");
+								}}
+								onAviso={setAviso}
+								onError={setErrorAccion}
+							/>
+						</fieldset>
+
+						{/* Fotos */}
+						<fieldset className="mt-4 space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">Fotos</legend>
+							{!supabaseConfigurado && (
+								<p className="text-[12px] text-black/50">
+									Falta configurar Supabase para subir archivos; usa &quot;Poner URL&quot;.
+								</p>
 							)}
+							<div className="flex items-center gap-3">
+								<Foto
+									src={detalle?.logoUrl ?? null}
+									alt="Logo del negocio"
+									className="size-10 shrink-0 rounded-md"
+								/>
+								<div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+									<label className={BTN_SUBIR}>
+										{subiendo === `logo-${modo}`
+											? "Subiendo…"
+											: detalle?.logoUrl
+												? "Cambiar logo"
+												: "Subir logo"}
+										<input
+											type="file"
+											accept="image/*"
+											className="sr-only"
+											disabled={!supabaseConfigurado || subiendo !== null}
+											onChange={(e) => {
+												if (modo) void subirLogo(modo, e);
+											}}
+										/>
+									</label>
+									<CampoUrlImagen
+										valor={detalle?.logoUrl ?? null}
+										etiqueta="logo del negocio"
+										onGuardar={async (url) => {
+											if (modo) await aplicarLogo(modo, url);
+										}}
+									/>
+								</div>
+							</div>
 
-							{/*
-							 * Fotos: el estudiante sube el logo del negocio y las
-							 * fotos de sus productos desde acá. La vista previa
-							 * sale del mismo campo que usa la ficha.
-							 */}
-							<div className="mt-3 border-t border-black/10 pt-3">
-								{!supabaseConfigurado && (
-									<p className="text-xs text-black/55">
-										Falta configurar Supabase en <code>.env.local</code> para
-										subir archivos; con el botón Poner URL se puede igual.
-									</p>
-								)}
-
-								<div className="flex items-center gap-3">
+							{productos.map((p) => (
+								<div
+									key={p.id}
+									className="flex flex-wrap items-center gap-3 rounded-md bg-black/[.03] p-2"
+								>
 									<Foto
-										src={n.logoUrl}
-										alt={`Logo de ${n.nombre}`}
+										src={p.imagenUrl}
+										alt={p.nombre}
 										className="size-10 shrink-0 rounded-md"
 									/>
-									<div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-										<label className={BTN_SUBIR}>
-											{subiendo === `logo-${n.id}`
-												? "Subiendo…"
-												: n.logoUrl
-													? "Cambiar logo"
-													: "Subir logo"}
-											<input
-												type="file"
-												accept="image/*"
-												className="sr-only"
-												disabled={!supabaseConfigurado || subiendo !== null}
-												onChange={(e) => void subirLogo(n, e)}
-											/>
-										</label>
-										<button
-											type="button"
-											onClick={() => void abrirFotos(n)}
-											aria-expanded={abiertoFotos === n.id}
-											className={BTN_SECUNDARIO}
-										>
-											{abiertoFotos === n.id
-												? "Ocultar fotos"
-												: `Fotos de productos (${n.cantidadProductos})`}
-										</button>
-										<CampoUrlImagen
-											valor={n.logoUrl}
-											etiqueta={`logo de ${n.nombre}`}
-											onGuardar={(url) => ponerLogoUrl(n, url)}
+									<div className="min-w-0 flex-1">
+										<p className="truncate text-[13px] font-medium">{p.nombre}</p>
+										<p className="text-[11px] text-black/50">
+											<span className="tabular">{pesos(p.precio)}</span> /{" "}
+											{p.unidad === "KILO" ? "kilo" : "libra"}
+											{p.disponible ? "" : " · sin stock"}
+										</p>
+									</div>
+									<label className={BTN_SUBIR}>
+										{subiendo === `foto-${p.id}`
+											? "Subiendo…"
+											: p.imagenUrl
+												? "Cambiar foto"
+												: "Subir foto"}
+										<input
+											type="file"
+											accept="image/*"
+											className="sr-only"
+											disabled={!supabaseConfigurado || subiendo !== null}
+											onChange={(e) => void subirFotoProducto(p, e)}
 										/>
-									</div>
+									</label>
+									<CampoUrlImagen
+										valor={p.imagenUrl}
+										etiqueta={`foto de ${p.nombre}`}
+										onGuardar={(url) => actualizarFotoProducto(p, url)}
+									/>
 								</div>
+							))}
+							{productos.length === 0 && (
+								<p className="text-[12px] text-black/40">
+									Este negocio todavía no tiene productos.
+								</p>
+							)}
+						</fieldset>
 
-								{abiertoFotos === n.id && (
-									<div className="mt-3 space-y-2">
-										{cargandoFotos === n.id && (
-											<p className="text-sm text-black/55">Cargando productos…</p>
-										)}
+						<div className="mt-4 flex flex-wrap gap-2 border-t border-black/8 pt-3">
+							<button type="submit" disabled={guardando} className={BTN_PRIMARIO}>
+								{guardando ? "Guardando…" : "Guardar cambios"}
+							</button>
+							<button type="button" onClick={cerrarModal} className={BTN_SECUNDARIO}>
+								Cancelar
+							</button>
+						</div>
+					</form>
+				)}
 
-										{(productosPorNegocio[n.id] ?? []).map((p) => (
-											<div
-												key={p.id}
-												className="flex flex-wrap items-center gap-3 rounded-md bg-black/[.03] p-2"
-											>
-												<Foto
-													src={p.imagenUrl}
-													alt={p.nombre}
-													className="size-10 shrink-0 rounded-md"
-												/>
-												<div className="min-w-0 flex-1">
-													<p className="truncate text-[13px] font-medium">
-														{p.nombre}
-													</p>
-													<p className="text-[11px] text-black/50">
-														<span className="tabular">{pesos(p.precio)}</span> /{" "}
-														{p.unidad === "KILO" ? "kilo" : "libra"}
-														{p.disponible ? "" : " · sin stock"}
-													</p>
-												</div>
-												<label className={BTN_SUBIR}>
-													{subiendo === `foto-${p.id}`
-														? "Subiendo…"
-														: p.imagenUrl
-															? "Cambiar foto"
-															: "Subir foto"}
-													<input
-														type="file"
-														accept="image/*"
-														className="sr-only"
-														disabled={!supabaseConfigurado || subiendo !== null}
-														onChange={(e) => void subirFotoProducto(n, p, e)}
-													/>
-												</label>
-												<CampoUrlImagen
-													valor={p.imagenUrl}
-													etiqueta={`foto de ${p.nombre}`}
-													onGuardar={(url) => ponerFotoUrl(n, p, url)}
-												/>
-											</div>
-										))}
-
-										{cargandoFotos !== n.id &&
-											(productosPorNegocio[n.id] ?? []).length === 0 && (
-												<p className="text-xs text-black/55">
-													Este negocio todavía no tiene productos.
-												</p>
-											)}
-									</div>
-								)}
+				{modo === "crear" && (
+					<form onSubmit={(e) => void guardar(e)}>
+						<fieldset className="space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">Datos del negocio</legend>
+							<label className="block text-[12px] text-black/55">
+								Nombre *
+								<input
+									value={form.nombre}
+									onChange={(e) => campo("nombre", e.target.value)}
+									required
+									maxLength={120}
+									placeholder="Ej. Finca La Esperanza"
+									className={INPUT}
+								/>
+							</label>
+							<label className="block text-[12px] text-black/55">
+								Descripción
+								<textarea
+									value={form.descripcion}
+									onChange={(e) => campo("descripcion", e.target.value)}
+									maxLength={1000}
+									rows={2}
+									placeholder="Qué vende o qué ofrece…"
+									className={INPUT}
+								/>
+							</label>
+							<div className="grid gap-2 sm:grid-cols-2">
+								<label className="block text-[12px] text-black/55">
+									Barrio
+									<input
+										value={form.barrio}
+										onChange={(e) => campo("barrio", e.target.value)}
+										maxLength={100}
+										placeholder="Ej. Centro"
+										className={INPUT}
+									/>
+								</label>
+								<label className="block text-[12px] text-black/55">
+									Horario
+									<input
+										value={form.horario}
+										onChange={(e) => campo("horario", e.target.value)}
+										maxLength={60}
+										placeholder="Ej. 7am – 5pm"
+										className={INPUT}
+									/>
+								</label>
 							</div>
-						</li>
-					))}
-				</ul>
-			</BloqueEstado>
+							<div className="grid gap-2 sm:grid-cols-2">
+								<label className="block text-[12px] text-black/55">
+									Teléfono
+									<input
+										value={form.telefono}
+										onChange={(e) => campo("telefono", e.target.value)}
+										pattern="[0-9+\s-]{7,20}"
+										placeholder="300 123 4567"
+										className={INPUT}
+									/>
+								</label>
+								<label className="block text-[12px] text-black/55">
+									WhatsApp
+									<input
+										value={form.whatsapp}
+										onChange={(e) => campo("whatsapp", e.target.value)}
+										pattern="[0-9+\s-]{7,20}"
+										placeholder="300 123 4567"
+										className={INPUT}
+									/>
+								</label>
+							</div>
+						</fieldset>
+
+						<fieldset className="mt-4 space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">Ubicación</legend>
+							<EditorUbicacion
+								direccion={form.direccion}
+								lat={aNumero(form.latitud)}
+								lng={aNumero(form.longitud)}
+								onDireccion={(t) => campo("direccion", t)}
+								onPunto={(la, ln) => {
+									campo("latitud", la != null ? String(la) : "");
+									campo("longitud", ln != null ? String(ln) : "");
+								}}
+								onAviso={setAviso}
+								onError={setErrorAccion}
+							/>
+						</fieldset>
+
+						<div className="mt-4 flex flex-wrap gap-2 border-t border-black/8 pt-3">
+							<button
+								type="submit"
+								disabled={guardando || !form.nombre.trim() || !form.direccion.trim()}
+								className={BTN_PRIMARIO}
+							>
+								{guardando ? "Creando…" : "Crear negocio"}
+							</button>
+							<button type="button" onClick={cerrarModal} className={BTN_SECUNDARIO}>
+								Cancelar
+							</button>
+						</div>
+					</form>
+				)}
+			</VentanaAdmin>
 		</SeccionAdmin>
 	);
 }
