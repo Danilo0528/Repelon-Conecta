@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, Manrope } from "next/font/google";
 
 import BarraNavegacion from "@/components/BarraNavegacion";
 import { Blobs } from "@/components/Blobs";
@@ -9,9 +9,11 @@ import { SesionProvider } from "@/context/SesionContext";
 import "./globals.css";
 
 /*
- * Las dos tipografías de la casa: Fraunces para los títulos y el nombre
- * de la marca, Manrope para todo lo demás. Las variables que dejan aquí
- * son las que globals.css traduce a --font-display y --font-sans.
+ * Tipografías de la casa:
+ *   - Fraunces (display): títulos y marca.
+ *   - Manrope (sans):     cuerpo y UI general.
+ *   - IBM Plex Mono:      IDs, timestamps, códigos, números tabulares
+ *                         del panel denso (skill dense-dashboard).
  */
 const fraunces = Fraunces({
 	variable: "--font-fraunces",
@@ -22,6 +24,13 @@ const fraunces = Fraunces({
 const manrope = Manrope({
 	variable: "--font-manrope",
 	subsets: ["latin"],
+	display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+	variable: "--font-plex-mono",
+	subsets: ["latin"],
+	weight: ["400", "500", "600"],
 	display: "swap",
 });
 
@@ -42,7 +51,10 @@ export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="es" className={`${fraunces.variable} ${manrope.variable} h-full`}>
+		<html
+			lang="es"
+			className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable} h-full`}
+		>
 			<body className="flex min-h-full flex-col bg-background text-ink">
 				<Blobs />
 				<SesionProvider>

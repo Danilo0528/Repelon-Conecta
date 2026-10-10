@@ -10,9 +10,13 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	CeldaTabla,
+	FilaTabla,
 	INPUT,
+	PuntoEstado,
 	SeccionAdmin,
-	TARJETA,
+	TablaDensa,
+	ThDensa,
 	VentanaAdmin,
 } from "./ui-admin";
 
@@ -197,41 +201,56 @@ export function SeccionCategorias() {
 				cargando={cargando}
 				vacio={(datos ?? []).length === 0}
 				vacioTitulo="No hay categorías"
+				skeletonColumnas={4}
 			>
-				<ul className="mt-3 space-y-2">
-					{(datos ?? []).map((c) => (
-						<li
-							key={c.id}
-							className={`${TARJETA} flex items-center justify-between gap-3`}
-						>
-							<div className="min-w-0">
-								<p className="flex flex-wrap items-center gap-2 font-semibold">
-									{c.nombre}
-									<span
-										className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-											c.activa ? "bg-verde text-white" : "bg-black/60 text-white"
-										}`}
-									>
-										{c.activa ? "Activa" : "Inactiva"}
-									</span>
-								</p>
-								<p className="text-xs text-black/55">
-									{c.slug} · orden {c.orden}
-									{c.icono ? ` · icono: ${c.icono}` : ""}
-								</p>
-							</div>
-							{c.activa && (
-								<button
-									type="button"
-									onClick={() => void desactivar(c)}
-									className={`${BTN_SECUNDARIO} shrink-0`}
-								>
-									Desactivar
-								</button>
-							)}
-						</li>
-					))}
-				</ul>
+				<TablaDensa>
+					<table className="w-full min-w-[520px] border-collapse">
+						<thead className="sticky top-0 z-10 bg-white">
+							<tr className="border-b border-black/10">
+								<ThDensa>Nombre</ThDensa>
+								<ThDensa>Slug</ThDensa>
+								<ThDensa num>Orden</ThDensa>
+								<ThDensa>Estado</ThDensa>
+								<ThDensa className="text-right">Acción</ThDensa>
+							</tr>
+						</thead>
+						<tbody>
+							{(datos ?? []).map((c) => (
+								<FilaTabla key={c.id}>
+									<CeldaTabla>
+										<span className="font-medium">{c.nombre}</span>
+										{c.icono && (
+											<span className="ml-2 font-mono text-[11px] text-black/35">
+												{c.icono}
+											</span>
+										)}
+									</CeldaTabla>
+									<CeldaTabla mono>{c.slug}</CeldaTabla>
+									<CeldaTabla num>{c.orden}</CeldaTabla>
+									<CeldaTabla>
+										<PuntoEstado
+											color={c.activa ? "exito" : "neutro"}
+											etiqueta={c.activa ? "Activa" : "Inactiva"}
+										/>
+									</CeldaTabla>
+									<CeldaTabla className="text-right">
+										{c.activa ? (
+											<button
+												type="button"
+												onClick={() => void desactivar(c)}
+												className={BTN_SECUNDARIO}
+											>
+												Desactivar
+											</button>
+										) : (
+											<span className="text-[12px] text-black/25">—</span>
+										)}
+									</CeldaTabla>
+								</FilaTabla>
+							))}
+						</tbody>
+					</table>
+				</TablaDensa>
 			</BloqueEstado>
 		</SeccionAdmin>
 	);

@@ -12,8 +12,8 @@ import { SeccionTextosInicio } from "../SeccionTextosInicio";
 export default function PaginaContenido() {
 	return (
 		<div>
-			<h1 className="text-xl font-bold">Contenido del sitio</h1>
-			<p className="mt-1 text-xs text-black/55">
+			<h1 className="text-[18px] font-medium leading-tight">Contenido del sitio</h1>
+			<p className="mt-0.5 text-[12px] text-black/45">
 				Categorías y textos del home: todo lo que el público ve en la portada.
 			</p>
 			<SeccionCategorias />

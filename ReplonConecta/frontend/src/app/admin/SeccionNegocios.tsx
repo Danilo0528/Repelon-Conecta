@@ -16,6 +16,8 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	INPUT,
+	PuntoEstado,
 	SeccionAdmin,
 	TARJETA,
 } from "./ui-admin";
@@ -54,7 +56,7 @@ function cuerpoFotoProducto(p: Producto, imagenUrl: string) {
 }
 
 const BTN_SUBIR =
-	"inline-flex min-h-12 cursor-pointer items-center rounded-xl border border-black/15 px-4 text-sm font-medium disabled:pointer-events-none disabled:opacity-50";
+	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
 
 export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegocios }) {
 	const { datos: negocios, cargando, error, setDatos } = useDatos<NegocioAdmin[]>(
@@ -331,7 +333,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 					onChange={(e) => setTexto(e.target.value)}
 					placeholder="Buscar por nombre o dueño"
 					aria-label="Buscar negocio"
-					className="min-h-12 w-full rounded-xl border border-black/15 px-3 py-2.5 text-sm sm:w-72"
+					className={`${INPUT} w-full sm:w-72`}
 				/>
 				<Chip activo={filtro === "todos"} onClick={() => setFiltro("todos")}>
 					Todos
@@ -348,6 +350,12 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				>
 					Aprobados
 				</Chip>
+				{filtrados.length < (negocios ?? []).length && (
+					<span className="text-[12px] text-black/40">
+						<span className="tabular">{filtrados.length}</span> de{" "}
+						<span className="tabular">{(negocios ?? []).length}</span>
+					</span>
+				)}
 			</div>
 
 			<BloqueEstado
@@ -368,25 +376,26 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 						<li key={n.id} className={TARJETA}>
 							<div className="flex items-start justify-between gap-2">
 								<div>
-									<p className="font-semibold">{n.nombre}</p>
-									<p className="text-xs text-black/55">
-										{n.barrio ?? "Repelón"} · {n.cantidadProductos} productos ·{" "}
-										{n.pedidosRecibidos} pedidos
+									<p className="font-medium">{n.nombre}</p>
+									<p className="text-[12px] text-black/50">
+										{n.barrio ?? "Repelón"} ·{" "}
+										<span className="tabular">{n.cantidadProductos}</span> productos ·{" "}
+										<span className="tabular">{n.pedidosRecibidos}</span> pedidos
 									</p>
-									<p className="text-xs text-black/45">
-										Dueño: {n.duenoNombre} ({n.duenoEmail}) · {fecha(n.creadoEn)}
+									<p className="text-[11px] text-black/40">
+										Dueño: {n.duenoNombre}{" "}
+										<span className="font-mono">({n.duenoEmail})</span> ·{" "}
+										<span className="font-mono">{fecha(n.creadoEn)}</span>
 									</p>
 								</div>
 								<div className="flex shrink-0 flex-col items-end gap-1">
-									<span
-										className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-											n.aprobado ? "bg-verde text-white" : "bg-black/60 text-white"
-										}`}
-									>
-										{n.aprobado ? "Aprobado" : "Pendiente"}
-									</span>
+									<PuntoEstado
+										color={n.aprobado ? "exito" : "advertencia"}
+										etiqueta={n.aprobado ? "Aprobado" : "Pendiente"}
+									/>
 									{n.destacado && (
-										<span className="rounded-full bg-azul px-2 py-0.5 text-xs font-semibold text-white">
+										<span className="inline-flex items-center gap-1.5 text-[12px] text-azul">
+											<span className="size-1.5 shrink-0 rounded-full bg-azul" aria-hidden />
 											Destacado
 										</span>
 									)}
@@ -478,7 +487,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 									<Foto
 										src={n.logoUrl}
 										alt={`Logo de ${n.nombre}`}
-										className="size-12 shrink-0 rounded-lg"
+										className="size-10 shrink-0 rounded-md"
 									/>
 									<div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
 										<label className={BTN_SUBIR}>
@@ -522,19 +531,19 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 										{(productosPorNegocio[n.id] ?? []).map((p) => (
 											<div
 												key={p.id}
-												className="flex flex-wrap items-center gap-3 rounded-xl bg-black/[.03] p-2"
+												className="flex flex-wrap items-center gap-3 rounded-md bg-black/[.03] p-2"
 											>
 												<Foto
 													src={p.imagenUrl}
 													alt={p.nombre}
-													className="size-12 shrink-0 rounded-lg"
+													className="size-10 shrink-0 rounded-md"
 												/>
 												<div className="min-w-0 flex-1">
-													<p className="truncate text-sm font-semibold">
+													<p className="truncate text-[13px] font-medium">
 														{p.nombre}
 													</p>
-													<p className="text-xs text-black/55">
-														{pesos(p.precio)} /{" "}
+													<p className="text-[11px] text-black/50">
+														<span className="tabular">{pesos(p.precio)}</span> /{" "}
 														{p.unidad === "KILO" ? "kilo" : "libra"}
 														{p.disponible ? "" : " · sin stock"}
 													</p>

@@ -11,9 +11,12 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	CeldaTabla,
+	FilaTabla,
 	INPUT,
 	SeccionAdmin,
-	TARJETA,
+	TablaDensa,
+	ThDensa,
 	VentanaAdmin,
 } from "./ui-admin";
 
@@ -334,43 +337,61 @@ export function SeccionZonas() {
 				cargando={cargando}
 				vacio={(datos ?? []).length === 0}
 				vacioTitulo="No hay zonas turísticas"
+				skeletonColumnas={4}
 			>
-				<ul className="mt-3 space-y-2">
-					{(datos ?? []).map((z) => (
-						<li
-							key={z.id}
-							className={`${TARJETA} flex items-center justify-between gap-3`}
-						>
-							<div className="min-w-0">
-								<p className="truncate font-semibold">{z.nombre}</p>
-								<p className="truncate text-xs text-black/55">{z.direccion}</p>
-								<p className="text-[11px] text-black/45">
-									{MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? "Pueblo"}
-									{z.latitud != null && z.longitud != null
-										? ` · ${z.latitud}, ${z.longitud}`
-										: " · sin coordenadas"}
-									{z.imagenUrl ? " · con foto" : " · ilustración"}
-								</p>
-							</div>
-							<div className="flex shrink-0 gap-2">
-								<button
-									type="button"
-									onClick={() => editar(z)}
-									className={BTN_SECUNDARIO}
-								>
-									Editar
-								</button>
-								<button
-									type="button"
-									onClick={() => void eliminar(z)}
-									className={BTN_SECUNDARIO}
-								>
-									Borrar
-								</button>
-							</div>
-						</li>
-					))}
-				</ul>
+				<TablaDensa>
+					<table className="w-full min-w-[560px] border-collapse">
+						<thead className="sticky top-0 z-10 bg-white">
+							<tr className="border-b border-black/10">
+								<ThDensa>Zona</ThDensa>
+								<ThDensa>Ilustración</ThDensa>
+								<ThDensa>Coordenadas</ThDensa>
+								<ThDensa className="text-right">Acción</ThDensa>
+							</tr>
+						</thead>
+						<tbody>
+							{(datos ?? []).map((z) => (
+								<FilaTabla key={z.id}>
+									<CeldaTabla className="max-w-[220px]">
+										<p className="truncate font-medium">{z.nombre}</p>
+										<p className="truncate text-[11px] text-black/45">{z.direccion}</p>
+									</CeldaTabla>
+									<CeldaTabla>
+										<span className="text-[12px] text-black/60">
+											{MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? "Pueblo"}
+										</span>
+										{z.imagenUrl && (
+											<span className="ml-2 text-[11px] text-black/35">con foto</span>
+										)}
+									</CeldaTabla>
+									<CeldaTabla mono>
+										{z.latitud != null && z.longitud != null
+											? `${z.latitud}, ${z.longitud}`
+											: "—"}
+									</CeldaTabla>
+									<CeldaTabla className="text-right">
+										<span className="inline-flex gap-1.5">
+											<button
+												type="button"
+												onClick={() => editar(z)}
+												className={BTN_SECUNDARIO}
+											>
+												Editar
+											</button>
+											<button
+												type="button"
+												onClick={() => void eliminar(z)}
+												className={BTN_SECUNDARIO}
+											>
+												Borrar
+											</button>
+										</span>
+									</CeldaTabla>
+								</FilaTabla>
+							))}
+						</tbody>
+					</table>
+				</TablaDensa>
 			</BloqueEstado>
 		</SeccionAdmin>
 	);

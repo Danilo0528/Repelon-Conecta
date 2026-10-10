@@ -10,17 +10,22 @@ import {
 	AvisosSeccion,
 	BloqueEstado,
 	BTN_SECUNDARIO,
+	CeldaTabla,
+	FilaTabla,
+	INPUT,
+	PuntoEstado,
 	SeccionAdmin,
-	TARJETA,
+	TablaDensa,
+	ThDensa,
 } from "./ui-admin";
 
 /*
- * Sección "Usuarios" del panel (P2, fila 10).
+ * Sección "Usuarios" — dense table.
  *
  * Cambiar el rol y activar/desactivar son los dos únicos poderes que
  * tiene el admin sobre una cuenta. El backend se niega a aplicarlos
- * sobre la cuenta propia (evita que el estudiante se bloquee solo);
- * aquí ni siquiera se muestran los controles de la propia cuenta.
+ * sobre la cuenta propia; aquí ni siquiera se muestran los controles
+ * de la propia cuenta. Status = dot semántico (no pill).
  */
 
 const ETIQUETA_ROL: Record<Rol, string> = {
@@ -82,51 +87,45 @@ export function SeccionUsuarios({ perfilId }: { perfilId: string }) {
 				cargando={cargando}
 				vacio={(datos ?? []).length === 0}
 				vacioTitulo="Todavía no hay cuentas"
+				skeletonColumnas={5}
 			>
-				<ul className="mt-3 space-y-2">
-					{(datos ?? []).map((u) => {
-						const esMiCuenta = u.id === perfilId;
-						return (
-							<li
-								key={u.id}
-								className={`${TARJETA} sm:flex sm:items-center sm:justify-between sm:gap-3`}
-							>
-								<div className="min-w-0">
-									<p className="truncate font-semibold">
-										{u.nombre}
-										{esMiCuenta && (
-											<span className="ml-2 text-xs font-medium text-black/45">
-												(tú)
-											</span>
-										)}
-									</p>
-									<p className="truncate text-xs text-black/55">
-										{u.email} ·{" "}
-										{fecha(u.creadoEn)}
-										{u.tieneNegocio ? " · tiene negocio" : ""}
-									</p>
-								</div>
-
-								<div className="mt-2 flex flex-wrap items-center gap-2 sm:mt-0">
-									<span
-										className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-											u.activo ? "bg-verde text-white" : "bg-black/60 text-white"
-										}`}
-									>
-										{u.activo ? "Activa" : "Desactivada"}
-									</span>
-
-									{!esMiCuenta && (
-										<>
-											<label className="text-xs text-black/55">
-												<span className="sr-only">Rol de {u.nombre}</span>
+				<TablaDensa>
+					<table className="w-full min-w-[680px] border-collapse">
+						<thead className="sticky top-0 z-10 bg-white">
+							<tr className="border-b border-black/10">
+								<ThDensa>Usuario</ThDensa>
+								<ThDensa>Rol</ThDensa>
+								<ThDensa>Estado</ThDensa>
+								<ThDensa>Creado</ThDensa>
+								<ThDensa className="text-right">Acción</ThDensa>
+							</tr>
+						</thead>
+						<tbody>
+							{(datos ?? []).map((u) => {
+								const esMiCuenta = u.id === perfilId;
+								return (
+									<FilaTabla key={u.id}>
+										<CeldaTabla className="max-w-[240px]">
+											<p className="truncate font-medium">
+												{u.nombre}
+												{esMiCuenta && (
+													<span className="ml-1.5 text-[11px] text-black/40">(tú)</span>
+												)}
+											</p>
+											<p className="truncate font-mono text-[11px] text-black/45">
+												{u.email}
+											</p>
+										</CeldaTabla>
+										<CeldaTabla>
+											{esMiCuenta ? (
+												<span className="text-[13px] text-black/70">{ETIQUETA_ROL[u.rol]}</span>
+											) : (
 												<select
 													value={u.rol}
 													disabled={guardando === u.id}
-													onChange={(e) =>
-														void cambiar(u, { rol: e.target.value as Rol })
-													}
-													className="min-h-12 rounded-xl border border-black/15 px-3 py-2 text-sm"
+													aria-label={`Rol de ${u.nombre}`}
+													onChange={(e) => void cambiar(u, { rol: e.target.value as Rol })}
+													className={INPUT}
 												>
 													{(Object.keys(ETIQUETA_ROL) as Rol[]).map((rol) => (
 														<option key={rol} value={rol}>
@@ -134,22 +133,38 @@ export function SeccionUsuarios({ perfilId }: { perfilId: string }) {
 														</option>
 													))}
 												</select>
-											</label>
-											<button
-												type="button"
-												disabled={guardando === u.id}
-												onClick={() => confirmarDesactivar(u)}
-												className={BTN_SECUNDARIO}
-											>
-												{u.activo ? "Desactivar" : "Reactivar"}
-											</button>
-										</>
-									)}
-								</div>
-							</li>
-						);
-					})}
-				</ul>
+											)}
+										</CeldaTabla>
+										<CeldaTabla>
+											<PuntoEstado
+												color={u.activo ? "exito" : "peligro"}
+												etiqueta={u.activo ? "Activa" : "Desactivada"}
+											/>
+											{u.tieneNegocio && (
+												<span className="ml-2 text-[11px] text-black/35">negocio</span>
+											)}
+										</CeldaTabla>
+										<CeldaTabla mono>{fecha(u.creadoEn)}</CeldaTabla>
+										<CeldaTabla className="text-right">
+											{esMiCuenta ? (
+												<span className="text-[12px] text-black/25">—</span>
+											) : (
+												<button
+													type="button"
+													disabled={guardando === u.id}
+													onClick={() => confirmarDesactivar(u)}
+													className={BTN_SECUNDARIO}
+												>
+													{u.activo ? "Desactivar" : "Reactivar"}
+												</button>
+											)}
+										</CeldaTabla>
+									</FilaTabla>
+								);
+							})}
+						</tbody>
+					</table>
+				</TablaDensa>
 			</BloqueEstado>
 		</SeccionAdmin>
 	);

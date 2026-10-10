@@ -2,43 +2,87 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-import { Aviso, Cargando, Vacio } from "@/components/ui";
+import { Aviso, Vacio } from "@/components/ui";
 
 /*
- * Piezas compartidas del panel /admin.
+ * Piezas compartidas del panel /admin — estilo dense dashboard.
  *
- * Antes cada sección repetía el mismo encabezado, la misma pila de
- * avisos y el dúo carga/vacío (cinco copias del mismo código con las
- * mismas clases). Acá viven una sola vez.
- *
- * Los botones y campos traen la convención del proyecto: `min-h-12`
- * son 48 px, el mínimo que la app se compromete a respetar en todo lo
- * que se toca con el pulgar (ver comentario de CLASE_BOTON_* en
- * components/ui.tsx). El panel no es la excepción.
- *
- * Superficies: se usa `glass` (la misma pastilla de vidrio del home y
- * la cabecera) para que el admin se lea como parte de la misma web,
- * con densidad de panel de trabajo (texto chico, poco aire).
+ * Reglas del skill (CRAFT=7, MOTION=3, DENSITY=9):
+ *   - Grid de spacing 4/8px estricto: 4, 8, 12, 16, 24. Nunca 5/7/9/10.
+ *   - Superficie: blanco + 1px border. Sin glass, sin sombra pesada.
+ *   - Radio: 8px máximo (rounded-lg). Nada de rounded-2xl/3xl.
+ *   - Botones y controles: h-9 (36px), no h-12 (48px).
+ *   - Estados: dot de color semántico, no pill coloreado.
+ *   - Números: tabular-nums. IDs y fechas: mono.
+ *   - Loading: skeleton rows, no spinner genérico.
  */
 
-/** Botón principal de acción (crear, guardar). Ancho del contenido. */
+/** Botón primario de acción (crear, guardar). */
 export const BTN_PRIMARIO =
-	"inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-leaf px-4 text-sm font-semibold text-white disabled:opacity-50";
+	"inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-azul px-3 text-[13px] font-medium text-white transition-colors hover:bg-azul/90 disabled:pointer-events-none disabled:opacity-50";
 
-/** Botón secundario (editar, aprobar, cancelar…). Ancho del contenido. */
+/** Botón secundario (editar, aprobar, cancelar…). */
 export const BTN_SECUNDARIO =
-	"inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-black/15 px-4 text-sm font-semibold text-black/70 disabled:opacity-50";
+	"inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
 
 /** Campo de texto / select del panel. */
 export const INPUT =
-	"mt-1 block w-full rounded-xl border border-black/15 px-3 py-2.5 text-sm text-black";
+	"block h-9 w-full rounded-md border border-black/15 bg-white px-2.5 text-[13px] text-black placeholder:text-black/35 focus:border-azul focus:outline-none focus:ring-1 focus:ring-azul/30";
 
-/** Tarjeta de lista o de formulario (vidrio, como el resto de la web). */
-export const TARJETA = "glass rounded-2xl p-4";
+/** Tarjeta: blanco + borde de 1px, sin sombra. */
+export const TARJETA = "rounded-lg border border-black/10 bg-white p-4";
 
 /**
- * Encabezado de sección del panel: el título en versalitas que usan
- * todas las pantallas de admin, con descripción opcional.
+ * Dot de estado: 6px, color semántico, sin pill.
+ * Regla del skill: "colored status dots (6px, not badges)".
+ */
+export function PuntoEstado({
+	color,
+	etiqueta,
+}: {
+	color: "exito" | "peligro" | "advertencia" | "info" | "neutro";
+	etiqueta: string;
+}) {
+	const fondo =
+		color === "exito"
+			? "bg-exito"
+			: color === "peligro"
+				? "bg-peligro"
+				: color === "advertencia"
+					? "bg-advertencia"
+					: color === "info"
+						? "bg-info"
+						: "bg-black/25";
+	return (
+		<span className="inline-flex items-center gap-1.5 text-[12px] text-black/70">
+			<span className={`size-1.5 shrink-0 rounded-full ${fondo}`} aria-hidden />
+			{etiqueta}
+		</span>
+	);
+}
+
+/**
+ * Fila de skeleton que imita la estructura de una tabla.
+ * Se pinta mientras carga; reemplaza al spinner genérico.
+ */
+export function SkeletonFila({ columnas = 4 }: { columnas?: number }) {
+	return (
+		<div className="flex items-center gap-4 border-b border-black/5 px-3 py-2.5">
+			{Array.from({ length: columnas }, (_, i) => (
+				<div
+					key={i}
+					className={`h-3 animate-pulse rounded bg-black/[.06] ${
+						i === 0 ? "w-32" : i === columnas - 1 ? "ml-auto w-16" : "flex-1"
+					}`}
+				/>
+			))}
+		</div>
+	);
+}
+
+/**
+ * Encabezado de sección del panel.
+ * Sentence case (nunca uppercase en headings del dashboard).
  */
 export function SeccionAdmin({
 	titulo,
@@ -50,19 +94,18 @@ export function SeccionAdmin({
 	children: ReactNode;
 }) {
 	return (
-		<section className="mt-10 first:mt-0">
-			<h2 className="text-sm font-semibold uppercase tracking-wide text-black/50">
-				{titulo}
-			</h2>
-			{descripcion && <p className="mt-1 text-xs text-black/55">{descripcion}</p>}
+		<section className="mt-6 first:mt-0">
+			<h2 className="text-[15px] font-medium leading-tight text-black">{titulo}</h2>
+			{descripcion && (
+				<p className="mt-0.5 text-[12px] leading-snug text-black/50">{descripcion}</p>
+			)}
 			{children}
 		</section>
 	);
 }
 
 /**
- * Pila de avisos de una sección: error de una acción, éxito de la
- * última acción y error de la carga. Si no hay nada, no pinta nada.
+ * Pila de avisos de una sección.
  */
 export function AvisosSeccion({
 	accion,
@@ -75,7 +118,7 @@ export function AvisosSeccion({
 }) {
 	if (!accion && !exito && !carga) return null;
 	return (
-		<div className="mt-2 space-y-2">
+		<div className="mt-2 space-y-1.5">
 			{accion && <Aviso tono="error">{accion}</Aviso>}
 			{exito && <Aviso tono="ok">{exito}</Aviso>}
 			{carga && <Aviso tono="error">{carga}</Aviso>}
@@ -84,24 +127,27 @@ export function AvisosSeccion({
 }
 
 /**
- * Estado de una lista: mientras carga muestra el spinner; si terminó
- * vacía, el mensaje de vacío; si hay datos, pinta a los hijos.
+ * Estado de una lista: skeleton mientras carga, vacío si no hay datos.
  */
 export function BloqueEstado({
 	cargando,
 	vacio,
 	vacioTitulo,
+	skeletonColumnas = 4,
 	children,
 }: {
 	cargando: boolean;
 	vacio?: boolean;
 	vacioTitulo?: string;
+	skeletonColumnas?: number;
 	children: ReactNode;
 }) {
 	if (cargando) {
 		return (
-			<div className="mt-3">
-				<Cargando />
+			<div className="mt-3 overflow-hidden rounded-lg border border-black/10 bg-white">
+				{Array.from({ length: 5 }, (_, i) => (
+					<SkeletonFila key={i} columnas={skeletonColumnas} />
+				))}
 			</div>
 		);
 	}
@@ -116,19 +162,94 @@ export function BloqueEstado({
 }
 
 /**
- * Ventana flotante para crear/editar (Zonas, Categorías y Textos).
- *
- * Mismo patrón que la ventana de turismo del home: capa trasera, vidrio,
- * Escape y fondo sin scroll — pero el cierre por clic FUERA no está
- * puesto a propósito: detrás hay un formulario a medio llenar y un
- * clic suelto no debe tirarlo. Se cierra con la ✕, con Escape o con
- * Cancelar.
- *
- * El listener de Escape se registra UNA sola vez por apertura (deps
- * solo [abierto]) y llama a onCerrar a través de un ref: si el effect
- * dependiera de la función, se re-registraría en cada render y
- * panel.focus() robaría el foco del input con cada tecla. Al cerrar,
- * el foco vuelve al botón que abrió la ventana.
+ * Envoltorio de tabla densa: overflow-x, borde, fondo blanco.
+ * La thead sticky se pone dentro, en cada tabla.
+ */
+export function TablaDensa({ children }: { children: ReactNode }) {
+	return (
+		<div className="mt-3 overflow-x-auto rounded-lg border border-black/10 bg-white">
+			{children}
+		</div>
+	);
+}
+
+/**
+ * Fila de tabla con hover sutil (80ms, sin translate).
+ */
+export function FilaTabla({
+	children,
+	onAccion,
+}: {
+	children: ReactNode;
+	onAccion?: () => void;
+}) {
+	return (
+		<tr
+			onClick={onAccion}
+			className={`border-b border-black/5 transition-colors last:border-b-0 hover:bg-black/[.03] ${
+				onAccion ? "cursor-pointer" : ""
+			}`}
+		>
+			{children}
+		</tr>
+	);
+}
+
+/**
+ * Celda de tabla: px-3 py-2, 13px.
+ * `num` alinea a la derecha y activa tabular-nums.
+ * `mono` usa la fuente monoespaciada para IDs / timestamps.
+ */
+export function CeldaTabla({
+	children,
+	num,
+	mono,
+	className = "",
+}: {
+	children: ReactNode;
+	num?: boolean;
+	mono?: boolean;
+	className?: string;
+}) {
+	return (
+		<td
+			className={`px-3 py-2 text-[13px] leading-snug ${
+				num ? "text-right tabular" : ""
+			} ${mono ? "font-mono text-[12px] text-black/60" : ""} ${className}`}
+		>
+			{children}
+		</td>
+	);
+}
+
+/**
+ * Encabezado de columna: sentence case, 500, secondary color.
+ * Nunca uppercase (regla del skill).
+ */
+export function ThDensa({
+	children,
+	num,
+	className = "",
+}: {
+	children: ReactNode;
+	num?: boolean;
+	className?: string;
+}) {
+	return (
+		<th
+			scope="col"
+			className={`px-3 py-2 text-[12px] font-medium text-black/50 ${
+				num ? "text-right" : "text-left"
+			} ${className}`}
+		>
+			{children}
+		</th>
+	);
+}
+
+/**
+ * Ventana flotante para crear/editar.
+ * Radio 8px, sin glass, sin sombra pesada.
  */
 export function VentanaAdmin({
 	abierto,
@@ -172,24 +293,24 @@ export function VentanaAdmin({
 	if (!abierto) return null;
 
 	return (
-		<div className="fixed inset-0 z-[900] flex items-end justify-center bg-black/45 p-4 backdrop-blur-[2px] sm:items-center">
+		<div className="fixed inset-0 z-[900] flex items-end justify-center bg-black/40 p-4 sm:items-center">
 			<div
 				ref={panel}
 				role="dialog"
 				aria-modal="true"
 				aria-label={titulo}
 				tabIndex={-1}
-				className={`ventana-flotante glass max-h-[85vh] w-full overflow-y-auto rounded-3xl outline-none ${
+				className={`max-h-[85vh] w-full overflow-y-auto rounded-lg border border-black/10 bg-white outline-none ${
 					ancho === "ancho" ? "max-w-2xl" : "max-w-lg"
 				}`}
 			>
-				<div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-black/10 bg-white/70 px-4 py-3 backdrop-blur">
-					<h3 className="font-display text-base font-semibold">{titulo}</h3>
+				<div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-black/10 bg-white px-4 py-2.5">
+					<h3 className="text-[15px] font-medium">{titulo}</h3>
 					<button
 						type="button"
 						onClick={onCerrar}
 						aria-label="Cerrar ventana"
-						className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/85 text-ink shadow-float hover:bg-white"
+						className="flex size-7 shrink-0 items-center justify-center rounded-md text-black/50 transition-colors hover:bg-black/[.05] hover:text-black"
 					>
 						✕
 					</button>

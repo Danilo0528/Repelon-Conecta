@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { BTN_PRIMARIO, BTN_SECUNDARIO } from "./ui-admin";
+import { BTN_PRIMARIO, BTN_SECUNDARIO, INPUT } from "./ui-admin";
 
 /*
  * Imagen por URL: pegan un enlace (Drive, Cloudinary, la web del
@@ -88,7 +88,7 @@ export function CampoUrlImagen({
 				onChange={(e) => setTexto(e.target.value)}
 				placeholder="https://…/foto.jpg"
 				aria-label={`URL (${etiqueta})`}
-				className="min-h-12 min-w-0 flex-1 rounded-xl border border-black/15 px-3 py-2 text-sm"
+				className={`${INPUT} min-w-0 flex-1`}
 			/>
 			<button type="submit" disabled={guardando} className={BTN_PRIMARIO}>
 				{guardando

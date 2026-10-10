@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Cargando } from "@/components/ui";
 import { api, apiConSesion } from "@/lib/api";
 import { TEXTO_INICIO, type ClaveTextoInicio } from "@/lib/inicio";
 import { useDatos } from "@/lib/useDatos";
@@ -111,19 +110,22 @@ export function SeccionTextosInicio() {
 			{!ventana && avisos}
 
 			{cargando ? (
-				<div className="mt-3">
-					<Cargando />
+				<div className="mt-3 space-y-2">
+					{Array.from({ length: 4 }, (_, i) => (
+						<div key={i} className="rounded-lg border border-black/10 bg-white p-4">
+							<div className="h-2.5 w-20 animate-pulse rounded bg-black/[.06]" />
+							<div className="mt-2 h-3.5 w-3/4 animate-pulse rounded bg-black/[.06]" />
+						</div>
+					))}
 				</div>
 			) : (
 				<>
 					{/* Vista previa de lo que el público ve hoy. */}
-					<dl className="mt-3 space-y-2">
+					<dl className="mt-3 grid gap-2 sm:grid-cols-2">
 						{CAMPOS.map(({ clave, etiqueta }) => (
 							<div key={clave} className={TARJETA}>
-								<dt className="text-[11px] font-semibold uppercase tracking-wide text-black/45">
-									{etiqueta}
-								</dt>
-								<dd className="truncate text-sm">{valor(clave)}</dd>
+								<dt className="text-[11px] font-medium text-black/45">{etiqueta}</dt>
+								<dd className="truncate text-[13px]">{valor(clave)}</dd>
 							</div>
 						))}
 					</dl>

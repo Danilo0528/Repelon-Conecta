@@ -3,25 +3,27 @@
 import { useState } from "react";
 
 import { apiConSesion } from "@/lib/api";
-import { CLASE_ESTADO, ETIQUETA_ESTADO, fecha, pesos } from "@/lib/format";
+import { ETIQUETA_ESTADO, fecha, pesos } from "@/lib/format";
 import type { EstadoPedido, Pedido, PedidoDetalle } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 import {
 	AvisosSeccion,
 	BloqueEstado,
 	BTN_SECUNDARIO,
+	CeldaTabla,
+	FilaTabla,
 	INPUT,
+	PuntoEstado,
 	SeccionAdmin,
-	TARJETA,
+	TablaDensa,
+	ThDensa,
 } from "./ui-admin";
 
 /*
- * Sección "Pedidos" del panel (P2, fila 11).
+ * Sección "Pedidos" — dense table.
  *
- * El listado es global (toda la plataforma) y los filtros corren en el
- * navegador: son dos o tres clics, no una consulta por tecla. Anular
- * va por el mismo cancelar del backend, así que devuelve el stock y
- * respeta los estados finales (lo entregado o en camino no se anula).
+ * Tabla densa con sticky thead, status dots (no pills), números con
+ * tabular-nums, fechas en mono, skeleton rows al cargar.
  */
 
 const ESTADOS: EstadoPedido[] = [
@@ -35,6 +37,16 @@ const ESTADOS: EstadoPedido[] = [
 
 /** Mismas reglas que el backend: solo se anula antes de salir. */
 const ANULABLES: EstadoPedido[] = ["PEDIDO_RECIBIDO", "EN_PREPARACION"];
+
+/** Color semántico del dot según estado. */
+const COLOR_ESTADO: Record<EstadoPedido, "info" | "exito" | "peligro" | "neutro"> = {
+	PEDIDO_RECIBIDO: "info",
+	EN_PREPARACION: "info",
+	EN_CAMINO: "exito",
+	ENTREGADO: "exito",
+	CANCELADO: "neutro",
+	RECHAZADO: "peligro",
+};
 
 export function SeccionPedidos() {
 	const {
@@ -90,20 +102,22 @@ export function SeccionPedidos() {
 		>
 			<AvisosSeccion accion={errorAccion} carga={error} />
 
+			{/* Toolbar: ghost controls, h-9, gap-2. */}
 			<div className="mt-3 flex flex-wrap items-center gap-2">
 				<input
 					type="search"
 					value={texto}
 					onChange={(e) => setTexto(e.target.value)}
 					placeholder="Filtrar por número o negocio"
-					className={`${INPUT} w-full sm:w-auto sm:flex-1`}
+					aria-label="Filtrar pedidos"
+					className={`${INPUT} w-full sm:w-64`}
 				/>
-				<label className="text-xs text-black/55">
+				<label className="text-[12px] text-black/50">
 					<span className="sr-only">Filtrar por estado</span>
 					<select
 						value={estado}
 						onChange={(e) => setEstado(e.target.value as EstadoPedido | "TODOS")}
-						className="min-h-12 rounded-xl border border-black/15 px-3 py-2 text-sm"
+						className={`${INPUT} w-auto`}
 					>
 						<option value="TODOS">Todos los estados</option>
 						{ESTADOS.map((e) => (
@@ -113,56 +127,75 @@ export function SeccionPedidos() {
 						))}
 					</select>
 				</label>
+				{filtrados.length < (datos ?? []).length && (
+					<span className="text-[12px] text-black/40">
+						<span className="tabular">{filtrados.length}</span> de{" "}
+						<span className="tabular">{(datos ?? []).length}</span>
+					</span>
+				)}
 			</div>
 
 			<BloqueEstado
 				cargando={cargando}
 				vacio={(datos ?? []).length === 0}
 				vacioTitulo="Todavía no hay pedidos"
+				skeletonColumnas={5}
 			>
 				{filtrados.length === 0 ? (
-					<p className="mt-3 text-sm text-black/55">
+					<p className="mt-3 text-[13px] text-black/50">
 						Ningún pedido coincide con el filtro.
 					</p>
 				) : (
-					<ul className="mt-3 space-y-2">
-						{filtrados.map((p) => (
-							<li
-								key={p.id}
-								className={`${TARJETA} sm:flex sm:items-center sm:justify-between sm:gap-3`}
-							>
-								<div className="min-w-0">
-									<p className="flex flex-wrap items-center gap-2 font-semibold">
-										<span className="font-mono text-sm">{p.numero}</span>
-										<span
-											className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${CLASE_ESTADO[p.estado]}`}
-										>
-											{p.estadoEtiqueta ?? ETIQUETA_ESTADO[p.estado]}
-										</span>
-									</p>
-									<p className="truncate text-xs text-black/55">
-										{p.negocioNombre} · {p.cantidadItems}{" "}
-										{p.cantidadItems === 1 ? "producto" : "productos"} ·{" "}
-										{fecha(p.creadoEn)}
-									</p>
-								</div>
-
-								<div className="mt-2 flex items-center gap-3 sm:mt-0">
-									<span className="font-bold">{pesos(p.total)}</span>
-									{ANULABLES.includes(p.estado) && (
-										<button
-											type="button"
-											disabled={anulando === p.id}
-											onClick={() => void anular(p)}
-											className={BTN_SECUNDARIO}
-										>
-											{anulando === p.id ? "Anulando…" : "Anular"}
-										</button>
-									)}
-								</div>
-							</li>
-						))}
-					</ul>
+					<TablaDensa>
+						<table className="w-full min-w-[640px] border-collapse">
+							<thead className="sticky top-0 z-10 bg-white">
+								<tr className="border-b border-black/10">
+									<ThDensa>Número</ThDensa>
+									<ThDensa>Estado</ThDensa>
+									<ThDensa>Negocio</ThDensa>
+									<ThDensa num>Items</ThDensa>
+									<ThDensa num>Total</ThDensa>
+									<ThDensa>Fecha</ThDensa>
+									<ThDensa className="text-right">Acción</ThDensa>
+								</tr>
+							</thead>
+							<tbody>
+								{filtrados.map((p) => (
+									<FilaTabla key={p.id}>
+										<CeldaTabla mono>{p.numero}</CeldaTabla>
+										<CeldaTabla>
+											<PuntoEstado
+												color={COLOR_ESTADO[p.estado]}
+												etiqueta={p.estadoEtiqueta ?? ETIQUETA_ESTADO[p.estado]}
+											/>
+										</CeldaTabla>
+										<CeldaTabla className="max-w-[180px] truncate">
+											{p.negocioNombre}
+										</CeldaTabla>
+										<CeldaTabla num>{p.cantidadItems}</CeldaTabla>
+										<CeldaTabla num className="font-medium">
+											{pesos(p.total)}
+										</CeldaTabla>
+										<CeldaTabla mono>{fecha(p.creadoEn)}</CeldaTabla>
+										<CeldaTabla className="text-right">
+											{ANULABLES.includes(p.estado) ? (
+												<button
+													type="button"
+													disabled={anulando === p.id}
+													onClick={() => void anular(p)}
+													className={BTN_SECUNDARIO}
+												>
+													{anulando === p.id ? "Anulando…" : "Anular"}
+												</button>
+											) : (
+												<span className="text-[12px] text-black/25">—</span>
+											)}
+										</CeldaTabla>
+									</FilaTabla>
+								))}
+							</tbody>
+						</table>
+					</TablaDensa>
 				)}
 			</BloqueEstado>
 		</SeccionAdmin>

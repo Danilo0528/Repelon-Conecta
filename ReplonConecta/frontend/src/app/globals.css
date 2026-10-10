@@ -21,6 +21,7 @@
 @theme {
 	--font-display: var(--font-fraunces);
 	--font-sans: var(--font-manrope);
+	--font-mono: var(--font-plex-mono);
 
 	/* Bandera de Repelón: azul profundo, amarillo cálido y verde vivo. */
 	--color-verde: #16834b;
@@ -34,6 +35,17 @@
 	--color-muted-foreground: #5f7180;
 	--color-glass: #ffffff;
 	--color-background: #f8fbfa;
+
+	/*
+	 * Paleta semántica para el panel denso (dense dashboard).
+	 * OKLCH subduado: L 50-60, chroma ≤ 0.15 — pantallas de 8 horas
+	 * no pueden gritar. Los dots y textos de estado usan estos; los
+	 * fondos quedan neutros.
+	 */
+	--color-exito: oklch(60% 0.12 150);
+	--color-advertencia: oklch(72% 0.13 75);
+	--color-peligro: oklch(58% 0.15 25);
+	--color-info: oklch(62% 0.12 240);
 
 	--color-blob-1: #d7f0df;
 	--color-blob-2: #dcecf8;
@@ -94,6 +106,15 @@ body {
 
 @utility shadow-leaf {
 	box-shadow: var(--shadow-leaf);
+}
+
+/*
+ * Numeración tabular: cifras alineadas en columna, cero tachado.
+ * Regla del skill dense-dashboard: en cada columna numérica, métrica,
+ * timestamp y ID.
+ */
+@utility tabular {
+	font-variant-numeric: tabular-nums slashed-zero;
 }
 
 /* Sello de marca: azul del río, amarillo del sol y verde del campo. */
