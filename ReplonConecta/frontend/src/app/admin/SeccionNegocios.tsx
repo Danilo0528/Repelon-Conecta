@@ -375,14 +375,14 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 					{filtrados.map((n) => (
 						<li key={n.id} className={TARJETA}>
 							<div className="flex items-start justify-between gap-2">
-								<div>
-									<p className="font-medium">{n.nombre}</p>
-									<p className="text-[12px] text-black/50">
+								<div className="min-w-0 flex-1">
+									<p className="truncate font-medium">{n.nombre}</p>
+									<p className="truncate text-[12px] text-black/50">
 										{n.barrio ?? "Repelón"} ·{" "}
 										<span className="tabular">{n.cantidadProductos}</span> productos ·{" "}
 										<span className="tabular">{n.pedidosRecibidos}</span> pedidos
 									</p>
-									<p className="text-[11px] text-black/40">
+									<p className="truncate text-[11px] text-black/40">
 										Dueño: {n.duenoNombre}{" "}
 										<span className="font-mono">({n.duenoEmail})</span> ·{" "}
 										<span className="font-mono">{fecha(n.creadoEn)}</span>
