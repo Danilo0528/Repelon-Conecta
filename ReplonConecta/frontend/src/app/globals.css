@@ -10,11 +10,12 @@
  * que respiran detrás del contenido y dos tipografías con oficio:
  *   - Fraunces (font-display): títulos y el nombre de la marca.
  *   - Manrope (font-sans):     todo lo demás.
+ *   - IBM Plex Mono (font-mono): IDs, fechas y cifras en el panel admin.
  *
- * Los colores de la versión vieja se conservan como alias porque las
- * pantallas que todavía no se rediseñaron los usan:
- *   - verde (#16A34A) = leaf: abierto, marca, activo.
- *   - azul  (#2563EB): agregar, confirmar, pedir.
+ * Paleta de marca (bandera de Repelón):
+ *   - verde / leaf (#16834b): abierto, marca, activo, WhatsApp.
+ *   - azul  (#124b82): CTA, confirmar, pedir, enlaces.
+ *   - amarillo (#f4c542): acento cálido.
  *
  * No hay modo oscuro: el mercado se usa a plena luz del día.
  */
@@ -63,7 +64,7 @@
 :root {
 	--shadow-glass: 0 18px 50px -25px rgba(23, 84, 52, 0.45);
 	--shadow-float: 0 30px 80px -30px rgba(23, 84, 52, 0.5);
-	--shadow-leaf: 0 12px 30px -10px rgba(22, 163, 74, 0.7);
+	--shadow-leaf: 0 12px 30px -10px rgba(22, 131, 75, 0.7);
 }
 
 html,
@@ -72,6 +73,11 @@ body {
 	padding: 0;
 	background: var(--color-background);
 	color: var(--color-ink);
+}
+
+/* El hero full-bleed (w-[100vw]) no debe generar scroll horizontal. */
+html {
+	overflow-x: hidden;
 }
 
 body {
@@ -117,48 +123,6 @@ body {
 	font-variant-numeric: tabular-nums slashed-zero;
 }
 
-/* Sello de marca: azul del río, amarillo del sol y verde del campo. */
-.brand-mark {
-	position: relative;
-	display: grid;
-	height: 2.25rem;
-	width: 2.25rem;
-	flex-shrink: 0;
-	place-items: center;
-	overflow: hidden;
-	border-radius: 0.75rem;
-	background: linear-gradient(145deg, var(--color-azul) 0 47%, var(--color-leaf) 47% 100%);
-	box-shadow: 0 8px 18px -8px rgba(18, 75, 130, 0.65);
-}
-
-.brand-mark::after {
-	position: absolute;
-	inset: auto 0 0;
-	height: 0.24rem;
-	background: var(--color-amarillo);
-	content: "";
-}
-
-.brand-mark__sun {
-	position: absolute;
-	top: 0.35rem;
-	right: 0.35rem;
-	height: 0.4rem;
-	width: 0.4rem;
-	border-radius: 999px;
-	background: var(--color-amarillo);
-}
-
-.brand-mark__letter {
-	position: relative;
-	z-index: 1;
-	font-family: var(--font-display);
-	font-size: 1.2rem;
-	font-weight: 700;
-	line-height: 1;
-	color: white;
-}
-
 /* ====================================================================
  * Ventana flotante de turismo: la info de un lugar al presionar su
  * ficha, estilo botón flotante (sube desde abajo en el celular)
@@ -193,75 +157,7 @@ body {
 	}
 }
 
-@keyframes floaty {
-	0%,
-	100% {
-		transform: translateY(0);
-	}
-	50% {
-		transform: translateY(-16px);
-	}
-}
-
 @utility animate-drift {
 	animation: drift 20s ease-in-out infinite;
 }
 
-@utility animate-floaty {
-	animation: floaty 6s ease-in-out infinite;
-}
-
-/*
- * El mapa tapaba la barra de destinos.
- *
- * Leaflet pinta sus capas (teselas 200, pines 600, globos 650) con
- * z-index dentro del contenedor, pero ese contenedor NO crea contexto de
- * apilamiento, así que esos números se fugaban al resto del documento y
- * quedaban por encima de la barra y de las tarjetas. Aislar el
- * contenedor devuelve esas capas al mapa y deja que lo que va encima se
- * dibuje encima de verdad.
- */
-.leaflet-container {
-	isolation: isolate;
-	font-family: var(--font-sans);
-	background: var(--color-mist);
-}
-
-/*
- * Globo que aparece al pasar sobre un pin: el nombre del negocio y si
- * está abierto. Es lo que se sabe antes de tocar: pasar el dedo por ahí
- * y ver qué tienda es.
- */
-.leaflet-tooltip.tooltip-negocio {
-	border: 1px solid rgba(0, 0, 0, 0.08);
-	border-radius: 12px;
-	padding: 6px 10px;
-	font-size: 12px;
-	line-height: 1.3;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-}
-
-.tooltip-negocio .tn-nombre {
-	display: block;
-	font-family: var(--font-display);
-	font-weight: 700;
-	color: var(--color-ink);
-}
-
-.tooltip-negocio .tn-fila {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-	color: var(--color-muted-foreground);
-}
-
-.tooltip-negocio .tn-punto {
-	width: 7px;
-	height: 7px;
-	border-radius: 999px;
-	background: #6b7280;
-}
-
-.tooltip-negocio .tn-punto.abierto {
-	background: var(--color-leaf);
-}

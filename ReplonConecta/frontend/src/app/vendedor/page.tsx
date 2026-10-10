@@ -50,8 +50,10 @@ export default function PanelVendedor() {
 	}
 
 	return (
-		<div className="px-4 pt-4">
-			<h1 className="text-xl font-bold">Mi negocio</h1>
+		<div className="px-4 pt-6">
+			<h1 className="font-display text-2xl font-semibold text-ink">
+				Mi negocio
+			</h1>
 
 			{error && (
 				<div className="mt-3">
@@ -59,8 +61,6 @@ export default function PanelVendedor() {
 				</div>
 			)}
 
-			{/* En PC los negocios salen en dos columnas; en móvil, uno
-			    debajo del otro como siempre. */}
 			{(negocios ?? []).length === 0 && !cargando ? (
 				<>
 					<Vacio
@@ -70,7 +70,7 @@ export default function PanelVendedor() {
 					<FormularioNegocio onCreado={alCrear} />
 				</>
 			) : (
-				<ul className="mt-3 grid gap-4 md:grid-cols-2">
+				<ul className="mt-4 grid gap-4 md:grid-cols-2">
 					{(negocios ?? []).map((n) => (
 						<TarjetaNegocio key={n.id} negocio={n} />
 					))}
@@ -120,8 +120,8 @@ function TarjetaNegocio({ negocio }: { negocio: Negocio }) {
 		<li className="rounded-2xl border border-black/10 p-4">
 			<div className="flex items-start justify-between gap-2">
 				<div className="min-w-0">
-					<p className="font-semibold leading-tight">{negocio.nombre}</p>
-					<p className="text-xs text-black/55">
+					<p className="font-semibold leading-tight text-ink">{negocio.nombre}</p>
+					<p className="text-xs text-muted-foreground">
 						{negocio.barrio ?? "Repelón"} · {negocio.cantidadProductos} productos
 					</p>
 				</div>
@@ -166,11 +166,14 @@ function TarjetaNegocio({ negocio }: { negocio: Negocio }) {
 function Cifra({ etiqueta, valor }: { etiqueta: string; valor: string }) {
 	return (
 		<div className="rounded-xl bg-black/[.04] px-2 py-2">
-			<p className="text-base font-bold">{valor}</p>
-			<p className="text-[11px] text-black/55">{etiqueta}</p>
+			<p className="text-base font-bold tabular-nums text-ink">{valor}</p>
+			<p className="text-[11px] text-muted-foreground">{etiqueta}</p>
 		</div>
 	);
 }
+
+const CLASE_INPUT =
+	"w-full min-h-12 rounded-xl border border-black/15 px-3 py-3 text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2";
 
 function FormularioNegocio({
 	onCreado,
@@ -224,53 +227,72 @@ function FormularioNegocio({
 	return (
 		<form
 			onSubmit={crear}
-			className="space-y-2 rounded-2xl border border-black/10 p-4 md:max-w-2xl"
+			className="space-y-3 rounded-2xl border border-black/10 p-4 md:max-w-2xl"
 		>
-			<h2 className="font-semibold">Crear mi negocio</h2>
+			<h2 className="font-semibold text-ink">Crear mi negocio</h2>
 			{error && <Aviso tono="error">{error}</Aviso>}
 
-			<input
-				value={nombre}
-				onChange={(e) => setNombre(e.target.value)}
-				placeholder="Nombre del negocio"
-				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
-			/>
-			<textarea
-				value={descripcion}
-				onChange={(e) => setDescripcion(e.target.value)}
-				rows={2}
-				placeholder="¿Qué vendes?"
-				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
-			/>
-			<input
-				value={direccion}
-				onChange={(e) => setDireccion(e.target.value)}
-				placeholder="Dirección"
-				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
-			/>
-			<div className="flex gap-2">
+			<label className="block">
+				<span className="sr-only">Nombre del negocio</span>
 				<input
-					value={barrio}
-					onChange={(e) => setBarrio(e.target.value)}
-					placeholder="Barrio"
-					className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+					value={nombre}
+					onChange={(e) => setNombre(e.target.value)}
+					placeholder="Nombre del negocio"
+					className={CLASE_INPUT}
 				/>
+			</label>
+			<label className="block">
+				<span className="sr-only">Descripción</span>
+				<textarea
+					value={descripcion}
+					onChange={(e) => setDescripcion(e.target.value)}
+					rows={2}
+					placeholder="¿Qué vendes?"
+					className={`${CLASE_INPUT} min-h-[auto]`}
+				/>
+			</label>
+			<label className="block">
+				<span className="sr-only">Dirección</span>
 				<input
-					value={whatsapp}
-					onChange={(e) => setWhatsapp(e.target.value)}
-					placeholder="WhatsApp (300 000 0000)"
-					className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+					value={direccion}
+					onChange={(e) => setDireccion(e.target.value)}
+					placeholder="Dirección"
+					className={CLASE_INPUT}
 				/>
+			</label>
+			{/* En móvil uno debajo del otro; en PC comparten fila. */}
+			<div className="flex flex-col gap-3 sm:flex-row">
+				<label className="block flex-1">
+					<span className="sr-only">Barrio</span>
+					<input
+						value={barrio}
+						onChange={(e) => setBarrio(e.target.value)}
+						placeholder="Barrio"
+						className={CLASE_INPUT}
+					/>
+				</label>
+				<label className="block flex-1">
+					<span className="sr-only">WhatsApp</span>
+					<input
+						value={whatsapp}
+						onChange={(e) => setWhatsapp(e.target.value)}
+						placeholder="WhatsApp (300 000 0000)"
+						className={CLASE_INPUT}
+					/>
+				</label>
 			</div>
-			<input
-				value={referencia}
-				onChange={(e) => setReferencia(e.target.value)}
-				placeholder="Referencia (ej. frente a la plaza)"
-				className="w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
-			/>
+			<label className="block">
+				<span className="sr-only">Referencia</span>
+				<input
+					value={referencia}
+					onChange={(e) => setReferencia(e.target.value)}
+					placeholder="Referencia (ej. frente a la plaza)"
+					className={CLASE_INPUT}
+				/>
+			</label>
 
 			<div>
-				<p className="mb-1 text-xs font-medium text-black/55">
+				<p className="mb-1 text-xs font-medium text-muted-foreground">
 					Marca tu ubicación en el mapa
 				</p>
 				<MapaSelector
@@ -282,17 +304,13 @@ function FormularioNegocio({
 					}}
 				/>
 				{lat != null && lng != null && (
-					<p className="mt-1 text-xs font-medium text-verde">
+					<p className="mt-1 text-xs font-medium text-leaf">
 						Ubicación lista: {lat.toFixed(5)}, {lng.toFixed(5)}
 					</p>
 				)}
 			</div>
 
-			<button
-				type="submit"
-				disabled={enviando}
-				className={CLASE_BOTON_AZUL}
-			>
+			<button type="submit" disabled={enviando} className={CLASE_BOTON_AZUL}>
 				{enviando ? "Creando…" : "Crear negocio"}
 			</button>
 		</form>

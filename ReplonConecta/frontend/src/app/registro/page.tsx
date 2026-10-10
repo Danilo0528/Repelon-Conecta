@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Aviso } from "@/components/ui";
+import { Aviso, CLASE_BOTON_AZUL } from "@/components/ui";
 import { useSesion } from "@/context/SesionContext";
 
 export default function Registro() {
@@ -51,21 +51,19 @@ export default function Registro() {
 				<Aviso tono="ok">
 					Creamos tu cuenta. Revisa tu correo y confirma para poder entrar.
 				</Aviso>
-				<Link
-					href="/entrar"
-					className="mt-4 block w-full rounded-xl bg-azul py-3 text-center font-semibold text-white"
-				>
+				<Link href="/entrar" className={`${CLASE_BOTON_AZUL} mt-4`}>
 					Ir a entrar
 				</Link>
 			</div>
 		);
 	}
 
-	// En PC el formulario se centra; en móvil ocupa la pantalla.
 	return (
 		<div className="px-4 pt-6 md:mx-auto md:max-w-md">
-			<h1 className="text-2xl font-bold">Crear cuenta</h1>
-			<p className="mt-1 text-sm text-black/60">
+			<h1 className="font-display text-2xl font-semibold text-ink">
+				Crear cuenta
+			</h1>
+			<p className="mt-1 text-sm text-muted-foreground">
 				Con tu cuenta puedes pedir y también vender.
 			</p>
 
@@ -77,28 +75,28 @@ export default function Registro() {
 
 			<form onSubmit={enviar} className="mt-5 space-y-3">
 				<label className="block">
-					<span className="text-sm font-medium">Nombre</span>
+					<span className="text-sm font-medium text-ink">Nombre</span>
 					<input
 						required
 						value={nombre}
 						onChange={(e) => setNombre(e.target.value)}
 						autoComplete="name"
-						className="mt-1 w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+						className="mt-1 w-full min-h-12 rounded-xl border border-black/15 px-3 py-3 text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
 					/>
 				</label>
 				<label className="block">
-					<span className="text-sm font-medium">Correo</span>
+					<span className="text-sm font-medium text-ink">Correo</span>
 					<input
 						type="email"
 						required
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						autoComplete="email"
-						className="mt-1 w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+						className="mt-1 w-full min-h-12 rounded-xl border border-black/15 px-3 py-3 text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
 					/>
 				</label>
 				<label className="block">
-					<span className="text-sm font-medium">Clave</span>
+					<span className="text-sm font-medium text-ink">Clave</span>
 					<input
 						type="password"
 						required
@@ -106,21 +104,19 @@ export default function Registro() {
 						value={clave}
 						onChange={(e) => setClave(e.target.value)}
 						autoComplete="new-password"
-						className="mt-1 w-full rounded-xl border border-black/15 px-3 py-3 outline-none focus:border-azul"
+						className="mt-1 w-full min-h-12 rounded-xl border border-black/15 px-3 py-3 text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
 					/>
-					<span className="mt-1 block text-xs text-black/50">Mínimo 6 caracteres.</span>
+					<span className="mt-1 block text-xs text-muted-foreground">
+						Mínimo 6 caracteres.
+					</span>
 				</label>
 
-				<button
-					type="submit"
-					disabled={enviando}
-					className="w-full rounded-xl bg-azul py-3 font-semibold text-white disabled:opacity-60"
-				>
+				<button type="submit" disabled={enviando} className={CLASE_BOTON_AZUL}>
 					{enviando ? "Creando cuenta…" : "Crear cuenta"}
 				</button>
 			</form>
 
-			<p className="mt-4 text-center text-sm text-black/60">
+			<p className="mt-4 text-center text-sm text-muted-foreground">
 				¿Ya tienes cuenta?{" "}
 				<Link href="/entrar" className="font-medium text-azul">
 					Entrar

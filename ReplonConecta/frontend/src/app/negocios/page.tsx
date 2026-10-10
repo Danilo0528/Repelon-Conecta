@@ -18,11 +18,6 @@ import { useDatos } from "@/lib/useDatos";
  * mucho mejor en una rejilla. Las dos pantallas leen el mismo endpoint
  * con los mismos filtros, de modo que el resultado es el conjunto
  * completo y no un subconjunto distinto.
- *
- * La rejilla es de rejilla y no un feed: cada tarjeta es una foto,
- * un nombre y un dato, en ese orden de peso. Nada de sombra gruesa ni de
- * texto secundario; si un dato no cabe, no cabe. Son dos columnas en
- * móvil y crece hasta cuatro en PC, que es donde el ancho sobra.
  */
 export default function ListaNegocios() {
 	const [texto, setTexto] = useState("");
@@ -46,12 +41,6 @@ export default function ListaNegocios() {
 	const hayFiltros =
 		texto.trim() !== "" || categoriaId != null || barrio !== "" || soloAbiertos;
 
-	/*
-	 * La pista de la categoría vacía: si el filtro elegido es turismo
-	 * (que no tiene productos con precio) se explica el porqué en vez
-	 * de dejar un vacío mudo. Cualquier otro filtro vacío sigue con el
-	 * mensaje genérico de siempre.
-	 */
 	const categoriaActual = (categorias.datos ?? []).find((c) => c.id === categoriaId);
 	const pista = categoriaActual ? PISTA_SIN_PRODUCTOS[categoriaActual.slug] : undefined;
 
@@ -64,9 +53,11 @@ export default function ListaNegocios() {
 	}
 
 	return (
-		<div className="px-4 pt-4">
+		<div className="px-4 pt-6">
 			<div className="flex items-baseline justify-between gap-2">
-				<h1 className="text-xl font-bold">Negocios en Repelón</h1>
+				<h1 className="font-display text-2xl font-semibold text-ink">
+					Negocios en Repelón
+				</h1>
 				<Link href="/" className="shrink-0 text-sm font-medium text-azul">
 					Ver mapa
 				</Link>
@@ -77,7 +68,7 @@ export default function ListaNegocios() {
 				value={texto}
 				onChange={(e) => setTexto(e.target.value)}
 				placeholder="Busca yuca, pescado, mojarra…"
-				className="mt-3 w-full rounded-xl border border-black/15 bg-white px-4 py-3 text-base outline-none focus:border-azul md:max-w-xl"
+				className="mt-4 w-full min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3 text-base text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 md:max-w-xl"
 				aria-label="Buscar negocios o productos"
 			/>
 
@@ -105,7 +96,7 @@ export default function ListaNegocios() {
 			<select
 				value={barrio}
 				onChange={(e) => setBarrio(e.target.value)}
-				className="mt-3 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-sm md:max-w-xs"
+				className="mt-3 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 md:max-w-xs"
 				aria-label="Filtrar por barrio"
 			>
 				<option value="">Todos los barrios</option>
@@ -137,7 +128,7 @@ export default function ListaNegocios() {
 								setBarrio("");
 								setSoloAbiertos(false);
 							}}
-							className="rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white"
+							className="min-h-12 rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-azul/90 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
 						>
 							Quitar filtros
 						</button>
@@ -150,7 +141,7 @@ export default function ListaNegocios() {
 					<li key={n.id}>
 						<Link
 							href={`/negocios/${n.slug}`}
-							className="flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 active:bg-black/[.03]"
+							className="flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 transition-colors hover:bg-black/[.02] active:bg-black/[.04]"
 						>
 							<Foto
 								src={fotoNegocio(n)}
@@ -158,10 +149,12 @@ export default function ListaNegocios() {
 								className="h-36 w-full"
 							/>
 							<div className="flex flex-1 flex-col p-3">
-								<p className="line-clamp-2 font-semibold leading-tight">{n.nombre}</p>
+								<p className="line-clamp-2 font-semibold leading-tight text-ink">
+									{n.nombre}
+								</p>
 								<div className="mt-auto pt-2">
 									<InsigniaAbierto abierto={n.abierto} />
-									<p className="mt-1.5 text-xs text-black/55">
+									<p className="mt-1.5 text-xs text-muted-foreground">
 										{n.barrio ?? "Repelón"} · {n.cantidadProductos} prod.
 									</p>
 								</div>

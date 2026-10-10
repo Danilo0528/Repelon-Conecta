@@ -277,7 +277,7 @@ export default function Inicio() {
 				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
 					<div className="max-w-2xl">
 						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
-							<span className="h-px w-8 bg-yellow-300" />
+							<span className="h-px w-8 bg-amarillo" />
 							Repelón, Atlántico
 						</div>
 						<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
@@ -287,7 +287,7 @@ export default function Inicio() {
 
 						<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
 							{T("inicio.hero.titulo1")}{" "}
-							<span className="italic text-yellow-300">
+							<span className="italic text-amarillo">
 								{T("inicio.hero.titulo2")}
 							</span>
 						</h1>
@@ -342,7 +342,7 @@ export default function Inicio() {
 									<div className="absolute inset-0 bg-[url('/img/hero-campo.png')] bg-cover bg-center" />
 									<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/65 to-transparent" />
 									<div className="absolute bottom-4 left-4 right-4 text-white">
-										<p className="text-xs font-semibold uppercase tracking-[0.16em] text-yellow-300">Historias que conectan</p>
+										<p className="text-xs font-semibold uppercase tracking-[0.16em] text-amarillo">Historias que conectan</p>
 										<p className="mt-1 font-display text-xl font-semibold">Tu negocio merece ser encontrado</p>
 									</div>
 								</div>
