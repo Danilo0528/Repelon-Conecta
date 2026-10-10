@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useCarrito } from "@/context/CarritoContext";
 import { COMPRAS_ACTIVAS } from "@/lib/compras";
 
+import BuscadorNav from "./BuscadorNav";
+
 /*
  * Cabecera de Repelón Conecta.
  *
@@ -113,7 +115,7 @@ export default function HeaderConecta() {
 
 	return (
 		<header className="sticky top-0 z-50 w-full px-4 pt-3 sm:px-6 lg:px-8">
-			<nav className="glass flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
+			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
 				<Link
 					href="/"
 					className="flex shrink-0 items-center gap-2"
@@ -148,6 +150,8 @@ export default function HeaderConecta() {
 						);
 					})}
 				</div>
+
+				<BuscadorNav />
 
 				<div className="ml-auto flex items-center gap-2">
 					<span aria-hidden className="hidden h-6 w-px bg-black/10 md:block" />

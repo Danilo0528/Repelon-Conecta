@@ -15,15 +15,15 @@ import { supabaseConfigurado } from "@/lib/env";
 import { conCoordenadas, useCoordenadas } from "@/lib/geocodificar";
 import { textoInicio } from "@/lib/inicio";
 import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
-import { enlaceComoLlegar } from "@/lib/maps";
+import { enlaceComoLlegar, enlaceRutaDesde } from "@/lib/maps";
 import type { Categoria, Negocio, ZonaTuristica } from "@/lib/tipos";
 import {
 	LUGARES_TURISMO,
-	enlaceLugar,
 	zonaALugar,
 	type LugarTuristico,
 	type MotivoTurismo,
 } from "@/lib/turismo";
+import { useUbicacion } from "@/lib/ubicacion";
 import { useDatos } from "@/lib/useDatos";
 
 /*
@@ -916,6 +916,8 @@ function VentanaLugar({
 		};
 	}, [onCerrar]);
 
+	const { origen, pidiendo, preguntado, pedir } = useUbicacion();
+
 	return (
 		<div
 			className="fixed inset-0 z-[900] flex items-end justify-center bg-black/45 p-4 backdrop-blur-[2px] sm:items-center"
@@ -997,8 +999,11 @@ function VentanaLugar({
 						<span>{lugar.direccion}</span>
 					</p>
 
+					{/* El origen de la ruta sale de la ubicación real si el
+					    visitante ya la compartió; si no, del centro del pueblo.
+					    El permiso se pide al pulsar, nunca al abrir la ficha. */}
 					<a
-						href={enlaceLugar(lugar)}
+						href={enlaceRutaDesde(origen.real ? origen : null, lugar)}
 						target="_blank"
 						rel="noreferrer"
 						className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white"
@@ -1006,8 +1011,35 @@ function VentanaLugar({
 						<svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden>
 							<path d="M12 2 4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
 						</svg>
-						Abrir en Google Maps
+						{origen.real ? "Cómo llegar desde aquí" : "Abrir en Google Maps"}
 					</a>
+
+					{/* Botón de permiso: solo aparece si aún no sabemos dónde
+					    está la persona. En cuanto lo sabemos, se apaga solo. */}
+					{!origen.real && !preguntado && (
+						<button
+							type="button"
+							onClick={pedir}
+							disabled={pidiendo}
+							className="mt-2 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:text-ink disabled:opacity-60"
+						>
+							<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+								<circle cx="12" cy="12" r="3.2" />
+								<circle cx="12" cy="12" r="7.5" />
+								<path d="M12 1.5v2.6M12 19.9v2.6M22.5 12h-2.6M4.1 12H1.5" strokeLinecap="round" />
+							</svg>
+							{pidiendo ? "Buscando tu ubicación…" : "Usar mi ubicación para la ruta"}
+						</button>
+					)}
+
+					{/* Si se denegó el permiso, el enlace de arriba ya salió igual
+					    desde el centro del pueblo: no hace falta insistir. */}
+					{!origen.real && preguntado && (
+						<p className="mt-2 text-center text-xs text-muted-foreground/80">
+							Ruta desde el centro del pueblo
+						</p>
+					)}
+
 					<button
 						type="button"
 						onClick={onCerrar}

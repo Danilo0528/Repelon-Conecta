@@ -66,6 +66,32 @@ export function enlaceGoogleMaps(n: {
 }
 
 /*
+ * Ruta DESDE la ubicación real de quien mira la pantalla.
+ *
+ * Es lo mismo que `enlaceGoogleMaps` pero con el origen cambiante: si ya
+ * sabemos dónde está la persona (useUbicacion) la ruta arranca en ese
+ * punto y no en el centro del pueblo. Sin origen conocido se cae al
+ * centro, que es el comportamiento de siempre.
+ *
+ * El destino con coordenadas gana sobre la dirección escrita, porque el
+ * punto exacto es lo que hace que la navegación llegue a la puerta.
+ */
+export function enlaceRutaDesde(
+	origen: { lat: number; lng: number } | null,
+	n: { latitud: number | null; longitud: number | null; direccion: string },
+): string {
+	const destino =
+		n.latitud != null && n.longitud != null
+			? `${n.latitud},${n.longitud}`
+			: direccionDe(n);
+	const desde =
+		origen != null
+			? `${origen.lat},${origen.lng}`
+			: `${CENTRO_REPELON.lat},${CENTRO_REPELON.lng}`;
+	return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(desde)}&destination=${encodeURIComponent(destino)}&travelmode=driving`;
+}
+
+/*
  * "Ver en OpenStreetMap": el negocio centrado en el mapa, sin ruta.
  * Con coordenadas abre el mapa en la ubicación; sin ellas, la búsqueda
  * de la dirección, que es donde OpenStreetMap deja el resultado.

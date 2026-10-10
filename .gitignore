@@ -40,3 +40,12 @@ Thumbs.db
 # Herramientas de agentes — no son parte del portafolio
 .archify/
 .scratch/
+
+# Skills de agentes. Son symlinks a rutas absolutas de esta maquina
+# (npx skills add creo .agents/skills con symlinks); si se versionan,
+# el clon de otra persona los recibe rotos.
+.agents/
+.claude/
+
+# ui-craft deja su configuracion y brief aqui
+.ui-craft/
