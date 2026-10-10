@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
 import { Chip, Foto, normalizarUrlImagen } from "@/components/ui";
 import { supabaseConfigurado } from "@/lib/env";
 import { api, apiConSesion } from "@/lib/api";
 import { fecha, pesos } from "@/lib/format";
 import { subirImagen } from "@/lib/subirImagen";
-import type { NegocioAdmin, NegocioDetalle, Producto } from "@/lib/tipos";
+import type { Categoria, NegocioAdmin, NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 import { CampoUrlImagen } from "./CampoUrlImagen";
 import { EditorUbicacion } from "./EditorUbicacion";
@@ -105,9 +105,23 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 	// Detalle completo del negocio en edición (descripción, tel, etc.).
 	const [detalle, setDetalle] = useState<NegocioDetalle | null>(null);
 
-	// Fotos del negocio en edición.
+	// Fotos y productos del negocio en edición.
 	const [subiendo, setSubiendo] = useState<string | null>(null);
 	const [productos, setProductos] = useState<Producto[]>([]);
+	const [categorias, setCategorias] = useState<Categoria[]>([]);
+
+	// Formulario de nuevo producto (dentro del modal de edición).
+	const [nuevoProd, setNuevoProd] = useState({
+		nombre: "",
+		precio: "",
+		unidad: "KILO",
+		descripcion: "",
+		categoriaId: "",
+		stock: "",
+		imagenUrl: "",
+	});
+	const [creandoProd, setCreandoProd] = useState(false);
+	const [mostrarFormProd, setMostrarFormProd] = useState(false);
 
 	const termino = texto.trim().toLocaleLowerCase("es");
 	const filtrados = (negocios ?? []).filter(
@@ -131,6 +145,9 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		setSubiendo(null);
 		setErrorAccion(null);
 		setAviso(null);
+		setNuevoProd({ nombre: "", precio: "", unidad: "KILO", descripcion: "", categoriaId: "", stock: "", imagenUrl: "" });
+		setMostrarFormProd(false);
+		setCreandoProd(false);
 	}
 
 	function abrirCrear() {
@@ -158,12 +175,14 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		setCargandoDetalle(true);
 		setErrorAccion(null);
 		try {
-			const [d, ps] = await Promise.all([
+			const [d, ps, cats] = await Promise.all([
 				api<NegocioDetalle>(`/api/negocios/slug/${n.slug}`),
 				api<Producto[]>(`/api/productos/negocio/${n.id}`),
+				api<Categoria[]>("/api/categorias"),
 			]);
 			setDetalle(d);
 			setProductos(ps);
+			setCategorias(cats.filter((c) => c.activa));
 			setForm({
 				nombre: d.nombre,
 				descripcion: d.descripcion ?? "",
@@ -361,6 +380,58 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 			body: cuerpoFotoProducto(p, imagenUrl),
 		});
 		setProductos((ps) => ps.map((x) => (x.id === p.id ? actualizado : x)));
+	}
+
+	// --- Crear y eliminar productos (solo en modo edición) ---
+
+	async function crearProducto(e: FormEvent) {
+		e.preventDefault();
+		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) return;
+		if (!modo) return;
+
+		setCreandoProd(true);
+		setErrorAccion(null);
+		try {
+			const precio = Math.round(Number(nuevoProd.precio) * 100);
+			if (!Number.isFinite(precio) || precio < 0) {
+				setErrorAccion("El precio debe ser un número positivo.");
+				return;
+			}
+			const cuerpo = JSON.stringify({
+				nombre: nuevoProd.nombre.trim(),
+				descripcion: nuevoProd.descripcion.trim() || null,
+				precio,
+				unidad: nuevoProd.unidad,
+				imagenUrl: nuevoProd.imagenUrl.trim() || null,
+				categoriaId: nuevoProd.categoriaId || null,
+				disponible: true,
+				stock: nuevoProd.stock ? Number(nuevoProd.stock) : null,
+			});
+			const creado = await apiConSesion<Producto>(`/api/productos/negocio/${modo}`, {
+				method: "POST",
+				body: cuerpo,
+			});
+			setProductos((ps) => [...ps, creado]);
+			setAviso(`Producto "${creado.nombre}" creado.`);
+			setNuevoProd({ nombre: "", precio: "", unidad: "KILO", descripcion: "", categoriaId: "", stock: "", imagenUrl: "" });
+			setMostrarFormProd(false);
+		} catch (e2) {
+			setErrorAccion(e2 instanceof Error ? e2.message : "No se pudo crear el producto.");
+		} finally {
+			setCreandoProd(false);
+		}
+	}
+
+	async function eliminarProducto(p: Producto) {
+		if (!window.confirm(`¿Eliminar el producto "${p.nombre}"?`)) return;
+		setErrorAccion(null);
+		try {
+			await apiConSesion(`/api/productos/${p.id}`, { method: "DELETE" });
+			setProductos((ps) => ps.filter((x) => x.id !== p.id));
+			setAviso(`Producto "${p.nombre}" eliminado.`);
+		} catch (e) {
+			setErrorAccion(e instanceof Error ? e.message : "No se pudo eliminar el producto.");
+		}
 	}
 
 	const editando = modo !== null && modo !== "crear";
@@ -593,9 +664,9 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 							/>
 						</fieldset>
 
-						{/* Fotos */}
+						{/* Logo */}
 						<fieldset className="mt-4 space-y-2">
-							<legend className="text-[12px] font-medium text-black/50">Fotos</legend>
+							<legend className="text-[12px] font-medium text-black/50">Logo</legend>
 							{!supabaseConfigurado && (
 								<p className="text-[12px] text-black/50">
 									Falta configurar Supabase para subir archivos; usa &quot;Poner URL&quot;.
@@ -633,6 +704,145 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 									/>
 								</div>
 							</div>
+						</fieldset>
+
+						{/* Productos */}
+						<fieldset className="mt-4 space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">
+								Productos ({productos.length})
+							</legend>
+
+							<div className="flex items-center justify-between">
+								<p className="text-[12px] text-black/50">
+									Catálogo del negocio; cada uno puede tener su foto.
+								</p>
+								<button
+									type="button"
+									onClick={() => setMostrarFormProd((v) => !v)}
+									className={BTN_SECUNDARIO}
+								>
+									{mostrarFormProd ? "Ocultar formulario" : "+ Nuevo producto"}
+								</button>
+							</div>
+
+							{mostrarFormProd && (
+								<form
+									onSubmit={(e) => void crearProducto(e)}
+									className="space-y-2 rounded-md border border-black/10 bg-black/[.02] p-3"
+								>
+									<div className="grid gap-2 sm:grid-cols-2">
+										<label className="block text-[12px] text-black/55">
+											Nombre *
+											<input
+												value={nuevoProd.nombre}
+												onChange={(e) => setNuevoProd((p) => ({ ...p, nombre: e.target.value }))}
+												required
+												maxLength={140}
+												placeholder="Ej. Yuca criolla"
+												className={INPUT}
+											/>
+										</label>
+										<label className="block text-[12px] text-black/55">
+											Precio (COP) *
+											<input
+												type="number"
+												min="0"
+												step="100"
+												value={nuevoProd.precio}
+												onChange={(e) => setNuevoProd((p) => ({ ...p, precio: e.target.value }))}
+												required
+												placeholder="Ej. 3500"
+												className={INPUT}
+											/>
+										</label>
+									</div>
+									<div className="grid gap-2 sm:grid-cols-3">
+										<label className="block text-[12px] text-black/55">
+											Unidad
+											<select
+												value={nuevoProd.unidad}
+												onChange={(e) => setNuevoProd((p) => ({ ...p, unidad: e.target.value }))}
+												className={INPUT}
+											>
+												<option value="KILO">Kilo</option>
+												<option value="LIBRA">Libra</option>
+											</select>
+										</label>
+										<label className="block text-[12px] text-black/55">
+											Categoría
+											<select
+												value={nuevoProd.categoriaId}
+												onChange={(e) => setNuevoProd((p) => ({ ...p, categoriaId: e.target.value }))}
+												className={INPUT}
+											>
+												<option value="">Sin categoría</option>
+												{categorias.map((c) => (
+													<option key={c.id} value={c.id}>
+														{c.nombre}
+													</option>
+												))}
+											</select>
+										</label>
+										<label className="block text-[12px] text-black/55">
+											Stock
+											<input
+												type="number"
+												min="0"
+												value={nuevoProd.stock}
+												onChange={(e) => setNuevoProd((p) => ({ ...p, stock: e.target.value }))}
+												placeholder="Ej. 50"
+												className={INPUT}
+											/>
+										</label>
+									</div>
+									<label className="block text-[12px] text-black/55">
+										Descripción
+										<textarea
+											value={nuevoProd.descripcion}
+											onChange={(e) => setNuevoProd((p) => ({ ...p, descripcion: e.target.value }))}
+											maxLength={600}
+											rows={2}
+											placeholder="Detalles del producto…"
+											className={INPUT}
+										/>
+									</label>
+									<label className="block text-[12px] text-black/55">
+										Foto por URL (opcional)
+										<input
+											type="url"
+											value={nuevoProd.imagenUrl}
+											onChange={(e) => setNuevoProd((p) => ({ ...p, imagenUrl: e.target.value }))}
+											maxLength={500}
+											placeholder="https://…/foto.jpg"
+											className={INPUT}
+										/>
+									</label>
+									{nuevoProd.imagenUrl.trim().startsWith("http") && (
+										// eslint-disable-next-line @next/next/no-img-element
+										<img
+											src={normalizarUrlImagen(nuevoProd.imagenUrl)}
+											alt="Vista previa de la foto"
+											className="h-16 w-16 rounded-md border border-black/10 object-cover"
+										/>
+									)}
+									<div className="flex gap-2">
+										<button
+											type="submit"
+											disabled={creandoProd || !nuevoProd.nombre.trim() || !nuevoProd.precio.trim()}
+											className={BTN_PRIMARIO}
+										>
+											{creandoProd ? "Creando…" : "Crear producto"}
+										</button>
+										<button
+											type="button"
+											onClick={() => setMostrarFormProd(false)}
+											className={BTN_SECUNDARIO}
+										>
+											Cancelar
+										</button>
+									</div>
+								</form>
+							)}
 
 							{productos.map((p) => (
 								<div
@@ -671,11 +881,18 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 										etiqueta={`foto de ${p.nombre}`}
 										onGuardar={(url) => actualizarFotoProducto(p, url)}
 									/>
+									<button
+										type="button"
+										onClick={() => void eliminarProducto(p)}
+										className={BTN_SECUNDARIO}
+									>
+										Eliminar
+									</button>
 								</div>
 							))}
-							{productos.length === 0 && (
+							{productos.length === 0 && !mostrarFormProd && (
 								<p className="text-[12px] text-black/40">
-									Este negocio todavía no tiene productos.
+									Este negocio todavía no tiene productos. Pulsa &quot;+ Nuevo producto&quot;.
 								</p>
 							)}
 						</fieldset>
