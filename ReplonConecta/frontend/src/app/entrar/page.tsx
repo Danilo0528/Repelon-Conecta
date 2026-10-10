@@ -7,29 +7,37 @@ import { Suspense, useState } from "react";
 import { Aviso, Cargando } from "@/components/ui";
 import { useSesion } from "@/context/SesionContext";
 
-function FormularioEntrar() {
-	const router = useRouter();
-	const buscar = useSearchParams();
-	const destino = buscar.get("next") || "/";
-	const { entrar } = useSesion();
+	function FormularioEntrar() {
+		const router = useRouter();
+		const buscar = useSearchParams();
+		const siguiente = buscar.get("next");
+		const { entrar } = useSesion();
 
-	const [email, setEmail] = useState("");
-	const [clave, setClave] = useState("");
-	const [enviando, setEnviando] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+		const [email, setEmail] = useState("");
+		const [clave, setClave] = useState("");
+		const [enviando, setEnviando] = useState(false);
+		const [error, setError] = useState<string | null>(null);
 
-	async function enviar(e: React.FormEvent) {
-		e.preventDefault();
-		setError(null);
-		setEnviando(true);
-		try {
-			await entrar(email.trim(), clave);
-			router.replace(destino);
-		} catch (err) {
-			setError(err instanceof Error ? err.message : "No se pudo entrar.");
-			setEnviando(false);
+		async function enviar(e: React.FormEvent) {
+			e.preventDefault();
+			setError(null);
+			setEnviando(true);
+			try {
+				const perfil = await entrar(email.trim(), clave);
+				// Si hay ?next= se respeta; si no, el rol decide adonde ir.
+				const destino =
+					siguiente ??
+					(perfil?.rol === "ADMIN"
+						? "/admin"
+						: perfil?.rol === "VENDEDOR"
+							? "/vendedor"
+							: "/");
+				router.replace(destino);
+			} catch (err) {
+				setError(err instanceof Error ? err.message : "No se pudo entrar.");
+				setEnviando(false);
+			}
 		}
-	}
 
 	// En PC el formulario se centra; en móvil ocupa la pantalla.
 	return (

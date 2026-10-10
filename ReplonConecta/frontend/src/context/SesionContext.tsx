@@ -25,7 +25,7 @@ interface ValorSesion {
 	sesion: Session | null;
 	perfil: Usuario | null;
 	cargando: boolean;
-	entrar: (email: string, clave: string) => Promise<void>;
+	entrar: (email: string, clave: string) => Promise<Usuario | null>;
 	registrar: (
 		email: string,
 		clave: string,
@@ -103,13 +103,26 @@ export function SesionProvider({ children }: { children: React.ReactNode }) {
 		};
 	}, [cargarPerfil]);
 
-	const entrar = useCallback(async (email: string, clave: string) => {
-		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password: clave,
-		});
-		if (error) throw new Error(traducirError(error.message));
-	}, []);
+	const entrar = useCallback(
+		async (email: string, clave: string): Promise<Usuario | null> => {
+			const { error } = await supabase.auth.signInWithPassword({
+				email,
+				password: clave,
+			});
+			if (error) throw new Error(traducirError(error.message));
+			// onAuthStateChange dispara cargarPerfil en paralelo; aqui lo
+			// pedimos explicito para poder devolver el perfil y que la
+			// pagina de login decija adonde llevar segun el rol.
+			try {
+				const p = await apiConSesion<Usuario>("/api/me");
+				setPerfil(p);
+				return p;
+			} catch {
+				return null;
+			}
+		},
+		[],
+	);
 
 	const registrar = useCallback(
 		async (email: string, clave: string, nombre: string) => {
