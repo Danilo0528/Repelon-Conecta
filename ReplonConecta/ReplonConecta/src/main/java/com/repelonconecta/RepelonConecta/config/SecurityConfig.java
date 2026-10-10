@@ -1,5 +1,6 @@
 package com.repelonconecta.RepelonConecta.config;
 
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,6 +10,13 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,7 +179,34 @@ public class SecurityConfig {
 
 			log.info("Validando JWT con JWKS asimetrico: {}", uri);
 
-			decoder = NimbusJwtDecoder.withJwkSetUri(uri).build();
+			// Spring Security 7 restringe los algoritmos JWS a HMAC y RSA
+			// por defecto: ES256 (ECDSA), que es lo que firma Supabase
+			// nuevo, queda fuera y Nimbus responde "Another algorithm
+			// expected, or no matching key(s) found". Se construye el
+			// processor a mano para incluir la familia ECDSA en el
+			// selector de claves.
+			try {
+				JWKSource<SecurityContext> jwkSource =
+						new RemoteJWKSet<>(new URL(uri));
+
+				// Nimbus 10 ya no trae las constantes FAMILY_*: se arma el
+				// set de algoritmos a mano. ES256 es el que usa Supabase.
+				var algoritmos = java.util.Set.of(
+						JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
+						JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
+						JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512,
+						JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512);
+
+				DefaultJWTProcessor<SecurityContext> processor =
+						new DefaultJWTProcessor<>();
+				processor.setJWSKeySelector(new JWSVerificationKeySelector<>(
+						algoritmos, jwkSource));
+
+				decoder = new NimbusJwtDecoder(processor);
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"No se pudo crear el decoder JWKS para " + uri, e);
+			}
 		}
 
 		List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
