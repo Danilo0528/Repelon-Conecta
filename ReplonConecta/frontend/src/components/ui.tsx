@@ -166,6 +166,21 @@ export function InsigniaAbierto({ abierto }: { abierto: boolean }) {
 	);
 }
 
+/**
+ * Normaliza URLs de imagen para que funcionen como <img src>.
+ *
+ * Imgur: "https://imgur.com/abc123" no sirve como imagen directa;
+ * necesita "https://i.imgur.com/abc123.jpg". Las URLs que ya apuntan a
+ * i.imgur.com o que no son de Imgur pasan sin tocar.
+ */
+export function normalizarUrlImagen(url: string): string {
+	const t = url.trim();
+	// https://imgur.com/XXXXX o http://imgur.com/XXXXX (sin /a/ ni /gallery/)
+	const m = t.match(/^https?:\/\/imgur\.com\/([a-zA-Z0-9]+)$/);
+	if (m) return `https://i.imgur.com/${m[1]}.jpg`;
+	return t;
+}
+
 /*
  * Foto de producto o logo del negocio.
  *
@@ -193,7 +208,9 @@ export function Foto({
 	 */
 	const [fallaEn, setFallaEn] = useState<string | null>(null);
 
-	if (!src || fallaEn === src) {
+	const url = src ? normalizarUrlImagen(src) : null;
+
+	if (!url || fallaEn === url) {
 		return (
 			<div
 				className={`flex items-center justify-center bg-black/[.05] ${className}`}
@@ -218,10 +235,10 @@ export function Foto({
 	return (
 		// eslint-disable-next-line @next/next/no-img-element
 		<img
-			src={src}
+			src={url}
 			alt={alt}
 			loading="lazy"
-			onError={() => setFallaEn(src)}
+			onError={() => setFallaEn(url)}
 			className={`object-cover ${className}`}
 		/>
 	);

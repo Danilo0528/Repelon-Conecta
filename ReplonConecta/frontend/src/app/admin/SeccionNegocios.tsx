@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent } from "react";
 
-import { Chip, Foto } from "@/components/ui";
+import { Chip, Foto, normalizarUrlImagen } from "@/components/ui";
 import { supabaseConfigurado } from "@/lib/env";
 import { api, apiConSesion } from "@/lib/api";
 import { fecha, pesos } from "@/lib/format";
@@ -141,7 +141,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 	function abrirEditar(n: NegocioAdmin) {
 		limpiar();
 		setModo(n.id);
-		cargarDetalle(n.id);
+		cargarDetalle(n);
 	}
 
 	function cerrarModal() {
@@ -149,14 +149,18 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		limpiar();
 	}
 
-	/** Carga el detalle completo y los productos para el modal de edición. */
-	async function cargarDetalle(id: string) {
+	/**
+	 * Carga el detalle completo y los productos para el modal de edición.
+	 * Usa GET /api/negocios/slug/{slug} (endpoint público) porque el
+	 * backend no expone GET por ID. El slug viene de la lista admin.
+	 */
+	async function cargarDetalle(n: NegocioAdmin) {
 		setCargandoDetalle(true);
 		setErrorAccion(null);
 		try {
 			const [d, ps] = await Promise.all([
-				apiConSesion<NegocioDetalle>(`/api/negocios/${id}`),
-				api<Producto[]>(`/api/productos/negocio/${id}`),
+				api<NegocioDetalle>(`/api/negocios/slug/${n.slug}`),
+				api<Producto[]>(`/api/productos/negocio/${n.id}`),
 			]);
 			setDetalle(d);
 			setProductos(ps);
@@ -771,7 +775,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 							{form.logoUrl.trim().startsWith("http") && (
 								// eslint-disable-next-line @next/next/no-img-element
 								<img
-									src={form.logoUrl.trim()}
+									src={normalizarUrlImagen(form.logoUrl)}
 									alt="Vista previa del logo"
 									className="h-16 w-16 rounded-md border border-black/10 object-cover"
 								/>

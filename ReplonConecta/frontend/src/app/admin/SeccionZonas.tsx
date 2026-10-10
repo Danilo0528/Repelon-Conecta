@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
+import { normalizarUrlImagen } from "@/components/ui";
 import { apiConSesion } from "@/lib/api";
 import type { ZonaTuristica } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
@@ -288,7 +289,7 @@ export function SeccionZonas() {
 							{imagenUrl.trim().startsWith("http") && (
 								// eslint-disable-next-line @next/next/no-img-element
 								<img
-									src={imagenUrl.trim()}
+									src={normalizarUrlImagen(imagenUrl)}
 									alt="Vista previa de la foto"
 									className="h-16 w-28 rounded-lg border border-black/10 object-cover"
 								/>
