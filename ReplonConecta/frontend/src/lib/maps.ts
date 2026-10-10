@@ -8,12 +8,10 @@
  * se carga con la clave de GOOGLE_MAPS_API_KEY. Aquí viven las
  * utilidades que las pantallas comparten: la carga de esa API, el pin
  * de los negocios y los enlaces salientes (Google Maps para "Cómo
- * llegar", OpenStreetMap como alternativa que no pide nada).
+ * llegar" y para ver el punto en el mapa).
  */
 
 import { CENTRO_REPELON, GOOGLE_MAPS_API_KEY, mapasGoogleConfigurado } from "./env";
-
-const OSM = "https://www.openstreetmap.org";
 
 /** Dirección con la que se busca cualquier negocio fuera del mapa. */
 function direccionDe(n: { direccion: string }): string {
@@ -33,9 +31,6 @@ function direccionDe(n: { direccion: string }): string {
  * mapa embebido y que la mayoría tiene en el celular, así que la ruta
  * continúa en la app de quien abre el enlace. Viaja en pestaña nueva como
  * los demás enlaces externos.
- *
- * `enlaceVerEnMapa` (más abajo) sigue siendo OpenStreetMap: es para quien
- * solo quiere mirar el punto sin que nadie le proponga una ruta.
  */
 export function enlaceComoLlegar(n: {
 	latitud: number | null;
@@ -92,19 +87,21 @@ export function enlaceRutaDesde(
 }
 
 /*
- * "Ver en OpenStreetMap": el negocio centrado en el mapa, sin ruta.
- * Con coordenadas abre el mapa en la ubicación; sin ellas, la búsqueda
- * de la dirección, que es donde OpenStreetMap deja el resultado.
+ * "Ver en Google Maps": el negocio centrado en el mapa, sin ruta.
+ * Con coordenadas abre el punto exacto; sin ellas, la búsqueda de la
+ * dirección. A diferencia de `enlaceComoLlegar`, no propone una ruta:
+ * solo muestra el lugar.
  */
-export function enlaceVerEnMapa(n: {
+export function enlaceVerEnGoogleMaps(n: {
 	latitud: number | null;
 	longitud: number | null;
 	direccion: string;
 }): string {
-	if (n.latitud != null && n.longitud != null) {
-		return `${OSM}/#map=17/${n.latitud}/${n.longitud}`;
-	}
-	return `${OSM}/search?query=${encodeURIComponent(direccionDe(n))}`;
+	const consulta =
+		n.latitud != null && n.longitud != null
+			? `${n.latitud},${n.longitud}`
+			: direccionDe(n);
+	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consulta)}`;
 }
 
 /* ====================================================================
