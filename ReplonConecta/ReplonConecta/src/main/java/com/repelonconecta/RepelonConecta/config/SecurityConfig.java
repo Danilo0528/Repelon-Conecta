@@ -113,6 +113,9 @@ public class SecurityConfig {
 			.oauth2ResourceServer(oauth2 -> oauth2
 				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
 				.authenticationEntryPoint((request, response, ex) -> {
+					log.warn("JWT rechazado en {} {}: {}",
+							request.getMethod(), request.getRequestURI(),
+							ex != null ? ex.getMessage() : "sin excepcion");
 					response.setStatus(401);
 					response.setContentType("application/json");
 					response.getWriter().write(
