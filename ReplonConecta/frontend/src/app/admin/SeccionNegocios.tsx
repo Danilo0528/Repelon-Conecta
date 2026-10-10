@@ -62,6 +62,7 @@ type FormNegocio = {
 	telefono: string;
 	whatsapp: string;
 	horario: string;
+	logoUrl: string;
 };
 
 const FORM_VACIO: FormNegocio = {
@@ -74,6 +75,7 @@ const FORM_VACIO: FormNegocio = {
 	telefono: "",
 	whatsapp: "",
 	horario: "",
+	logoUrl: "",
 };
 
 function aNumero(texto: string): number | null {
@@ -168,6 +170,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				telefono: d.telefono ?? "",
 				whatsapp: d.whatsapp ?? "",
 				horario: d.horario ?? "",
+				logoUrl: d.logoUrl ?? "",
 			});
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo cargar el negocio.");
@@ -212,16 +215,26 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 					telefono: form.telefono.trim() || null,
 					whatsapp: form.whatsapp.trim() || null,
 					horario: form.horario.trim() || null,
+					logoUrl: form.logoUrl.trim() || null,
 				});
 				const nuevo = await apiConSesion<NegocioDetalle>("/api/negocios", {
 					method: "POST",
 					body: cuerpo,
 				});
-				// Refrescar la lista para ver el negocio nuevo.
+				// Refrescar la lista y pasar a modo edición con el nuevo ID,
+				// así el usuario puede subir el logo y los productos al toque.
 				const lista = await apiConSesion<NegocioAdmin[]>("/api/admin/negocios");
 				setDatos(lista);
-				setAviso(`Negocio "${nuevo.nombre}" creado. Ya puedes cargar su logo y productos.`);
-				cerrarModal();
+				setAviso(`Negocio "${nuevo.nombre}" creado. Ahora puedes subir su logo y productos.`);
+				setModo(nuevo.id);
+				setDetalle(nuevo);
+				// Cargar productos del negocio nuevo (vacío por ahora).
+				try {
+					const ps = await api<Producto[]>(`/api/productos/negocio/${nuevo.id}`);
+					setProductos(ps);
+				} catch {
+					setProductos([]);
+				}
 			} else {
 				const id = modo;
 				const cuerpo = JSON.stringify({
@@ -744,6 +757,25 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 									/>
 								</label>
 							</div>
+							<label className="block text-[12px] text-black/55">
+								Logo por URL (opcional)
+								<input
+									type="url"
+									value={form.logoUrl}
+									onChange={(e) => campo("logoUrl", e.target.value)}
+									maxLength={500}
+									placeholder="https://…/logo.jpg"
+									className={INPUT}
+								/>
+							</label>
+							{form.logoUrl.trim().startsWith("http") && (
+								// eslint-disable-next-line @next/next/no-img-element
+								<img
+									src={form.logoUrl.trim()}
+									alt="Vista previa del logo"
+									className="h-16 w-16 rounded-md border border-black/10 object-cover"
+								/>
+							)}
 						</fieldset>
 
 						<fieldset className="mt-4 space-y-2">

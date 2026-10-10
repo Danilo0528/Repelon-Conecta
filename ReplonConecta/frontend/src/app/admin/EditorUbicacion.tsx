@@ -297,6 +297,56 @@ export function EditorUbicacion({
 					: "Sin pin todavía: busca la dirección, usa tu ubicación o arrastra el pin en el mapa."}
 			</p>
 
+			{/* Coordenadas directas: escribir lat/lng sin pasar por el mapa. */}
+			<div className="mt-2 grid grid-cols-2 gap-2">
+				<label className="block text-xs text-black/55">
+					Latitud
+					<input
+						type="number"
+						step="any"
+						min="-90"
+						max="90"
+						value={lat != null ? String(lat) : ""}
+						onChange={(e) => {
+							const t = e.target.value.trim();
+							if (!t) {
+								onPunto(null, lng);
+								return;
+							}
+							const n = Number(t);
+							if (Number.isFinite(n) && n >= -90 && n <= 90) {
+								onPunto(n, lng);
+							}
+						}}
+						placeholder="Ej. 10.7984"
+						className={INPUT}
+					/>
+				</label>
+				<label className="block text-xs text-black/55">
+					Longitud
+					<input
+						type="number"
+						step="any"
+						min="-180"
+						max="180"
+						value={lng != null ? String(lng) : ""}
+						onChange={(e) => {
+							const t = e.target.value.trim();
+							if (!t) {
+								onPunto(lat, null);
+								return;
+							}
+							const n = Number(t);
+							if (Number.isFinite(n) && n >= -180 && n <= 180) {
+								onPunto(lat, n);
+							}
+						}}
+						placeholder="Ej. -74.8536"
+						className={INPUT}
+					/>
+				</label>
+			</div>
+
 			{direccionPin && (
 				<p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-black/65">
 					<span className="min-w-0">

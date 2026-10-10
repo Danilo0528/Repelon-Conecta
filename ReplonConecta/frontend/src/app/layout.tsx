@@ -38,6 +38,9 @@ export const metadata: Metadata = {
 	title: "Repelón Conecta | Encuentra lo que necesitas",
 	description:
 		"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
+	icons: {
+		icon: "/img/logo-repelon-conecta.png",
+	},
 };
 
 export const viewport: Viewport = {
