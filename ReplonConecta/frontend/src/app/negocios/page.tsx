@@ -101,21 +101,20 @@ export default function ListaNegocios() {
 					))}
 			</div>
 
-			{(barrios.datos ?? []).length > 0 && (
-				<select
-					value={barrio}
-					onChange={(e) => setBarrio(e.target.value)}
-					className="mt-3 w-full rounded-xl border border-black/15 bg-white px-3 py-3 text-sm md:max-w-xs"
-					aria-label="Filtrar por barrio"
-				>
-					<option value="">Todos los barrios</option>
-					{(barrios.datos ?? []).map((b) => (
-						<option key={b} value={b}>
-							{b}
-						</option>
-					))}
-				</select>
-			)}
+			{/* Select siempre presente (aunque vacío) para evitar salto visual. */}
+			<select
+				value={barrio}
+				onChange={(e) => setBarrio(e.target.value)}
+				className="mt-3 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-sm md:max-w-xs"
+				aria-label="Filtrar por barrio"
+			>
+				<option value="">Todos los barrios</option>
+				{(barrios.datos ?? []).map((b) => (
+					<option key={b} value={b}>
+						{b}
+					</option>
+				))}
+			</select>
 
 			{negocios.error && (
 				<div className="mt-3">
@@ -146,7 +145,7 @@ export default function ListaNegocios() {
 				</Vacio>
 			)}
 
-			<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
 				{(negocios.datos ?? []).map((n) => (
 					<li key={n.id}>
 						<Link
@@ -156,7 +155,7 @@ export default function ListaNegocios() {
 							<Foto
 								src={fotoNegocio(n)}
 								alt={`Foto de ${n.nombre}`}
-								className="h-28 w-full"
+								className="h-36 w-full"
 							/>
 							<div className="flex flex-1 flex-col p-3">
 								<p className="line-clamp-2 font-semibold leading-tight">{n.nombre}</p>

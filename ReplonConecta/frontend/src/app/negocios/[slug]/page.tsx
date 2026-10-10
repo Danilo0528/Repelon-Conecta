@@ -237,7 +237,7 @@ function Ficha() {
 				{disponibles.length === 0 ? (
 					<Vacio titulo="Este negocio aún no tiene productos" />
 				) : (
-					<ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					<ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
 						{disponibles.map((p) => {
 							const unidades = unidadesDe(p.id);
 							return (
@@ -245,21 +245,21 @@ function Ficha() {
 									key={p.id}
 									className="flex flex-col overflow-hidden rounded-2xl border border-black/10"
 								>
-									<Foto src={p.imagenUrl} alt={p.nombre} className="h-24 w-full" />
+									<Foto src={p.imagenUrl} alt={p.nombre} className="h-32 w-full" />
 									<div className="flex flex-1 flex-col p-2.5">
 										<p className="line-clamp-2 text-sm font-medium leading-tight">
 											{p.nombre}
 										</p>
 
 										<p className="mt-1 text-base font-bold">
-										{pesos(p.precio)}
-										{p.unidad && (
-											<span className="text-xs font-medium text-black/50">
-												{" "}
-												/ {p.unidad === "LIBRA" ? "libra" : "kilo"}
-											</span>
-										)}
-									</p>
+											{pesos(p.precio)}
+											{p.unidad && (
+												<span className="text-xs font-medium text-black/50">
+													{" "}
+													/ {p.unidad === "LIBRA" ? "libra" : "kilo"}
+												</span>
+											)}
+										</p>
 
 										{p.stock != null && p.stock <= 5 && (
 											<p className="text-xs text-black/50">
@@ -356,10 +356,8 @@ function Horario({ json }: { json: string | null }) {
 
 	return (
 		<section className="mt-3">
-			<h2 className="text-sm font-semibold uppercase tracking-wide text-black/50">
-				Horario
-			</h2>
-			<ul className="mt-1.5 grid grid-cols-2 gap-x-5 text-sm">
+			<h2 className="text-sm font-semibold text-black/50">Horario</h2>
+			<ul className="mt-1.5 grid grid-cols-1 gap-x-5 text-sm sm:grid-cols-2">
 				{DIAS_HORARIO.map(({ clave, nombre }) => {
 					const dia = horario[clave];
 					const esHoy = clave === hoyClave;

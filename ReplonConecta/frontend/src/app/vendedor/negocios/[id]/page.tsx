@@ -177,7 +177,7 @@ function SeccionProductos({ negocioId }: { negocioId: string }) {
 								</div>
 								<span
 									className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
-										p.disponible ? "bg-verde text-white" : "bg-black/60 text-white"
+										p.disponible ? "bg-verde text-white" : "bg-black/80 text-white"
 									}`}
 								>
 									{p.disponible ? "Disponible" : "Agotado"}
@@ -303,7 +303,7 @@ function FormularioProducto({
 				value={nombre}
 				onChange={(e) => setNombre(e.target.value)}
 				placeholder="Nombre"
-				className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+				className="w-full min-h-11 rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
 			/>
 			<div className="flex gap-2">
 				<input
@@ -311,20 +311,20 @@ function FormularioProducto({
 					value={precio}
 					onChange={(e) => setPrecio(e.target.value)}
 					placeholder="Precio (ej. 4000)"
-					className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+					className="w-full min-h-11 rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
 				/>
 				<input
 					inputMode="numeric"
 					value={stock}
 					onChange={(e) => setStock(e.target.value)}
 					placeholder="Stock"
-					className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+					className="w-full min-h-11 rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
 				/>
 			</div>
 			<select
 				value={categoriaId}
 				onChange={(e) => setCategoriaId(e.target.value)}
-				className="w-full rounded-xl border border-black/15 bg-white px-3 py-2"
+				className="w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2"
 			>
 				<option value="">Sin categoría</option>
 				{categorias.map((c) => (
@@ -337,7 +337,7 @@ function FormularioProducto({
 				value={unidad}
 				onChange={(e) => setUnidad(e.target.value as Unidad)}
 				aria-label="Unidad de venta"
-				className="w-full rounded-xl border border-black/15 bg-white px-3 py-2"
+				className="w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2"
 			>
 				<option value="KILO">Kilo</option>
 				<option value="LIBRA">Libra</option>
@@ -347,12 +347,12 @@ function FormularioProducto({
 				onChange={(e) => setDescripcion(e.target.value)}
 				rows={2}
 				placeholder="Descripción"
-				className="w-full rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
+				className="w-full min-h-11 rounded-xl border border-black/15 px-3 py-2 outline-none focus:border-azul"
 			/>
 			<button
 				type="submit"
 				disabled={enviando}
-				className="w-full rounded-xl bg-azul py-2 font-semibold text-white disabled:opacity-60"
+				className="w-full min-h-11 rounded-xl bg-azul py-2 font-semibold text-white disabled:opacity-60"
 			>
 				{enviando ? "Guardando…" : etiquetaBoton}
 			</button>

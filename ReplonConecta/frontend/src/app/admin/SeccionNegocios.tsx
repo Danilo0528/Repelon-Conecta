@@ -442,7 +442,8 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 			titulo="Negocios"
 			descripcion="Aprueba, destaca o elimina negocios; crea nuevos y edita sus datos en una ventana."
 		>
-			<AvisosSeccion accion={errorAccion} exito={aviso} carga={error} />
+			{/* Avisos de la lista (fuera del modal). Dentro del modal hay otros. */}
+			{modo === null && <AvisosSeccion accion={errorAccion} exito={aviso} carga={error} />}
 
 			<div className="mt-3 flex flex-wrap items-center gap-2">
 				<input
@@ -575,6 +576,9 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				titulo={modo === "crear" ? "Nuevo negocio" : `Editar: ${negocioEditando?.nombre ?? ""}`}
 				ancho="ancho"
 			>
+				{/* Avisos DENTRO del modal: aquí ocurren las acciones. */}
+				<AvisosSeccion accion={errorAccion} exito={aviso} />
+
 				{editando && cargandoDetalle && (
 					<p className="text-[13px] text-black/50">Cargando negocio…</p>
 				)}
