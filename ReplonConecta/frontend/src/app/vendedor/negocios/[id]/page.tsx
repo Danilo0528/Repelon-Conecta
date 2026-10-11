@@ -251,6 +251,14 @@ function FormularioProducto({
 			return;
 		}
 
+		// Aviso: el backend apaga el producto automáticamente si stock = 0.
+		if (!producto && stock.trim() !== "" && Number(stock) === 0) {
+			const ok = window.confirm(
+				"El stock es 0, así que el producto se creará como AGOTADO (no aparecerá en la ficha del negocio). ¿Continuar?",
+			);
+			if (!ok) return;
+		}
+
 		setEnviando(true);
 		try {
 			const cuerpo = JSON.stringify({

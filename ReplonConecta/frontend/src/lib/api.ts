@@ -65,10 +65,12 @@ export async function api<T>(ruta: string, opciones: Opciones = {}): Promise<T> 
 	}
 
 	if (!respuesta.ok) {
-		const mensaje =
-			(cuerpo as { message?: string; error?: string } | null)?.message ??
-			(cuerpo as { error?: string } | null)?.error ??
-			`Error ${respuesta.status}`;
+		const c = cuerpo as
+			| { message?: string; error?: string; detalle?: string }
+			| null;
+		// `detalle` trae el mensaje real de validación del backend;
+		// sin él solo llegaría "Datos invalidos" y no se sabe qué falló.
+		const mensaje = c?.message ?? c?.detalle ?? c?.error ?? `Error ${respuesta.status}`;
 		throw new ErrorApi(respuesta.status, mensaje);
 	}
 

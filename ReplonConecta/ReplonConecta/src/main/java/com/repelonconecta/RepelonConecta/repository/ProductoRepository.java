@@ -35,7 +35,7 @@ public interface ProductoRepository extends JpaRepository<Producto, UUID> {
 	@Query("""
 			SELECT p FROM Producto p
 			WHERE p.negocio.aprobado = true
-			  AND p.categoria.slug IN :slugs
+			  AND (p.categoria IS NULL OR p.categoria.slug IN :slugs)
 			  AND (:categoriaSlug IS NULL OR p.categoria.slug = :categoriaSlug)
 			  AND (:barrio IS NULL OR LOWER(p.negocio.barrio) = LOWER(CAST(:barrio AS string)))
 			ORDER BY p.negocio.destacado DESC, p.nombre ASC

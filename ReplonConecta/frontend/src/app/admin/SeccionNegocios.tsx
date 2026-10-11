@@ -251,10 +251,16 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				setAviso(`Negocio "${nuevo.nombre}" creado. Ahora puedes subir su logo y productos.`);
 				setModo(nuevo.id);
 				setDetalle(nuevo);
-				// Cargar productos del negocio nuevo (vacío por ahora).
+				// Cargar productos Y categorías del negocio nuevo: sin las
+				// categorías el dropdown de productos quedaría vacío y todo
+				// producto se crearía sin categoría (invisible en la búsqueda).
 				try {
-					const ps = await api<Producto[]>(`/api/productos/negocio/${nuevo.id}`);
+					const [ps, cats] = await Promise.all([
+						api<Producto[]>(`/api/productos/negocio/${nuevo.id}`),
+						api<Categoria[]>("/api/categorias"),
+					]);
 					setProductos(ps);
+					setCategorias(cats.filter((c) => c.activa));
 				} catch {
 					setProductos([]);
 				}
@@ -392,7 +398,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		setCreandoProd(true);
 		setErrorAccion(null);
 		try {
-			const precio = Math.round(Number(nuevoProd.precio) * 100);
+			const precio = Math.round(Number(nuevoProd.precio));
 			if (!Number.isFinite(precio) || precio < 0) {
 				setErrorAccion("El precio debe ser un número positivo.");
 				return;
