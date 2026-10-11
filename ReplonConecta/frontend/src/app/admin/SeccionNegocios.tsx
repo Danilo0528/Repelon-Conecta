@@ -392,18 +392,27 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 
 	async function crearProducto(e: FormEvent) {
 		e.preventDefault();
-		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) return;
-		if (!modo) return;
+		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo });
+		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) {
+			console.warn("[DEBUG-CREAR] Faltan campos obligatorios");
+			return;
+		}
+		if (!modo) {
+			console.warn("[DEBUG-CREAR] Sin modo/negocioId");
+			return;
+		}
 
 		setCreandoProd(true);
 		setErrorAccion(null);
 		try {
 			const precio = Math.round(Number(nuevoProd.precio));
+			console.log("[DEBUG-CREAR] precio calculado:", precio);
 			if (!Number.isFinite(precio) || precio < 0) {
 				setErrorAccion("El precio debe ser un número positivo.");
+				console.warn("[DEBUG-CREAR] Precio inválido");
 				return;
 			}
-			const cuerpo = JSON.stringify({
+			const payload = {
 				nombre: nuevoProd.nombre.trim(),
 				descripcion: nuevoProd.descripcion.trim() || null,
 				precio,
@@ -412,16 +421,21 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				categoriaId: nuevoProd.categoriaId || null,
 				disponible: true,
 				stock: nuevoProd.stock ? Number(nuevoProd.stock) : null,
-			});
+			};
+			const cuerpo = JSON.stringify(payload);
+			console.log("[DEBUG-CREAR] Enviando POST a:", `/api/productos/negocio/${modo}`);
+			console.log("[DEBUG-CREAR] Payload:", payload);
 			const creado = await apiConSesion<Producto>(`/api/productos/negocio/${modo}`, {
 				method: "POST",
 				body: cuerpo,
 			});
+			console.log("[DEBUG-CREAR] OK creado:", creado);
 			setProductos((ps) => [...ps, creado]);
 			setAviso(`Producto "${creado.nombre}" creado.`);
 			setNuevoProd({ nombre: "", precio: "", unidad: "KILO", descripcion: "", categoriaId: "", stock: "", imagenUrl: "" });
 			setMostrarFormProd(false);
 		} catch (e2) {
+			console.error("[DEBUG-CREAR] ERROR:", e2);
 			setErrorAccion(e2 instanceof Error ? e2.message : "No se pudo crear el producto.");
 		} finally {
 			setCreandoProd(false);
