@@ -392,13 +392,16 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 
 	async function crearProducto(e: FormEvent) {
 		e.preventDefault();
-		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo });
+		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo, negocioId: detalle?.id });
 		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) {
 			console.warn("[DEBUG-CREAR] Faltan campos obligatorios");
 			return;
 		}
-		if (!modo) {
-			console.warn("[DEBUG-CREAR] Sin modo/negocioId");
+		// Si estamos en modo "crear" un negocio nuevo, usamos el id del negocio recién creado en `detalle`
+		const negocioIdReal = modo === "crear" ? detalle?.id : modo;
+		if (!negocioIdReal) {
+			setErrorAccion("Guarda el negocio primero antes de agregar productos.");
+			console.warn("[DEBUG-CREAR] Sin negocioId válido");
 			return;
 		}
 
@@ -423,9 +426,9 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				stock: nuevoProd.stock ? Number(nuevoProd.stock) : null,
 			};
 			const cuerpo = JSON.stringify(payload);
-			console.log("[DEBUG-CREAR] Enviando POST a:", `/api/productos/negocio/${modo}`);
+			console.log("[DEBUG-CREAR] Enviando POST a:", `/api/productos/negocio/${negocioIdReal}`);
 			console.log("[DEBUG-CREAR] Payload:", payload);
-			const creado = await apiConSesion<Producto>(`/api/productos/negocio/${modo}`, {
+			const creado = await apiConSesion<Producto>(`/api/productos/negocio/${negocioIdReal}`, {
 				method: "POST",
 				body: cuerpo,
 			});
