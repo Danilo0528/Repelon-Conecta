@@ -391,7 +391,6 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 	// --- Crear y eliminar productos (solo en modo edición) ---
 
 	async function crearProducto(e: FormEvent) {
-		e.preventDefault();
 		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo });
 		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) {
 			console.warn("[DEBUG-CREAR] Faltan campos obligatorios");
@@ -788,7 +787,11 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 
 							{mostrarFormProd && (
 								<form
-									onSubmit={(e) => void crearProducto(e)}
+									onSubmit={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										void crearProducto(e);
+									}}
 									className="space-y-2 rounded-md border border-black/10 bg-black/[.02] p-3"
 								>
 									<div className="grid gap-2 sm:grid-cols-2">
