@@ -391,6 +391,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 	// --- Crear y eliminar productos (solo en modo edición) ---
 
 	async function crearProducto(e: FormEvent) {
+		e.preventDefault();
 		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo });
 		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) {
 			console.warn("[DEBUG-CREAR] Faltan campos obligatorios");
