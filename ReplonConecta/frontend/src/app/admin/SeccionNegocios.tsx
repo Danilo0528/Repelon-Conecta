@@ -726,13 +726,50 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 								<p className="text-[12px] text-black/50">
 									Catálogo del negocio; cada uno puede tener su foto.
 								</p>
-								<button
-									type="button"
-									onClick={() => setMostrarFormProd((v) => !v)}
-									className={BTN_SECUNDARIO}
-								>
-									{mostrarFormProd ? "Ocultar formulario" : "+ Nuevo producto"}
-								</button>
+								<div className="flex gap-2">
+									<button
+										type="button"
+										onClick={() => setMostrarFormProd((v) => !v)}
+										className={BTN_SECUNDARIO}
+									>
+										{mostrarFormProd ? "Ocultar formulario" : "+ Nuevo producto"}
+									</button>
+									{editando && (
+										<button
+											type="button"
+											onClick={async () => {
+												setErrorAccion(null);
+												setAviso(null);
+												try {
+													const precio = 2500;
+													const cuerpo = JSON.stringify({
+														nombre: `DEBUG-TEST-${Date.now()}`,
+														descripcion: "Producto de prueba debug",
+														precio,
+														unidad: "KILO",
+														imagenUrl: null,
+														categoriaId: null,
+														disponible: true,
+														stock: 10,
+													});
+													const creado = await apiConSesion<Producto>(`/api/productos/negocio/${modo}`, {
+														method: "POST",
+														body: cuerpo,
+													});
+													console.log("[DEBUG] Producto creado:", creado);
+													setProductos((ps) => [...ps, creado]);
+													setAviso(`DEBUG: Producto creado OK - ${creado.id}`);
+												} catch (e2) {
+													console.error("[DEBUG] Error creando producto:", e2);
+													setErrorAccion(e2 instanceof Error ? e2.message : "Error debug");
+												}
+											}}
+											className={BTN_SECUNDARIO}
+										>
+											DEBUG: Crear test
+										</button>
+									)}
+								</div>
 							</div>
 
 							{mostrarFormProd && (
