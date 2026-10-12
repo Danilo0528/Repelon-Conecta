@@ -191,6 +191,15 @@ const MOTIVO_TRAZO: Record<MotivoTurismo, ReactNode> = {
 	),
 };
 
+/** Imágenes del slider de fondo del hero (rotan solas con crossfade). */
+const IMAGENES_HERO = [
+	"/img/hero-campo.png",
+	"/img/hero.jpg",
+	"/img/campo.jpg",
+	"/img/tienda.jpg",
+	"/img/servicios.jpg",
+];
+
 export default function Inicio() {
 	const router = useRouter();
 	const [texto, setTexto] = useState("");
@@ -201,6 +210,17 @@ export default function Inicio() {
 		null,
 	);
 	const controlRef = useRef<ControlZoom["current"]>(null);
+
+	// Slider de fondo del hero: 5 imágenes que rotan solas con crossfade.
+	const [heroIdx, setHeroIdx] = useState(0);
+	useEffect(() => {
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const t = setInterval(
+			() => setHeroIdx((i) => (i + 1) % IMAGENES_HERO.length),
+			6000,
+		);
+		return () => clearInterval(t);
+	}, []);
 
 	const categorias = useDatos<Categoria[]>(() => api("/api/categorias"), []);
 	const negocios = useDatos<Negocio[]>(() => api("/api/negocios"), []);
@@ -265,10 +285,19 @@ export default function Inicio() {
 				{/* ============================ Hero ============================ */}
 				<section
 					className="relative left-1/2 m-0 min-h-[calc(100svh-4rem)] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
-					style={{
-						backgroundImage: 'linear-gradient(90deg, rgba(7,27,47,.46), rgba(7,27,47,.08)), url(/img/hero-campo.png)',
-					}}
 				>
+				{/* Slider de fondo: 5 imágenes apiladas con crossfade */}
+				{IMAGENES_HERO.map((src, i) => (
+					<div
+						key={src}
+						aria-hidden
+						className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1200ms] ease-in-out"
+						style={{
+							backgroundImage: `linear-gradient(90deg, rgba(7,27,47,.46), rgba(7,27,47,.08)), url(${src})`,
+							opacity: i === heroIdx ? 1 : 0,
+						}}
+					/>
+				))}
 				{/* Overlay oscuro para mejorar legibilidad del texto */}
 				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
 				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
