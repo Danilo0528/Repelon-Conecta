@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 
 import { Chip, Foto, normalizarUrlImagen } from "@/components/ui";
 import { supabaseConfigurado } from "@/lib/env";
@@ -390,18 +390,11 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 
 	// --- Crear y eliminar productos (solo en modo edición) ---
 
-	async function crearProducto(e: FormEvent) {
-		e.preventDefault();
-		console.log("[DEBUG-CREAR] submit iniciado", { nuevoProd, modo, negocioId: detalle?.id });
-		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) {
-			console.warn("[DEBUG-CREAR] Faltan campos obligatorios");
-			return;
-		}
-		// Si estamos en modo "crear" un negocio nuevo, usamos el id del negocio recién creado en `detalle`
+	async function crearProducto() {
+		if (!nuevoProd.nombre.trim() || !nuevoProd.precio.trim()) return;
 		const negocioIdReal = modo === "crear" ? detalle?.id : modo;
 		if (!negocioIdReal) {
 			setErrorAccion("Guarda el negocio primero antes de agregar productos.");
-			console.warn("[DEBUG-CREAR] Sin negocioId válido");
 			return;
 		}
 
@@ -409,13 +402,11 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 		setErrorAccion(null);
 		try {
 			const precio = Math.round(Number(nuevoProd.precio));
-			console.log("[DEBUG-CREAR] precio calculado:", precio);
 			if (!Number.isFinite(precio) || precio < 0) {
 				setErrorAccion("El precio debe ser un número positivo.");
-				console.warn("[DEBUG-CREAR] Precio inválido");
 				return;
 			}
-			const payload = {
+			const cuerpo = JSON.stringify({
 				nombre: nuevoProd.nombre.trim(),
 				descripcion: nuevoProd.descripcion.trim() || null,
 				precio,
@@ -424,21 +415,16 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 				categoriaId: nuevoProd.categoriaId || null,
 				disponible: true,
 				stock: nuevoProd.stock ? Number(nuevoProd.stock) : null,
-			};
-			const cuerpo = JSON.stringify(payload);
-			console.log("[DEBUG-CREAR] Enviando POST a:", `/api/productos/negocio/${negocioIdReal}`);
-			console.log("[DEBUG-CREAR] Payload:", payload);
+			});
 			const creado = await apiConSesion<Producto>(`/api/productos/negocio/${negocioIdReal}`, {
 				method: "POST",
 				body: cuerpo,
 			});
-			console.log("[DEBUG-CREAR] OK creado:", creado);
 			setProductos((ps) => [...ps, creado]);
 			setAviso(`Producto "${creado.nombre}" creado.`);
 			setNuevoProd({ nombre: "", precio: "", unidad: "KILO", descripcion: "", categoriaId: "", stock: "", imagenUrl: "" });
 			setMostrarFormProd(false);
 		} catch (e2) {
-			console.error("[DEBUG-CREAR] ERROR:", e2);
 			setErrorAccion(e2 instanceof Error ? e2.message : "No se pudo crear el producto.");
 		} finally {
 			setCreandoProd(false);
@@ -743,59 +729,17 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 								<p className="text-[12px] text-black/50">
 									Catálogo del negocio; cada uno puede tener su foto.
 								</p>
-								<div className="flex gap-2">
-									<button
-										type="button"
-										onClick={() => setMostrarFormProd((v) => !v)}
-										className={BTN_SECUNDARIO}
-									>
-										{mostrarFormProd ? "Ocultar formulario" : "+ Nuevo producto"}
-									</button>
-									{editando && (
-										<button
-											type="button"
-											onClick={async () => {
-												setErrorAccion(null);
-												setAviso(null);
-												try {
-													const precio = 2500;
-													const cuerpo = JSON.stringify({
-														nombre: `DEBUG-TEST-${Date.now()}`,
-														descripcion: "Producto de prueba debug",
-														precio,
-														unidad: "KILO",
-														imagenUrl: null,
-														categoriaId: null,
-														disponible: true,
-														stock: 10,
-													});
-													const creado = await apiConSesion<Producto>(`/api/productos/negocio/${modo}`, {
-														method: "POST",
-														body: cuerpo,
-													});
-													console.log("[DEBUG] Producto creado:", creado);
-													setProductos((ps) => [...ps, creado]);
-													setAviso(`DEBUG: Producto creado OK - ${creado.id}`);
-												} catch (e2) {
-													console.error("[DEBUG] Error creando producto:", e2);
-													setErrorAccion(e2 instanceof Error ? e2.message : "Error debug");
-												}
-											}}
-											className={BTN_SECUNDARIO}
-										>
-											DEBUG: Crear test
-										</button>
-									)}
-								</div>
+								<button
+									type="button"
+									onClick={() => setMostrarFormProd((v) => !v)}
+									className={BTN_SECUNDARIO}
+								>
+									{mostrarFormProd ? "Ocultar formulario" : "+ Nuevo producto"}
+								</button>
 							</div>
 
 							{mostrarFormProd && (
-								<form
-									onSubmit={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										void crearProducto(e);
-									}}
+								<div
 									className="space-y-2 rounded-md border border-black/10 bg-black/[.02] p-3"
 								>
 									<div className="grid gap-2 sm:grid-cols-2">
@@ -895,7 +839,8 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 									)}
 									<div className="flex gap-2">
 										<button
-											type="submit"
+											type="button"
+											onClick={() => void crearProducto()}
 											disabled={creandoProd || !nuevoProd.nombre.trim() || !nuevoProd.precio.trim()}
 											className={BTN_PRIMARIO}
 										>
@@ -909,7 +854,7 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 											Cancelar
 										</button>
 									</div>
-								</form>
+								</div>
 							)}
 
 							{productos.map((p) => (
