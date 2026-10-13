@@ -64,7 +64,7 @@ export function SeccionZonas() {
 	const [direccion, setDireccion] = useState("");
 	const [latitud, setLatitud] = useState("");
 	const [longitud, setLongitud] = useState("");
-	const [imagenUrl, setImagenUrl] = useState("");
+	const [imagenes, setImagenes] = useState<string[]>([]);
 	const [motivo, setMotivo] = useState("pueblo");
 	const [guardando, setGuardando] = useState(false);
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
@@ -77,7 +77,7 @@ export function SeccionZonas() {
 		setDireccion("");
 		setLatitud("");
 		setLongitud("");
-		setImagenUrl("");
+		setImagenes([]);
 		setMotivo("pueblo");
 	}
 
@@ -100,7 +100,7 @@ export function SeccionZonas() {
 		setDireccion(z.direccion);
 		setLatitud(z.latitud != null ? String(z.latitud) : "");
 		setLongitud(z.longitud != null ? String(z.longitud) : "");
-		setImagenUrl(z.imagenUrl ?? "");
+		setImagenes(z.imagenes?.length ? z.imagenes : z.imagenUrl ? [z.imagenUrl] : []);
 		setMotivo(MOTIVOS.some((m) => m.valor === z.motivo) ? z.motivo : "pueblo");
 		setErrorAccion(null);
 		setAviso(null);
@@ -156,7 +156,7 @@ export function SeccionZonas() {
 			direccion: direccion.trim(),
 			latitud: coords.lat,
 			longitud: coords.lng,
-			imagenUrl: imagenUrl.trim() || null,
+			imagenes: imagenes.map((url) => url.trim()).filter(Boolean),
 			motivo,
 		});
 		try {
@@ -275,25 +275,55 @@ export function SeccionZonas() {
 							/>
 						</label>
 						<div className="grid gap-2">
-							<label className="text-xs text-black/55">
-								Foto por URL (opcional)
-								<input
-									value={imagenUrl}
-									onChange={(e) => setImagenUrl(e.target.value)}
-									maxLength={500}
-									type="url"
-									placeholder="https://…/foto.jpg"
-									className={INPUT}
-								/>
-							</label>
-							{imagenUrl.trim().startsWith("http") && (
-								// eslint-disable-next-line @next/next/no-img-element
-								<img
-									src={normalizarUrlImagen(imagenUrl)}
-									alt="Vista previa de la foto"
-									className="h-16 w-28 rounded-lg border border-black/10 object-cover"
-								/>
-							)}
+							<fieldset className="grid gap-2">
+								<legend className="text-xs text-black/55">
+									Fotos por URL (hasta 4; pasan al poner el cursor sobre la ficha)
+								</legend>
+								{imagenes.map((url, indice) => (
+									<div key={indice} className="flex items-center gap-2">
+										<label className="min-w-0 flex-1">
+											<span className="sr-only">URL de la foto {indice + 1}</span>
+											<input
+												value={url}
+												onChange={(e) =>
+													setImagenes((actuales) =>
+														actuales.map((actual, i) => i === indice ? e.target.value : actual),
+													)
+												}
+												maxLength={500}
+												type="url"
+												placeholder="https://…/foto.jpg"
+												className={INPUT}
+											/>
+										</label>
+										<button
+											type="button"
+											onClick={() => setImagenes((actuales) => actuales.filter((_, i) => i !== indice))}
+											aria-label={`Quitar foto ${indice + 1}`}
+											className={`${BTN_SECUNDARIO} shrink-0`}
+										>
+											Quitar
+										</button>
+										{url.trim().startsWith("http") && (
+											// eslint-disable-next-line @next/next/no-img-element
+											<img
+												src={normalizarUrlImagen(url)}
+												alt={`Vista previa de la foto ${indice + 1}`}
+												className="h-10 w-16 shrink-0 rounded-md border border-black/10 object-cover"
+											/>
+										)}
+									</div>
+								))}
+								{imagenes.length < 4 && (
+									<button
+										type="button"
+										onClick={() => setImagenes((actuales) => [...actuales, ""])}
+										className={`${BTN_SECUNDARIO} justify-self-start`}
+									>
+										+ Añadir URL
+									</button>
+								)}
+							</fieldset>
 						</div>
 					</div>
 
@@ -361,8 +391,10 @@ export function SeccionZonas() {
 										<span className="text-[12px] text-black/60">
 											{MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? "Pueblo"}
 										</span>
-										{z.imagenUrl && (
-											<span className="ml-2 text-[11px] text-black/35">con foto</span>
+										{(z.imagenes?.length ?? (z.imagenUrl ? 1 : 0)) > 0 && (
+											<span className="ml-2 text-[11px] text-black/35">
+												{z.imagenes?.length || 1} foto(s)
+											</span>
 										)}
 									</CeldaTabla>
 									<CeldaTabla mono>

@@ -53,6 +53,7 @@ export interface ZonaTuristica {
 	latitud: number | null;
 	longitud: number | null;
 	imagenUrl: string | null;
+	imagenes: string[];
 	motivo: string;
 	orden: number;
 }

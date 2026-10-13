@@ -1,5 +1,6 @@
 package com.repelonconecta.RepelonConecta.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ public final class ZonaDtos {
 			Double latitud,
 			Double longitud,
 			String imagenUrl,
+			List<String> imagenes,
 			String motivo,
 			int orden) {
 	}
@@ -47,6 +49,9 @@ public final class ZonaDtos {
 
 			@Size(max = 500, message = "La URL de la imagen máximo tiene 500 caracteres")
 			String imagenUrl,
+
+			@Size(max = 4, message = "La galería admite hasta 4 imágenes")
+			List<@Size(max = 500, message = "Cada URL admite hasta 500 caracteres") String> imagenes,
 
 			@Size(max = 20)
 			String motivo,

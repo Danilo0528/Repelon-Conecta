@@ -8,12 +8,13 @@ import type { ReactNode } from "react";
 import { IconoCategoria } from "@/components/IconoCategoria";
 import { MapaNegocios } from "@/components/Mapa";
 import { StoreCard } from "@/components/StoreCard";
+import { SliderTurismo } from "@/components/SliderTurismo";
 import { Aviso, InsigniaAbierto } from "@/components/ui";
 import { api } from "@/lib/api";
 import { enAlcance } from "@/lib/alcance";
 import { supabaseConfigurado } from "@/lib/env";
 import { conCoordenadas, useCoordenadas } from "@/lib/geocodificar";
-import { textoInicio } from "@/lib/inicio";
+import { imagenesInicio, textoInicio } from "@/lib/inicio";
 import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
 import { enlaceComoLlegar, enlaceRutaDesde } from "@/lib/maps";
 import type { Categoria, Negocio, ZonaTuristica } from "@/lib/tipos";
@@ -191,15 +192,6 @@ const MOTIVO_TRAZO: Record<MotivoTurismo, ReactNode> = {
 	),
 };
 
-/** Imágenes del slider de fondo del hero (rotan solas con crossfade). */
-const IMAGENES_HERO = [
-	"/img/hero-campo.png",
-	"/img/hero.jpg",
-	"/img/campo.jpg",
-	"/img/tienda.jpg",
-	"/img/servicios.jpg",
-];
-
 export default function Inicio() {
 	const router = useRouter();
 	const [texto, setTexto] = useState("");
@@ -210,17 +202,6 @@ export default function Inicio() {
 		null,
 	);
 	const controlRef = useRef<ControlZoom["current"]>(null);
-
-	// Slider de fondo del hero: 5 imágenes que rotan solas con crossfade.
-	const [heroIdx, setHeroIdx] = useState(0);
-	useEffect(() => {
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const t = setInterval(
-			() => setHeroIdx((i) => (i + 1) % IMAGENES_HERO.length),
-			6000,
-		);
-		return () => clearInterval(t);
-	}, []);
 
 	const categorias = useDatos<Categoria[]>(() => api("/api/categorias"), []);
 	const negocios = useDatos<Negocio[]>(() => api("/api/negocios"), []);
@@ -236,6 +217,26 @@ export default function Inicio() {
 	);
 	const T = (clave: Parameters<typeof textoInicio>[1]) =>
 		textoInicio(textos.datos, clave);
+
+	/*
+	 * Slider de fondo del hero: las imágenes las ordena el panel desde
+	 * /admin/contenido, y mientras nadie las toca salen las de siempre.
+	 * El paso se guarda por módulo y no por la longitud directa, y el
+	 * índice visible se recorta: si el admin acorta la lista con la
+	 * portada abierta, el slider no se sale en vez de clavarse en un
+	 * fondo transparente.
+	 */
+	const imagenesHero = imagenesInicio(textos.datos);
+	const [heroIdx, setHeroIdx] = useState(0);
+	useEffect(() => {
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const t = setInterval(
+			() => setHeroIdx((i) => (i + 1) % imagenesHero.length),
+			6000,
+		);
+		return () => clearInterval(t);
+	}, [imagenesHero.length]);
+	const indiceHero = heroIdx % imagenesHero.length;
 
 	/*
 	 * Zonas turísticas: las carga el estudiante desde /admin (con su
@@ -286,15 +287,15 @@ export default function Inicio() {
 				<section
 					className="relative left-1/2 m-0 min-h-[calc(100svh-4rem)] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
 				>
-				{/* Slider de fondo: 5 imágenes apiladas con crossfade */}
-				{IMAGENES_HERO.map((src, i) => (
+				{/* Slider de fondo: imágenes apiladas con crossfade */}
+				{imagenesHero.map((src, i) => (
 					<div
-						key={src}
+						key={`${src}-${i}`}
 						aria-hidden
 						className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1200ms] ease-in-out"
 						style={{
 							backgroundImage: `linear-gradient(90deg, rgba(7,27,47,.46), rgba(7,27,47,.08)), url(${src})`,
-							opacity: i === heroIdx ? 1 : 0,
+							opacity: i === indiceHero ? 1 : 0,
 						}}
 					/>
 				))}
@@ -542,24 +543,13 @@ export default function Inicio() {
 						 */}
 						<div
 							role="img"
-							aria-label={
-								lugar.imagen
-									? `${lugar.nombre} (foto)`
-									: `${lugar.nombre} (ilustración)`
-							}
+							aria-label={lugar.imagen
+								? `${lugar.nombre} (fotos)`
+								: `${lugar.nombre} (ilustración)`}
 							className={`relative -mx-5 -mt-5 mb-4 h-36 overflow-hidden rounded-t-3xl ${FONDO_MOTIVO[lugar.motivo]}`}
 						>
-							{lugar.imagen ? (
-								// eslint-disable-next-line @next/next/no-img-element
-								<img
-									src={lugar.imagen}
-									alt={lugar.nombre}
-									onError={(e) => {
-										// URL caída: se apaga la foto y queda el fondo de la ficha
-										e.currentTarget.style.display = "none";
-									}}
-									className="absolute inset-0 h-full w-full object-cover"
-								/>
+							{lugar.imagenes.length > 0 ? (
+								<SliderTurismo imagenes={lugar.imagenes} nombre={lugar.nombre} />
 							) : (
 								<svg
 									viewBox="0 0 24 24"

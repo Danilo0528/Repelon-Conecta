@@ -12,10 +12,10 @@ import jakarta.persistence.Table;
  * Zona turística del home: un lugar de interés de Repelón.
  *
  * La cargan los estudiantes desde el panel /admin (nombre, dirección,
- * foto por URL y un motivo que el frontend usa para elegir la
- * ilustración de respaldo). Las coordenadas son opcionales: sin ellas,
- * el enlace "Abrir en Google Maps" busca por la dirección escrita,
- * igual que hacía la lista estática que vivía en el frontend.
+ * hasta cuatro fotos por URL y un motivo que el frontend usa para
+ * elegir la ilustración de respaldo). Las coordenadas son opcionales:
+ * sin ellas, el enlace "Abrir en Google Maps" busca por la dirección
+ * escrita, igual que hacía la lista estática que vivía en el frontend.
  */
 @Entity
 @Table(name = "zonas_turisticas")
@@ -40,9 +40,13 @@ public class ZonaTuristica {
 	@Column(name = "longitud")
 	private Double longitud;
 
-	/** URL de la foto (la suben por URL o al bucket); null = ilustración. */
+	/** Primera URL de la galería, conservada para clientes anteriores. */
 	@Column(name = "imagen_url", length = 500)
 	private String imagenUrl;
+
+	/** URLs de la galería turística guardadas como un array JSON. */
+	@Column(name = "imagenes", columnDefinition = "text")
+	private String imagenes;
 
 	/** Tema de la ilustración de respaldo: agua, barco, aves, ... */
 	@Column(name = "motivo", length = 20)
@@ -112,6 +116,14 @@ public class ZonaTuristica {
 
 	public void setImagenUrl(String imagenUrl) {
 		this.imagenUrl = imagenUrl;
+	}
+
+	public String getImagenes() {
+		return imagenes;
+	}
+
+	public void setImagenes(String imagenes) {
+		this.imagenes = imagenes;
 	}
 
 	public String getMotivo() {

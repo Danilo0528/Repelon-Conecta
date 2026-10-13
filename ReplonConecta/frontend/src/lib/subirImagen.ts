@@ -20,7 +20,7 @@ import { supabase } from "./supabase";
  * sin esto el bucket se llena de archivos que la lista no necesita.
  */
 
-export type CarpetaFotos = "negocios" | "productos";
+export type CarpetaFotos = "negocios" | "productos" | "inicio";
 
 const LADO_MAXIMO = 1280;
 const PESO_MAXIMO = 5 * 1024 * 1024;

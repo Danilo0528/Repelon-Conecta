@@ -6,6 +6,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
+
 import com.repelonconecta.RepelonConecta.dto.ZonaDtos;
 import com.repelonconecta.RepelonConecta.entity.ZonaTuristica;
 import com.repelonconecta.RepelonConecta.repository.ZonaTuristicaRepository;
@@ -20,6 +24,9 @@ import com.repelonconecta.RepelonConecta.repository.ZonaTuristicaRepository;
  */
 @Service
 public class ZonaTuristicaService {
+
+	private static final JsonMapper JSON = JsonMapper.builder().build();
+	private static final int MAX_IMAGENES = 4;
 
 	private final ZonaTuristicaRepository zonas;
 
@@ -89,8 +96,48 @@ public class ZonaTuristicaService {
 		zona.setDireccion(request.direccion().trim());
 		zona.setLatitud(request.latitud());
 		zona.setLongitud(request.longitud());
-		zona.setImagenUrl(limpiar(request.imagenUrl()));
+		List<String> imagenes = request.imagenes() == null
+				? imagenesLegadas(request.imagenUrl())
+				: limpiarImagenes(request.imagenes());
+		zona.setImagenes(escribirImagenes(imagenes));
+		zona.setImagenUrl(imagenes.isEmpty() ? null : imagenes.get(0));
 		zona.setMotivo(limpiar(request.motivo()));
+	}
+
+	private static List<String> imagenesLegadas(String imagenUrl) {
+		String imagen = limpiar(imagenUrl);
+		return imagen == null ? List.of() : List.of(imagen);
+	}
+
+	private static List<String> limpiarImagenes(List<String> imagenes) {
+		if (imagenes.size() > MAX_IMAGENES) {
+			throw ApiException.peticionInvalida(
+					"La galería admite hasta " + MAX_IMAGENES + " imágenes");
+		}
+		List<String> resultado = imagenes.stream()
+				.map(ZonaTuristicaService::limpiar)
+				.filter(url -> url != null)
+				.distinct()
+				.toList();
+		for (String url : resultado) {
+			if (url.length() > 500) {
+				throw ApiException.peticionInvalida(
+						"Cada URL de imagen admite hasta 500 caracteres");
+			}
+			if (!(url.startsWith("https://") || url.startsWith("http://") || url.startsWith("/"))) {
+				throw ApiException.peticionInvalida(
+						"Cada imagen debe ser una URL http(s) o una ruta del sitio que empiece con /");
+			}
+		}
+		return resultado;
+	}
+
+	private static String escribirImagenes(List<String> imagenes) {
+		try {
+			return JSON.writeValueAsString(imagenes);
+		} catch (JacksonException e) {
+			throw ApiException.peticionInvalida("No se pudo guardar la galería turística");
+		}
 	}
 
 	private static String limpiar(String texto) {
@@ -110,7 +157,25 @@ public class ZonaTuristicaService {
 				zona.getLatitud(),
 				zona.getLongitud(),
 				zona.getImagenUrl(),
+				leerImagenes(zona.getImagenes(), zona.getImagenUrl()),
 				zona.getMotivo(),
 				zona.getOrden());
+	}
+
+	private static List<String> leerImagenes(String json, String imagenUrl) {
+		if (json != null && !json.isBlank()) {
+			try {
+				List<String> imagenes = JSON.readValue(json, new TypeReference<List<String>>() {});
+				if (imagenes != null) {
+					return imagenes.stream()
+							.filter(url -> url != null && !url.isBlank())
+							.toList();
+				}
+			} catch (JacksonException | ClassCastException e) {
+				throw new IllegalStateException("La galería turística guardada no es JSON válido", e);
+			}
+		}
+		String legado = limpiar(imagenUrl);
+		return legado == null ? List.of() : List.of(legado);
 	}
 }

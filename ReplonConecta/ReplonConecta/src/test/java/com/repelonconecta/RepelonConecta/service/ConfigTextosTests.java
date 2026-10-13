@@ -105,6 +105,69 @@ class ConfigTextosTests {
 				"claves huerfanas no deben filtrarse al home");
 	}
 
+	// ---- El deslizamiento automatico del hero ------------------------
+
+	@Test
+	void guardaLeeYRestauraLasImagenesDelHero() {
+		autenticarComoAdmin();
+
+		String lista = "[\"/img/hero.jpg\",\"https://cdn.repelon.co/campo.png\"]";
+		Map<String, String> guardado =
+				config.actualizarTextosInicio(Map.of(ConfigService.CLAVE_IMAGENES_HERO, lista));
+		assertEquals(lista, guardado.get(ConfigService.CLAVE_IMAGENES_HERO));
+
+		SecurityContextHolder.clearContext();
+		assertEquals(lista, config.textosInicio().get(ConfigService.CLAVE_IMAGENES_HERO));
+
+		// Vacio = volver a las cinco imagenes que trae el frontend.
+		autenticarComoAdmin();
+		Map<String, String> trasBorrar = config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "  "));
+		assertFalse(trasBorrar.containsKey(ConfigService.CLAVE_IMAGENES_HERO));
+	}
+
+	@Test
+	void imagenesDelHeroRechazanJsonRoto() {
+		autenticarComoAdmin();
+
+		assertThrows(ApiException.class, () -> config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "no soy una lista")));
+		assertThrows(ApiException.class, () -> config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "{}")));
+		assertThrows(ApiException.class, () -> config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "[1, 2]")));
+		assertThrows(ApiException.class, () -> config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "[]")));
+		assertTrue(textos.findById(ConfigService.CLAVE_IMAGENES_HERO).isEmpty(),
+				"nada de lo rechazado debe quedar en la base");
+	}
+
+	@Test
+	void imagenesDelHeroRechazanEsquemasQueElNavegadorNoCarga() {
+		autenticarComoAdmin();
+
+		assertThrows(ApiException.class, () -> config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, "[\"javascript:alert(1)\"]")));
+	}
+
+	@Test
+	void imagenesDelHeroNoPasanDeDiez() {
+		autenticarComoAdmin();
+
+		String once = "[" + String.join(",", java.util.Collections.nCopies(11, "\"/img/a.jpg\"")) + "]";
+		ApiException error = assertThrows(ApiException.class,
+				() -> config.actualizarTextosInicio(
+						Map.of(ConfigService.CLAVE_IMAGENES_HERO, once)));
+		assertTrue(error.getMessage().contains("hasta"), error.getMessage());
+
+		// Justo diez sí caben.
+		String diez = "[" + String.join(",", java.util.Collections.nCopies(10, "\"/img/a.jpg\"")) + "]";
+		assertEquals(diez, config.actualizarTextosInicio(
+				Map.of(ConfigService.CLAVE_IMAGENES_HERO, diez))
+				.get(ConfigService.CLAVE_IMAGENES_HERO));
+	}
+
+
 	private void autenticarComoAdmin() {
 		autenticar(ADMIN_ID);
 	}

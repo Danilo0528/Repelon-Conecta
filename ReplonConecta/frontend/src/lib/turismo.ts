@@ -17,12 +17,9 @@
  * Las 6 zonas de referencia (VisitAtlántico y prensa local) están en
  * el seed del backend; esta copia es solo el respaldo offline.
  *
- * FOTOS: mientras no lleguen las del cliente, cada ficha muestra una
- * ilustración de fondo según su `motivo`. Cuando haya foto real se
- * pone su dirección en `imagenUrl`: acepta una URL completa
- * (`https://…/foto.jpg`) o un archivo local (`/turismo/foto.jpg`) y
- * la ilustración se apaga sola. Para estudiantes lo más fácil es
- * pegar la URL en el panel; no hay que subir ni editar nada más.
+ * FOTOS: cada ficha admite hasta cuatro URLs; en la portada se deslizan
+ * mientras el cursor está sobre la imagen. `imagenUrl` se conserva para
+ * compatibilidad con las zonas cargadas antes de la galería.
  */
 
 import { enlaceGoogleMaps } from "./maps";
@@ -55,6 +52,8 @@ export type LugarTuristico = {
 	longitud: number | null;
 	/** Ruta pública de la foto; null = ilustración de respaldo. */
 	imagen: string | null;
+	/** Fotos para el slider de la portada. */
+	imagenes: string[];
 	motivo: MotivoTurismo;
 };
 
@@ -67,6 +66,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "agua",
 	},
 	{
@@ -77,6 +77,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "barco",
 	},
 	{
@@ -87,6 +88,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "aves",
 	},
 	{
@@ -97,6 +99,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "naturaleza",
 	},
 	{
@@ -107,6 +110,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "parque",
 	},
 	{
@@ -117,6 +121,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		latitud: null,
 		longitud: null,
 		imagen: null,
+		imagenes: [],
 		motivo: "pueblo",
 	},
 ];
@@ -137,6 +142,11 @@ export function zonaALugar(zona: ZonaTuristica): LugarTuristico {
 	const motivo = MOTIVOS_VALIDOS.includes(zona.motivo ?? "")
 		? (zona.motivo as MotivoTurismo)
 		: "pueblo";
+	const imagenes = zona.imagenes?.length
+		? zona.imagenes
+		: zona.imagenUrl
+			? [zona.imagenUrl]
+			: [];
 
 	return {
 		nombre: zona.nombre,
@@ -144,7 +154,8 @@ export function zonaALugar(zona: ZonaTuristica): LugarTuristico {
 		direccion: zona.direccion,
 		latitud: zona.latitud,
 		longitud: zona.longitud,
-		imagen: zona.imagenUrl,
+		imagen: imagenes[0] ?? null,
+		imagenes,
 		motivo,
 	};
 }

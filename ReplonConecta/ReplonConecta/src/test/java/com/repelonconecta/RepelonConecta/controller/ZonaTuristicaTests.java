@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,6 +108,44 @@ class ZonaTuristicaTests {
 		mvc.perform(post("/api/zonas")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(cuerpo)
+						.header("Authorization", conToken(ADMIN_ID)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void adminGuardaHastaCuatroImagenesYRechazaUnaQuinta() throws Exception {
+		String nombre = "Zona con galería " + System.nanoTime();
+		List<String> imagenes = List.of(
+				"https://fotos.example.com/uno.jpg",
+				"https://fotos.example.com/dos.jpg",
+				"https://fotos.example.com/tres.jpg",
+				"https://fotos.example.com/cuatro.jpg");
+		String cuerpo = json.writeValueAsString(Map.of(
+				"nombre", nombre,
+				"direccion", "Calle 1 # 2-3, Repelón, Atlántico",
+				"imagenes", imagenes));
+
+		mvc.perform(post("/api/zonas")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(cuerpo)
+						.header("Authorization", conToken(ADMIN_ID)))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.imagenes.length()").value(4))
+				.andExpect(jsonPath("$.imagenes[0]").value(imagenes.get(0)))
+				.andExpect(jsonPath("$.imagenUrl").value(imagenes.get(0)));
+
+		String cuerpoConCinco = json.writeValueAsString(Map.of(
+				"nombre", nombre + " quinta",
+				"direccion", "Calle 1 # 2-3, Repelón, Atlántico",
+				"imagenes", List.of(
+						"https://fotos.example.com/uno.jpg",
+						"https://fotos.example.com/dos.jpg",
+						"https://fotos.example.com/tres.jpg",
+						"https://fotos.example.com/cuatro.jpg",
+						"https://fotos.example.com/cinco.jpg")));
+		mvc.perform(post("/api/zonas")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(cuerpoConCinco)
 						.header("Authorization", conToken(ADMIN_ID)))
 				.andExpect(status().isBadRequest());
 	}
