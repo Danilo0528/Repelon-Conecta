@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+import { GaleriaNegocio } from "@/components/GaleriaNegocio";
 import { MapaMini } from "@/components/Mapa";
 import {
 	CLASE_BOTON_AZUL,
@@ -100,15 +101,16 @@ function Ficha() {
 	return (
 		<div className="pb-4">
 			{/*
-			 * Banner: foto a todo el ancho con el nombre y el estado
-			 * superpuestos abajo a la izquierda, sobre un degradado que
-			 * garantiza legibilidad sin importar la foto.
+			 * Banner: la galería del negocio a todo el ancho, con el
+			 * nombre y el estado superpuestos abajo a la izquierda, sobre
+			 * un degradado que garantiza legibilidad sin importar la foto.
+			 * Sin galería cargada se cae al logo y a la foto de respaldo,
+			 * y ahí no hay controles porque no hay nada que deslizar.
 			 */}
 			<div className="relative">
-				<Foto
-					src={fotoNegocio(negocio)}
+				<GaleriaNegocio
+					fotos={negocio.imagenes.length > 0 ? negocio.imagenes : [fotoNegocio(negocio)]}
 					alt={negocio.nombre}
-					className="h-52 w-full object-cover sm:h-64 md:h-80"
 				/>
 				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-4 pb-4 pt-16">
 					<div className="flex items-end justify-between gap-3">

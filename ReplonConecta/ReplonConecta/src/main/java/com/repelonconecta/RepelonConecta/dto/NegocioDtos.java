@@ -1,6 +1,7 @@
 package com.repelonconecta.RepelonConecta.dto;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.constraints.DecimalMax;
@@ -47,6 +48,7 @@ public final class NegocioDtos {
 			String telefono,
 			String whatsapp,
 			String logoUrl,
+			List<String> imagenes,
 			String horario,
 			boolean abierto,
 			boolean destacado,
@@ -113,6 +115,13 @@ public final class NegocioDtos {
 			String whatsapp,
 			@Size(max = 60) String horario,
 			@Size(max = 500) String logoUrl,
+			/**
+			 * Galería completa y en orden. `null` = no se toca (el PUT es
+			 * parcial); una lista vacía = borrar todas las fotos. El
+			 * frontend siempre manda la lista entera al reordenar.
+			 */
+			@Size(max = 10, message = "La galería admite hasta 10 fotos")
+			List<@Size(max = 500) String> imagenes,
 			Boolean abierto) {
 	}
 

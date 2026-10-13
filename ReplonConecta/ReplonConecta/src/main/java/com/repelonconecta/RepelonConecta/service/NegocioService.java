@@ -1,11 +1,16 @@
 package com.repelonconecta.RepelonConecta.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import com.repelonconecta.RepelonConecta.config.Alcance;
 import com.repelonconecta.RepelonConecta.dto.NegocioDtos;
@@ -18,6 +23,15 @@ import com.repelonconecta.RepelonConecta.repository.ProductoRepository;
 
 @Service
 public class NegocioService {
+
+	/**
+	 * Mapper propio de la galería.
+	 *
+	 * Se crea aquí y no se inyecta: el proyecto corre sobre Jackson 3 y
+	 * el único que se necesita es leer y escribir un array plano de URLs,
+	 * así no hay que acoplar el servicio al bean de Spring.
+	 */
+	private static final JsonMapper JSON = JsonMapper.builder().build();
 
 	private final NegocioRepository negocios;
 	private final ProductoRepository productos;
@@ -106,6 +120,7 @@ public class NegocioService {
 				negocio.getTelefono(),
 				negocio.getWhatsapp(),
 				negocio.getLogoUrl(),
+				leerImagenes(negocio.getImagenes()),
 				negocio.getHorario(),
 				negocio.isAbierto(),
 				negocio.isDestacado(),
@@ -229,6 +244,11 @@ public class NegocioService {
 		if (request.logoUrl() != null) {
 			negocio.setLogoUrl(textoVacioANulo(request.logoUrl()));
 		}
+		// Lista entera y en orden: si llega null no se toca la galería,
+		// si llega vacía se borra (el panel admin siempre manda la lista).
+		if (request.imagenes() != null) {
+			negocio.setImagenes(escribirImagenes(limpiarGaleria(request.imagenes())));
+		}
 		if (request.abierto() != null) {
 			negocio.setAbierto(request.abierto());
 		}
@@ -312,6 +332,7 @@ public class NegocioService {
 				negocio.getTelefono(),
 				negocio.getWhatsapp(),
 				negocio.getLogoUrl(),
+				leerImagenes(negocio.getImagenes()),
 				negocio.getHorario(),
 				negocio.isAbierto(),
 				negocio.isDestacado(),
@@ -370,6 +391,71 @@ public class NegocioService {
 		if (longitud != null && (longitud < -180.0 || longitud > 180.0)) {
 			throw ApiException.peticionInvalida("La longitud debe estar entre -180 y 180");
 		}
+	}
+
+	/**
+	 * Galería en memoria a partir de la columna JSON.
+	 *
+	 * Una base dañada o una columna vieja no pueden tumbar la ficha del
+	 * negocio entera: si el JSON no se lee, se devuelve lista vacía y la
+	 * página cae al logo, como antes de existir la galería.
+	 */
+	private List<String> leerImagenes(String jsonGaleria) {
+		if (jsonGaleria == null || jsonGaleria.isBlank()) {
+			return List.of();
+		}
+		try {
+			List<String> urls = JSON.readValue(jsonGaleria, new TypeReference<List<String>>() {
+			});
+			return urls.stream().filter(u -> u != null && !u.isBlank()).toList();
+		} catch (JacksonException | ClassCastException e) {
+			return List.of();
+		}
+	}
+
+	private String escribirImagenes(List<String> imagenes) {
+		try {
+			return JSON.writeValueAsString(imagenes);
+		} catch (JacksonException e) {
+			throw ApiException.peticionInvalida("No se pudo guardar la galería");
+		}
+	}
+
+	/**
+	 * Limpia lo que manda el panel: recorta, descarta repetidos (el mismo
+	 * enlace pegado dos veces) y corta en el límite.
+	 *
+	 * Solo entran http(s) o una ruta relativa que empiece con "/". Sin
+	 * esto un texto pegado en el campo de URL llegaría a la base y
+	 * acabaría pintado en la ficha pública.
+	 */
+	private List<String> limpiarGaleria(List<String> imagenes) {
+		List<String> limpias = new ArrayList<>();
+		for (String url : imagenes) {
+			if (url == null) {
+				continue;
+			}
+			String recortada = url.trim();
+			if (recortada.isEmpty() || limpias.contains(recortada)) {
+				continue;
+			}
+			boolean esEnlace = recortada.startsWith("https://")
+					|| recortada.startsWith("http://")
+					|| recortada.startsWith("/");
+			if (!esEnlace) {
+				throw ApiException.peticionInvalida(
+						"La imagen debe ser un enlace http(s) o una ruta /…");
+			}
+			if (recortada.length() > 500) {
+				throw ApiException.peticionInvalida(
+						"Una URL de imagen no puede pasar de 500 caracteres");
+			}
+			limpias.add(recortada);
+			if (limpias.size() == 10) {
+				break;
+			}
+		}
+		return limpias;
 	}
 
 	private String textoVacioANulo(String texto) {

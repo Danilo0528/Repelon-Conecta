@@ -75,6 +75,20 @@ public class Negocio {
 	private String logoUrl;
 
 	/**
+	 * Galería de la ficha: las fotos que el visitante ve deslizar en
+	 * /negocios/{slug}.
+	 *
+	 * Se guarda como JSON de un array de URLs, igual que `horario`, y no
+	 * como tabla aparte: las fotos se leen y se escriben siempre de a
+	 * toda la lista (el panel admin manda el orden completo), así que
+	 * una entidad por imagen solo añadiría un join sin ganar nada. La
+	 * lista vacía es null, y la galería se cae al logo o a la foto de
+	 * respaldo.
+	 */
+	@Column(name = "imagenes", columnDefinition = "text")
+	private String imagenes;
+
+	/**
 	 * Horario en JSON: {"lunes":{"abre":"08:00","cierra":"18:00"}, ...}
 	 *
 	 * Se guarda como texto y no como entidad Reloj porque en el MVP el
@@ -223,6 +237,14 @@ public class Negocio {
 
 	public void setLogoUrl(String logoUrl) {
 		this.logoUrl = logoUrl;
+	}
+
+	public String getImagenes() {
+		return imagenes;
+	}
+
+	public void setImagenes(String imagenes) {
+		this.imagenes = imagenes;
 	}
 
 	public String getHorario() {

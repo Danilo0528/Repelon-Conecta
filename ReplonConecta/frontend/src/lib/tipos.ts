@@ -122,6 +122,8 @@ export interface NegocioDetalle {
 	telefono: string | null;
 	whatsapp: string | null;
 	logoUrl: string | null;
+	/** Galería de la ficha, en el orden en que se desliza. */
+	imagenes: string[];
 	horario: string | null;
 	abierto: boolean;
 	destacado: boolean;

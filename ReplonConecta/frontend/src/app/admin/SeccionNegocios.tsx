@@ -10,6 +10,7 @@ import { subirImagen } from "@/lib/subirImagen";
 import type { Categoria, NegocioAdmin, NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 import { CampoUrlImagen } from "./CampoUrlImagen";
+import { EditorGaleria } from "./EditorGaleria";
 import { EditorUbicacion } from "./EditorUbicacion";
 import {
 	AvisosSeccion,
@@ -717,6 +718,33 @@ export function SeccionNegocios({ filtroInicial }: { filtroInicial?: FiltroNegoc
 									/>
 								</div>
 							</div>
+						</fieldset>
+
+						{/*
+						 * Galería: las fotos que se deslizan en la ficha pública
+						 * del negocio. Vive en el modal de edición porque necesita
+						 * el id del negocio ya guardado.
+						 */}
+						<fieldset className="mt-4 space-y-2">
+							<legend className="text-[12px] font-medium text-black/50">
+								Galería de la ficha
+							</legend>
+							<p className="text-[12px] text-black/50">
+								Fotos que el visitante ve deslizar en{" "}
+								{negocioEditando ? `/negocios/${negocioEditando.slug}` : "la ficha"}.
+								Puedes subir el archivo o pegar una URL.
+							</p>
+							{modo && (
+								<EditorGaleria
+									negocioId={modo}
+									imagenes={detalle?.imagenes ?? []}
+									onCambio={(nuevas) =>
+										setDetalle((d) => (d ? { ...d, imagenes: nuevas } : d))
+									}
+									onAviso={setAviso}
+									onError={setErrorAccion}
+								/>
+							)}
 						</fieldset>
 
 						{/* Productos */}
