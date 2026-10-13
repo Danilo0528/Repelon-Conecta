@@ -26,6 +26,13 @@ public class IaAsistenteService {
 	@Value("${groq.api-key:}")
 	private String groqApiKey;
 
+	/**
+	 * Modelo de Groq. Se configura por env var para poder cambiarlo sin
+	 * redeploy si Groq descontinua el actual (ya le paso a llama-3.2-3b).
+	 */
+	@Value("${groq.model:qwen/qwen3.8-27b}")
+	private String groqModel;
+
 	private static final String GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 	public String procesarPregunta(String preguntaUsuario) {
@@ -64,7 +71,7 @@ public class IaAsistenteService {
         );
 
         Map<String, Object> requestBody = Map.of(
-            "model", "llama-3.2-3b-preview",
+            "model", groqModel,
             "messages", messages,
             "temperature", 0.3,
             "max_tokens", 300
@@ -85,7 +92,11 @@ public class IaAsistenteService {
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
                 if (choices != null && !choices.isEmpty()) {
                     Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                    return (String) message.get("content");
+                    Object content = message != null ? message.get("content") : null;
+                    // content nullo haria estallar Map.of en el controller.
+                    if (content instanceof String texto && !texto.isBlank()) {
+                        return texto;
+                    }
                 }
             }
         } catch (Exception e) {
