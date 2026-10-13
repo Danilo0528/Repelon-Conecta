@@ -85,6 +85,30 @@ export interface Negocio {
 	cantidadProductos: number;
 }
 
+/**
+ * Ficha mínima de un negocio que el asistente IA acaba de recomendar.
+ * Trae solo lo necesario para pintar la tarjeta del chat: el enlace al
+ * negocio se arma con `slug` y el de Google Maps con las coordenadas o,
+ * si no las tiene, con la dirección.
+ */
+export interface NegocioIa {
+	slug: string;
+	nombre: string;
+	barrio: string | null;
+	direccion: string;
+	latitud: number | null;
+	longitud: number | null;
+	whatsapp: string | null;
+	logoUrl: string | null;
+	abierto: boolean;
+}
+
+/** Lo que devuelve POST /api/ia/chat. */
+export interface RespuestaIa {
+	respuesta: string;
+	negocios: NegocioIa[];
+}
+
 export interface NegocioDetalle {
 	id: string;
 	nombre: string;

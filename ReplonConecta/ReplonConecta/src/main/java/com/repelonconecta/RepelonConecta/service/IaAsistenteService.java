@@ -1,6 +1,10 @@
 package com.repelonconecta.RepelonConecta.service;
 
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.repelonconecta.RepelonConecta.config.Alcance;
+import com.repelonconecta.RepelonConecta.dto.IaDtos;
 import com.repelonconecta.RepelonConecta.entity.Negocio;
 import com.repelonconecta.RepelonConecta.repository.NegocioRepository;
 
@@ -35,9 +40,9 @@ public class IaAsistenteService {
 
 	private static final String GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-	public String procesarPregunta(String preguntaUsuario) {
+	public IaDtos.ChatResponse procesarPregunta(String preguntaUsuario) {
 		if (groqApiKey == null || groqApiKey.isBlank()) {
-			return "El asistente no esta configurado todavia. Explora los negocios en nuestro mapa interactivo.";
+			return respuestaFija("El asistente no esta configurado todavia. Explora los negocios en nuestro mapa interactivo.");
 		}
 
         // 1. Obtener los negocios públicos y aprobados de Repelón desde Supabase usando FAMILIAS
@@ -95,14 +100,82 @@ public class IaAsistenteService {
                     Object content = message != null ? message.get("content") : null;
                     // content nullo haria estallar Map.of en el controller.
                     if (content instanceof String texto && !texto.isBlank()) {
-                        return texto;
+                        // El modelo escribe texto libre; de ahi salen los
+                        // comercios que el chat debe pintar como tarjeta.
+                        List<IaDtos.NegocioIa> mencionados =
+                                emparejarNegocios(texto, negocios).stream().map(IaAsistenteService::aDto).toList();
+                        return new IaDtos.ChatResponse(texto, mencionados);
                     }
                 }
             }
         } catch (Exception e) {
-            return "¡Hola! En este momento el asistente inteligente está tomando un respiro, pero puedes explorar todos los negocios directamente en nuestro mapa interactivo.";
+            return respuestaFija("¡Hola! En este momento el asistente inteligente está tomando un respiro, pero puedes explorar todos los negocios directamente en nuestro mapa interactivo.");
         }
 
-        return "No pude procesar tu consulta en este momento, pero te invito a revisar el listado de comercios del pueblo.";
+        return respuestaFija("No pude procesar tu consulta en este momento, pero te invito a revisar el listado de comercios del pueblo.");
     }
+
+	/** Respuesta de texto sin tarjetas adjuntas (errores, sin key, etc.). */
+	private static IaDtos.ChatResponse respuestaFija(String texto) {
+		return new IaDtos.ChatResponse(texto, List.of());
+	}
+
+	/**
+	 * Comercios del texto que coinciden con la base, más específicos
+	 * primero y sin repetir, para que el chat pida tarjeta solo a los que
+	 * la respuesta nombró de verdad.
+	 */
+	public static List<Negocio> emparejarNegocios(String texto, List<Negocio> candidatos) {
+		if (texto == null || texto.isBlank() || candidatos == null || candidatos.isEmpty()) {
+			return List.of();
+		}
+
+		String textoNormalizado = normalizar(texto);
+
+		// Los nombres más largos primero: así "Panadería La Esquina" se
+		// acepta antes que "La Esquina", que está contenida en ella.
+		List<Negocio> ordenados = candidatos.stream()
+				.filter(n -> n.getNombre() != null && !n.getNombre().isBlank())
+				.sorted(Comparator.comparingInt((Negocio n) -> n.getNombre().length()).reversed())
+				.toList();
+
+		List<Negocio> encontrados = new ArrayList<>();
+		for (Negocio n : ordenados) {
+			String nombre = normalizar(n.getNombre());
+			if (!textoNormalizado.contains(nombre)) {
+				continue;
+			}
+			// Un nombre que ya va dentro de otro aceptado no suma tarjeta:
+			// "La Esquina" ya está cubierta por "Panadería La Esquina".
+			boolean yaCubierto = encontrados.stream()
+					.anyMatch(ya -> normalizar(ya.getNombre()).contains(nombre));
+			if (yaCubierto) {
+				continue;
+			}
+			encontrados.add(n);
+			if (encontrados.size() == 3) {
+				break;
+			}
+		}
+		return encontrados;
+	}
+
+	/** Tildes, mayúsculas y espacios dobles fuera: "Panadería" == "panaderia". */
+	private static String normalizar(String texto) {
+		String sinTildes = Normalizer.normalize(texto, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+		return sinTildes.toLowerCase(Locale.ROOT).replaceAll("\\s+", " ").trim();
+	}
+
+	private static IaDtos.NegocioIa aDto(Negocio n) {
+		return new IaDtos.NegocioIa(
+				n.getSlug(),
+				n.getNombre(),
+				n.getBarrio() != null && !n.getBarrio().isBlank() ? n.getBarrio() : "Repelón",
+				n.getDireccion(),
+				n.getLatitud(),
+				n.getLongitud(),
+				n.getWhatsapp(),
+				n.getLogoUrl(),
+				n.isAbierto());
+	}
 }
