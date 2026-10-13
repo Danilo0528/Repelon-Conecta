@@ -112,6 +112,12 @@ public class SecurityConfig {
 						// textos, el visitante sin sesion las tiene que ver.
 						"/api/zonas")
 					.permitAll()
+				// Asistente IA del home: lo usa el visitante sin sesion,
+				// asi que va abierto. La key de Groq NO sale de aca: vive
+				// en el servidor (GROQ_API_KEY) y el rate limit por IP
+				// limita el abuso.
+				.requestMatchers(HttpMethod.POST, "/api/ia/**")
+					.permitAll()
 				.requestMatchers("/actuator/health").permitAll()
 				// Todo lo demas exige un JWT valido de Supabase.
 				// OJO: los pedidos NO son publicos, aunque se puedan crear sin

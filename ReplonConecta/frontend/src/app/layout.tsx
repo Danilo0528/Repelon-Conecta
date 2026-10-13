@@ -5,6 +5,7 @@ import BarraNavegacion from "@/components/BarraNavegacion";
 import { Blobs } from "@/components/Blobs";
 import { CarritoProvider } from "@/context/CarritoContext";
 import { SesionProvider } from "@/context/SesionContext";
+import { AsistenteIaChat } from "@/components/AsistenteIaChat";
 
 import "./globals.css";
 
@@ -74,6 +75,7 @@ export default function RootLayout({
 						<main className="mx-auto w-full max-w-6xl flex-1 pb-nav-total md:pb-10">
 							{children}
 						</main>
+						<AsistenteIaChat />
 					</CarritoProvider>
 				</SesionProvider>
 			</body>
