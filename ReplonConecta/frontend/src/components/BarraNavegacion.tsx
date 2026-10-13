@@ -91,10 +91,12 @@ const ENLACES: {
 	icono: Parameters<typeof Icono>[0]["nombre"];
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
+	// Etiquetas cortas a proposito: en un Android angosto (320 px) cada
+	// destino tiene ~44 px de ancho y un texto largo queda truncado.
 	{ href: "/negocios", etiqueta: "Negocios", icono: "negocios" },
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
 	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
-	{ href: "/vendedor", etiqueta: "Mi tienda", icono: "negocio" },
+	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
 ];
 

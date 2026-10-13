@@ -39,7 +39,13 @@ export function AsistenteIaChat() {
 	};
 
 	return (
-		<div className="fixed bottom-6 right-6 z-[1000]">
+		/*
+		 * El FAB se sube sobre la barra inferior de destinos: sin esto
+		 * cae encima del destino "Perfil" y los dos se pisan (el
+		 * síntoma en Android es "todo enrredado"). Usa el mismo token
+		 * de altura que reserva el contenido (--spacing-nav-total).
+		 */
+		<div className="fixed bottom-[calc(var(--spacing-nav-total)+0.5rem)] right-4 z-[1000]">
 			{!abierto ? (
 				<button
 					onClick={() => setAbierto(true)}

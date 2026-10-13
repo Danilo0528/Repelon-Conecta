@@ -302,8 +302,9 @@ export default function Inicio() {
 				<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
 				<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 				
-				{/* Contenido superpuesto */}
-				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-8 px-6 py-14 sm:px-10 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
+				{/* Contenido superpuesto: en móvil el padding vertical baja
+				    para que el hero no ocupe toda la primera pantalla. */}
+				<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-6 px-5 py-10 sm:gap-8 sm:px-10 sm:py-14 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
 					<div className="max-w-2xl">
 						<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
 							<span className="h-px w-8 bg-amarillo" />

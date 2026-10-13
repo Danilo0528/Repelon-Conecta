@@ -78,11 +78,33 @@ body {
 /* El hero full-bleed (w-[100vw]) no debe generar scroll horizontal. */
 html {
 	overflow-x: hidden;
+	/*
+	 * Chrome Android "infla" las fuentes cuando cree que el texto es
+	 * demasiado pequeño para la pantalla (font boosting / text
+	 * autosizing). Es la causa #1 de "se ve todo gigante en el
+	 * celular": sin esta linea el navegador escala los tamaños por su
+	 * cuenta y el diseño queda arruinado solo en Android.
+	 */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 body {
 	font-family: var(--font-sans);
 	-webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Elementos tocables: quita el doble-tap-zoom y el retardo de ~300 ms
+ * que Android pone por defecto. Regla del skill adapt (touch targets).
+ */
+a,
+button,
+input,
+select,
+textarea,
+[role="button"] {
+	touch-action: manipulation;
 }
 
 /* ====================================================================

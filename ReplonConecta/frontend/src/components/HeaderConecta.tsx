@@ -113,9 +113,14 @@ export default function HeaderConecta() {
 	const { cantidadTotal } = useCarrito();
 	const pathname = usePathname();
 
+	/*
+	 * padding-top con el notch/camara del Android: layout.tsx pone
+	 * viewportFit=cover, asi que sin este safe-area la pastilla se
+	 * mete debajo del hueco en pantallas con muesca.
+	 */
 	return (
-		<header className="sticky top-0 z-50 w-full px-4 pt-3 sm:px-6 lg:px-8">
-			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2.5 shadow-float">
+		<header className="sticky top-0 z-50 w-full px-4 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] sm:px-6 lg:px-8">
+			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2 shadow-float">
 				<Link
 					href="/"
 					className="flex shrink-0 items-center gap-2"
@@ -124,7 +129,7 @@ export default function HeaderConecta() {
 					<img
 						src="/img/logo-repelon-conecta.png"
 						alt="Repelón Conecta"
-						className="h-12 w-40 object-contain object-center sm:h-14 sm:w-48"
+						className="h-9 w-28 object-contain object-center sm:h-12 sm:w-40 md:h-14 md:w-48"
 					/>
 				</Link>
 
