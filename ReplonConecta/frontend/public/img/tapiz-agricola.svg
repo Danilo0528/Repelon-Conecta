@@ -1,0 +1,127 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" fill="none">
+	<!--
+		Tapiz agrícola de Repelón — fondo del sitio.
+
+		Mosaico (tileable): las ondas de los surcos cruzan de borde a
+		borde con la misma fase, así que al repetir el campo se ve
+		continuo. Los motivos van todos DENTRO del cuadro 0-240: lo que
+		se sale del viewBox el navegador lo recorta y aparece un tajo.
+
+		Profundidad: las plantas se sientan en surcos distintos (194,
+		206 y 218) y varían en alto. Eso rompe la fila parejita y hace
+		que se lea como un campo con perspectiva y no como un sello
+		que se repite.
+
+		Motivos de lo que el pueblo siembra: sorgo (cultivo de
+		preferencia), maíz, yuca y plátano.
+
+		El verde va escrito acá y no en currentColor: cuando el SVG entra
+		como background-image es un recurso externo y no hereda el color
+		del documento, se quedaría en negro. La intensidad la regula el
+		contenedor con su opacidad.
+
+		Las ondas usan "q ... t ...": q dibuja la primera loma y t
+		refleja el punto de control, así alterna loma-valle cada 60px
+		y la onda entra y sale de la celda con la misma fase (4 x 60 = 240).
+	-->
+	<g stroke="#16834b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+
+		<!-- Surcos de campo: cuatro líneas paralelas, espaciadas a la
+		     desigualdad del arado, que atraviesan la celda entera. -->
+		<path opacity=".5" d="M0 194q30 -7 60 0t60 0t60 0t60 0" />
+		<path opacity=".36" d="M0 206q30 6 60 0t60 0t60 0t60 0" />
+		<path opacity=".26" d="M0 219q30 -6 60 0t60 0t60 0t60 0" />
+		<path opacity=".18" d="M0 232q30 5 60 0t60 0t60 0t60 0" />
+
+		<!-- Sorgo, el cultivo de preferencia del pueblo: el más alto,
+		     clavado en el surco de atrás. -->
+		<g transform="translate(36 96)" opacity=".75">
+			<path d="M0 98V28" />
+			<path d="M0 28c-9-5-14-15-12-26 10 4 16 13 17 23" />
+			<path d="M0 28c9-5 14-15 12-26-10 4-16 13-17 23" />
+			<path d="M0 8c-5-4-7-10-6-16 5 3 8 9 8 14" />
+			<path d="M0 64c-9 3-14 11-16 21 9 0 15-6 18-14" />
+			<path d="M0 78c8 3 13 10 15 19-8 0-14-5-17-13" />
+			<circle cx="-6" cy="36" r="3.2" />
+			<circle cx="6" cy="36" r="3.2" />
+			<circle cx="-6" cy="46" r="3.2" />
+			<circle cx="6" cy="46" r="3.2" />
+			<circle cx="-6" cy="56" r="3.2" />
+			<circle cx="6" cy="56" r="3.2" />
+			<circle cx="-6" cy="66" r="3.2" />
+			<circle cx="6" cy="66" r="3.2" />
+			<circle cx="-6" cy="76" r="3.2" />
+			<circle cx="6" cy="76" r="3.2" />
+			<circle cx="-6" cy="86" r="3.2" />
+			<circle cx="6" cy="86" r="3.2" />
+			<circle cx="0" cy="94" r="3.2" />
+		</g>
+
+		<!-- Maíz, un surco más adelante: mazorca envuelta en hojas de
+		     borde ancho y panolas en lo alto. -->
+		<g transform="translate(128 120)" opacity=".7">
+			<path d="M0 86V22" />
+			<path d="M0 22-9 6M0 22 0 2M0 22 9 6" />
+			<path d="M0 58c-15-2-26 6-31 20 13 4 25-2 32-14z" />
+			<path d="M0 46c15-2 26 6 31 20-13 4-25-2-32-14z" />
+			<path d="M0 40c7 1 11 6 11 13-6 1-11-3-13-9" />
+			<path d="M0 40c-7 1-11 6-11 13 6 1 11-3 13-9" />
+		</g>
+
+		<!-- Yuca, el surco de más adelante: hojas palmadas, de lóbulo
+		     ancho y caído, nunca rayas rectas. -->
+		<g transform="translate(206 152)" opacity=".65">
+			<path d="M0 66V26" />
+			<path d="M0 46c8 2 13 8 14 16-8 0-14-5-16-13" />
+			<g transform="translate(0 26)">
+				<path d="M0 0C-11-6-23-8-33-3-23 3-11 6 0 0z" />
+				<path d="M0 0C-9-12-17-22-27-27-21-15-11-6 0 0z" />
+				<path d="M0 0C11-6 23-8 33-3 23 3 11 6 0 0z" />
+				<path d="M0 0C9-12 17-22 27-27 21-15 11-6 0 0z" />
+				<path d="M0 0C-4-12-4-25 0-36 4-25 4-12 0 0z" />
+			</g>
+		</g>
+
+		<!-- Plátano: hoja ancha con la nervadura central. -->
+		<g transform="translate(168 18)" opacity=".5">
+			<path d="M0 0C16 4 27 16 31 34 15 33 3 23-2 8z" />
+			<path d="M0 0c9 12 16 23 21 33" />
+			<path d="M0 0v20" />
+		</g>
+
+		<!-- Otra hoja suelta, del lado opuesto, para que la parte alta
+		     de la celda no quede vacía. -->
+		<g transform="translate(58 14) scale(-1 1)" opacity=".42">
+			<path d="M0 0C14 3 23 14 26 30 13 29 3 20-1 7z" />
+			<path d="M0 0c8 11 14 20 18 29" />
+		</g>
+
+		<!-- Plántula recién brotada. -->
+		<g transform="translate(104 34)" opacity=".55">
+			<path d="M0 44V16" />
+			<path d="M0 22c-10-2-16-9-16-19 10 1 17 7 18 16" />
+			<path d="M0 22c10-2 16-9 16-19-10 1-17 7-18 16" />
+			<path d="M0 36c-7 1-11 6-11 12 7 0 12-4 13-10" />
+		</g>
+
+		<!-- Semillas desparramadas: lo que aún no germinó. -->
+		<g opacity=".5">
+			<circle cx="16" cy="66" r="2.2" />
+			<circle cx="26" cy="34" r="1.8" />
+			<circle cx="82" cy="18" r="2" />
+			<circle cx="90" cy="76" r="1.8" />
+			<circle cx="76" cy="118" r="2.2" />
+			<circle cx="98" cy="152" r="1.8" />
+			<circle cx="146" cy="94" r="2" />
+			<circle cx="164" cy="66" r="1.8" />
+			<circle cx="188" cy="84" r="2.2" />
+			<circle cx="214" cy="62" r="2" />
+			<circle cx="232" cy="104" r="1.8" />
+			<circle cx="224" cy="140" r="2.2" />
+			<circle cx="152" cy="146" r="1.8" />
+			<circle cx="58" cy="150" r="2" />
+			<circle cx="46" cy="176" r="1.6" />
+			<circle cx="186" cy="176" r="1.6" />
+		</g>
+	</g>
+</svg>

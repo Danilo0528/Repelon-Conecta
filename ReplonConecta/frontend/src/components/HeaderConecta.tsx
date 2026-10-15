@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { useCarrito } from "@/context/CarritoContext";
 import { COMPRAS_ACTIVAS } from "@/lib/compras";
+import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
 
 import BuscadorNav from "./BuscadorNav";
 
@@ -22,80 +23,12 @@ import BuscadorNav from "./BuscadorNav";
  * el WhatsApp del vendedor (se oculta, no se borra).
  */
 
-function Icono({
-	nombre,
-}: {
-	nombre:
-		| "carrito"
-		| "perfil"
-		| "comercios"
-		| "pedidos"
-		| "negocio"
-		| "turismo"
-		| "fondo";
-}) {
-	const clase = "h-[21px] w-[21px]";
-	switch (nombre) {
-		case "carrito":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<circle cx="9" cy="20" r="1.6" />
-					<circle cx="18" cy="20" r="1.6" />
-					<path d="M2 3h3l2.4 12.4a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6" strokeLinecap="round" strokeLinejoin="round" />
-				</svg>
-			);
-		case "perfil":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<circle cx="12" cy="8" r="4" />
-					<path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
-				</svg>
-			);
-		case "comercios":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<path d="M4.5 9.5h15V19a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" strokeLinejoin="round" />
-					<path d="M3 9.5 4.8 4.5h14.4L21 9.5" strokeLinejoin="round" />
-					<path d="M9.5 20v-5.5h5V20" strokeLinejoin="round" />
-				</svg>
-			);
-		case "pedidos":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<path d="M6 2h12l1 4H5l1-4z" strokeLinejoin="round" />
-					<path d="M5 6h14v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6z" strokeLinejoin="round" />
-					<path d="M9 11h6" strokeLinecap="round" />
-				</svg>
-			);
-		case "negocio":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<rect x="3.5" y="3.5" width="7" height="7" rx="2" />
-					<rect x="13.5" y="3.5" width="7" height="7" rx="2" />
-					<rect x="3.5" y="13.5" width="7" height="7" rx="2" />
-					<rect x="13.5" y="13.5" width="7" height="7" rx="2" />
-				</svg>
-			);
-		case "turismo":
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<path d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z" strokeLinejoin="round" />
-					<circle cx="12" cy="10.4" r="2.4" />
-				</svg>
-			);
-		case "fondo":
-			// Brote: "capital semilla", que es lo que ofrece el Fondo.
-			return (
-				<svg className={clase} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-					<path d="M12 21v-9" strokeLinecap="round" />
-					<path d="M12 12c4.4 0 8-3.6 8-8-4.4 0-8 3.6-8 8z" strokeLinejoin="round" />
-					<path d="M12 15c-3.3 0-6-2.7-6-6 3.3 0 6 2.7 6 6z" strokeLinejoin="round" />
-				</svg>
-			);
-	}
-}
+/*
+ * Iconos de destino de la cabecera: viven en IconoNav porque la barra
+ * inferior (BarraNavegacion) pinta los mismos destinos.
+ */
 
-const DESTINOS: { href: string; etiqueta: string; icono: Parameters<typeof Icono>[0]["nombre"] }[] = [
+const DESTINOS: { href: string; etiqueta: string; icono: NombreIconoNav }[] = [
 	{ href: "/negocios", etiqueta: "Comercios", icono: "comercios" },
 	// Ancla a la sección de la home: el acceso no queda escondido
 	// abajo del scroll, vive en la barra como los demás destinos.
@@ -119,7 +52,7 @@ export default function HeaderConecta() {
 	 * mete debajo del hueco en pantallas con muesca.
 	 */
 	return (
-		<header className="sticky top-0 z-50 w-full px-4 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] sm:px-6 lg:px-8">
+		<header className="sticky top-0 z-cromo w-full px-4 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] sm:px-6 lg:px-8">
 			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 py-2 shadow-float">
 				<Link
 					href="/"
@@ -165,7 +98,7 @@ export default function HeaderConecta() {
 						className="glass-soft hidden size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf sm:grid"
 						aria-label="Perfil"
 					>
-						<Icono nombre="perfil" />
+						<IconoNav nombre="perfil" />
 					</Link>
 
 					{COMPRAS_ACTIVAS && (
@@ -178,7 +111,7 @@ export default function HeaderConecta() {
 									: "Carrito vacío"
 							}
 						>
-							<Icono nombre="carrito" />
+							<IconoNav nombre="carrito" />
 							{cantidadTotal > 0 && (
 								<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-leaf px-1 text-[11px] font-bold leading-none text-white">
 									{cantidadTotal}

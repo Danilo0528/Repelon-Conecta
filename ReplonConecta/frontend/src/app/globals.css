@@ -53,6 +53,16 @@
 	--color-blob-3: #fff1bf;
 
 	/*
+	 * Escala de z-index de la app: vive como @utility al final del
+	 * archivo (Tailwind v4 no tiene namespace --z-* en @theme).
+	 *   50  — cromo (cabecera, barra de destinos)
+	 *   500 — controles flotantes sobre el mapa
+	 *   600 — burbuja del asistente IA
+	 *   900 — modales/ventanas flotantes
+	 *   1000 — atajo "Saltar al contenido"
+	 */
+
+	/*
 	 * Altura reservada para la barra inferior de destinos: la barra va
 	 * flotando a 12 px del borde y mide ~52 px, así que el contenido de
 	 * las pantallas baja 4.5rem + el margen seguro del teléfono para
@@ -71,13 +81,30 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	background: var(--color-background);
 	color: var(--color-ink);
+}
+
+/*
+ * El color de fondo vive SOLO en html. Si body también lo tuviera, el
+ * navegador lo pintaría después (y por encima) de las capas con
+ * z-index negativo, que es donde van los blobs y el tapiz: todo el
+ * color de fondo quedaría tapado y la app se vería gris y plana.
+ * Con el fondo solo en html, los blobs se pintan sobre el lienzo y
+ * debajo del contenido.
+ */
+html {
+	background: var(--color-background);
 }
 
 /* El hero full-bleed (w-[100vw]) no debe generar scroll horizontal. */
 html {
 	overflow-x: hidden;
+	/*
+	 * Los destinos de la barra son anclas (#turismo): sin esto el salto
+	 * es instantáneo y se siente como un corte. Con movimiento reducido
+	 * el navegador lo desactiva solo, no hace falta media query acá.
+	 */
+	scroll-behavior: smooth;
 	/*
 	 * Chrome Android "infla" las fuentes cuando cree que el texto es
 	 * demasiado pequeño para la pantalla (font boosting / text
@@ -87,6 +114,12 @@ html {
 	 */
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
 }
 
 body {
@@ -134,6 +167,38 @@ textarea,
 
 @utility shadow-leaf {
 	box-shadow: var(--shadow-leaf);
+}
+
+/*
+ * Escala de z-index de la app (única fuente de verdad; usar estas
+ * utilidades y no números sueltos):
+ *   50   — cromo (cabecera, barra de destinos)
+ *   500  — controles flotantes sobre el mapa (zoom, fichas, crédito)
+ *   600  — burbuja del asistente IA (sobre el cromo y el mapa)
+ *   900  — modales/ventanas flotantes: SIEMPRE sobre el asistente,
+ *          porque un diálogo con foco atrapado no puede quedar tapado
+ *          por una burbuja que no forma parte de él
+ *   1000 — atajo "Saltar al contenido" (solo visible con foco de
+ *          teclado; debe poder saltarse cualquier capa)
+ */
+@utility z-cromo {
+	z-index: 50;
+}
+
+@utility z-mapa {
+	z-index: 500;
+}
+
+@utility z-asistente {
+	z-index: 600;
+}
+
+@utility z-modal {
+	z-index: 900;
+}
+
+@utility z-atajo {
+	z-index: 1000;
 }
 
 /*

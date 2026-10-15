@@ -79,7 +79,7 @@ function responderCon(resultados: ResultadoBusqueda[]) {
 
 function cajaBusqueda(): HTMLInputElement {
 	const input = screen.getByPlaceholderText(
-		"Escribe lo que buscas: yuca, pescado, mango…",
+		"Ej: 20 kilos de yuca, pescado fresco o una finca para visitar",
 	) as HTMLInputElement;
 	return input;
 }
@@ -102,7 +102,9 @@ describe("flujo de búsqueda", () => {
 
 		fireEvent.change(cajaBusqueda(), { target: { value: "yuca" } });
 
-		expect(await screen.findByText("Yuca")).toBeTruthy();
+		// "Yuca" aparece como chip de categoría y como producto: el
+		// resultado debe estar entre los que coinciden.
+		expect((await screen.findAllByText("Yuca")).length).toBeGreaterThan(0);
 		expect(apiMock).toHaveBeenCalledWith("/api/buscar?q=yuca");
 
 		// Lista y mapa hablan del mismo resultado: conteo y negocio.

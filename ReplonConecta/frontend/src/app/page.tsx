@@ -413,7 +413,7 @@ export default function Inicio() {
 						/>
 
 						{/* Etiqueta del pueblo + crédito de Google Maps */}
-						<div className="pointer-events-none absolute left-3 top-3 z-[500] flex flex-col items-start gap-1">
+						<div className="pointer-events-none absolute left-3 top-3 z-mapa flex flex-col items-start gap-1">
 							<span className="glass-soft flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-ink">
 								<svg
 									viewBox="0 0 24 24"
@@ -442,7 +442,7 @@ export default function Inicio() {
 						</div>
 
 						{/* Zoom, pintado aquí y no por Google, para que quede arriba */}
-						<div className="absolute right-3 top-3 z-[500] flex flex-col overflow-hidden rounded-xl border border-black/10 bg-white/85 shadow-sm backdrop-blur-sm">
+						<div className="absolute right-3 top-3 z-mapa flex flex-col overflow-hidden rounded-xl border border-black/10 bg-white/85 shadow-sm backdrop-blur-sm">
 							<button
 								type="button"
 								onClick={() => controlRef.current?.(1)}
@@ -464,7 +464,7 @@ export default function Inicio() {
 
 						{/* Ficha del comercio elegido, o la tira para elegir uno */}
 						{catalogo.length > 0 && (
-							<div className="absolute inset-x-3 bottom-3 z-[500]">
+							<div className="absolute inset-x-3 bottom-3 z-mapa">
 								{seleccion ? (
 									<FichaMapa
 										n={seleccion}
@@ -860,7 +860,7 @@ function FichaMapa({ n, onCerrar }: { n: Negocio; onCerrar: () => void }) {
 				{/* eslint-disable-next-line @next/next/no-img-element */}
 				<img
 					src={foto}
-					alt=""
+					alt={`Foto de ${n.nombre}`}
 					onError={() => setFallaEn(logo)}
 					className="size-20 shrink-0 rounded-xl object-cover"
 				/>
@@ -940,7 +940,7 @@ function VentanaLugar({
 
 	return (
 		<div
-			className="fixed inset-0 z-[900] flex items-end justify-center bg-black/45 p-4 backdrop-blur-[2px] sm:items-center"
+			className="fixed inset-0 z-modal flex items-end justify-center bg-black/45 p-4 backdrop-blur-[2px] sm:items-center"
 			onClick={onCerrar}
 		>
 			<div

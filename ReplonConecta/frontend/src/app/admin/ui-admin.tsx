@@ -293,7 +293,7 @@ export function VentanaAdmin({
 	if (!abierto) return null;
 
 	return (
-		<div className="fixed inset-0 z-[900] flex items-end justify-center bg-black/40 p-4 sm:items-center">
+		<div className="fixed inset-0 z-modal flex items-end justify-center bg-black/40 p-4 sm:items-center">
 			<div
 				ref={panel}
 				role="dialog"

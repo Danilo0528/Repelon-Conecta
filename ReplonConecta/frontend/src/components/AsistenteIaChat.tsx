@@ -47,7 +47,7 @@ function TarjetaNegocioIa({ n }: { n: NegocioIa }) {
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
 						src={logo}
-						alt=""
+						alt={`Logo de ${n.nombre}`}
 						loading="lazy"
 						onError={(e) => {
 							e.currentTarget.src = fotoRespaldo(n.nombre);
@@ -149,7 +149,7 @@ export function AsistenteIaChat() {
 		 * síntoma en Android es "todo enrredado"). Usa el mismo token
 		 * de altura que reserva el contenido (--spacing-nav-total).
 		 */
-		<div className="fixed bottom-[calc(var(--spacing-nav-total)+0.5rem)] right-4 z-[1000]">
+		<div className="fixed bottom-[calc(var(--spacing-nav-total)+0.5rem)] right-4 z-asistente">
 			{!abierto ? (
 				<button
 					onClick={() => setAbierto(true)}

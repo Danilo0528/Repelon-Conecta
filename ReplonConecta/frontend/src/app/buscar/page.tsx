@@ -301,7 +301,7 @@ function Busqueda() {
 								type="button"
 								onClick={pedirUbicacion}
 								disabled={ubicacion.pidiendo}
-								className="absolute bottom-2 left-2 z-[500] inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1.5 text-xs font-semibold text-ink shadow-sm backdrop-blur-sm transition-colors hover:text-leaf disabled:opacity-50"
+								className="absolute bottom-2 left-2 z-mapa inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1.5 text-xs font-semibold text-ink shadow-sm backdrop-blur-sm transition-colors hover:text-leaf disabled:opacity-50"
 							>
 								<svg
 									viewBox="0 0 24 24"
@@ -319,7 +319,7 @@ function Busqueda() {
 							</button>
 
 							{/* Zoom, pintado aquí y no por Google, para que quede arriba */}
-							<div className="absolute right-3 top-3 z-[500] flex flex-col overflow-hidden rounded-xl border border-black/10 bg-white/85 shadow-sm backdrop-blur-sm">
+							<div className="absolute right-3 top-3 z-mapa flex flex-col overflow-hidden rounded-xl border border-black/10 bg-white/85 shadow-sm backdrop-blur-sm">
 								<button
 									type="button"
 									onClick={() => controlRef.current?.(1)}
@@ -343,7 +343,7 @@ function Busqueda() {
 								href="https://www.google.com/maps"
 								target="_blank"
 								rel="noreferrer"
-								className="pointer-events-auto absolute bottom-2 right-2 z-[500] rounded-full bg-white/85 px-2 py-0.5 text-[10px] text-muted-foreground backdrop-blur-sm"
+								className="pointer-events-auto absolute bottom-2 right-2 z-mapa rounded-full bg-white/85 px-2 py-0.5 text-[10px] text-muted-foreground backdrop-blur-sm"
 							>
 								© Google Maps
 							</a>

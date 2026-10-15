@@ -18,10 +18,10 @@ import type { EstadoPedido } from "@/lib/tipos";
  * todo botón, porque se usa con el pulgar y a veces sin mirar.
  */
 export const CLASE_BOTON_AZUL =
-	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-azul px-4 py-3 text-center font-semibold text-white disabled:opacity-50";
+	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-azul px-4 py-3 text-center font-semibold text-white transition hover:bg-azul/90 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-azul disabled:active:scale-100";
 
 export const CLASE_BOTON_NEUTRO =
-	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-black/15 px-4 py-3 text-center font-semibold disabled:opacity-50";
+	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-black/15 px-4 py-3 text-center font-semibold transition hover:bg-black/[.04] active:scale-[.98] disabled:opacity-50 disabled:hover:bg-transparent disabled:active:scale-100";
 
 /*
  * Botón verde principal: el de WhatsApp en la ficha del vendedor. Es la
@@ -30,7 +30,7 @@ export const CLASE_BOTON_NEUTRO =
  * grande de la pantalla.
  */
 export const CLASE_BOTON_VERDE =
-	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-center font-semibold text-white shadow-leaf disabled:opacity-50";
+	"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-center font-semibold text-white shadow-leaf transition hover:bg-leaf/90 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-leaf disabled:active:scale-100";
 
 /*
  * Botones de la fila de acciones de la hoja del mapa ("Ver negocio" /
@@ -40,10 +40,10 @@ export const CLASE_BOTON_VERDE =
  * respetar en todo lo que se toca con el pulgar.
  */
 export const CLASE_BOTON_AZUL_ANCHO =
-	"flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-azul px-4 text-sm font-semibold text-white disabled:opacity-50";
+	"flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-azul px-4 text-sm font-semibold text-white transition hover:bg-azul/90 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-azul disabled:active:scale-100";
 
 export const CLASE_BOTON_AZUL_CONTORNO_ANCHO =
-	"flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl border border-azul bg-white px-4 text-sm font-semibold text-azul disabled:opacity-50";
+	"flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl border border-azul bg-white px-4 text-sm font-semibold text-azul transition hover:bg-azul/5 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-white disabled:active:scale-100";
 
 /*
  * Chip de filtro: "Todos", una categoría, "Abiertos ahora".
@@ -83,10 +83,22 @@ export function Chip({
 }
 
 export function Cargando({ texto = "Cargando…" }: { texto?: string }) {
+	/*
+	 * Skeleton con la forma del contenido de siempre (una ficha ancha y
+	 * dos renglones) en vez del círculo que gira: el esqueleto se parece
+	 * a lo que va a llegar, así el cambio de carga a dato no saltita.
+	 * `texto` queda como mensaje para lectores de pantalla.
+	 */
 	return (
-		<div className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-black/60">
-			<span className="h-4 w-4 animate-spin rounded-full border-2 border-verde border-t-transparent" />
-			{texto}
+		<div
+			className="mx-auto w-full max-w-2xl space-y-3 px-4 py-10"
+			role="status"
+			aria-live="polite"
+		>
+			<div className="glass h-28 animate-pulse rounded-3xl" />
+			<div className="glass h-4 w-2/3 animate-pulse rounded-2xl" />
+			<div className="glass h-4 w-1/2 animate-pulse rounded-2xl" />
+			<span className="sr-only">{texto}</span>
 		</div>
 	);
 }
@@ -98,15 +110,24 @@ export function Aviso({
 	tono?: "error" | "ok" | "info";
 	children: React.ReactNode;
 }) {
+	/*
+	 * El error va con el token `peligro` (oklch subduado del panel):
+	 * con negro sobre gris claro se confundía con un aviso neutro.
+	 * `role="alert"` para que el lector de pantalla lo anuncie en el
+	 * momento en que aparece (los errores de formulario llegan así).
+	 */
 	const clases =
 		tono === "error"
-			? "border-black/15 bg-black/[.04] text-black"
+			? "border-peligro/40 bg-peligro/10 text-ink"
 			: tono === "ok"
 				? "border-verde bg-verde/10 text-black"
 				: "border-azul bg-azul/10 text-black";
 
 	return (
-		<div className={`rounded-xl border px-3 py-2 text-sm ${clases}`} role="status">
+		<div
+			className={`rounded-xl border px-3 py-2 text-sm ${clases}`}
+			role={tono === "error" ? "alert" : "status"}
+		>
 			{children}
 		</div>
 	);
