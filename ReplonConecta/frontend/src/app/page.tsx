@@ -336,7 +336,7 @@ export default function Inicio() {
 							</Link>
 							<Link
 								href="/vendedor"
-								className="glass-soft inline-flex min-h-12 items-center justify-center rounded-xl px-5 py-3 font-semibold text-ink"
+								className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-5 py-3 font-semibold text-leaf shadow-leaf transition-transform active:scale-[.98]"
 							>
 								Registrar mi negocio
 							</Link>

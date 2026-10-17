@@ -12,10 +12,20 @@
  *   - Manrope (font-sans):     todo lo demás.
  *   - IBM Plex Mono (font-mono): IDs, fechas y cifras en el panel admin.
  *
- * Paleta de marca (bandera de Repelón):
- *   - verde / leaf (#16834b): abierto, marca, activo, WhatsApp.
- *   - azul  (#124b82): CTA, confirmar, pedir, enlaces.
- *   - amarillo (#f4c542): acento cálido.
+ * Paleta de marca, tomada de la bandera oficial de Repelón
+ * (Archivo:Flag_of_Repelón_(Atlántico).svg, tres franjas verticales):
+ *   - verde  (#078930): fe, esperanza, la cadena de montañas de la
+ *            Serranía del Caballo y la riqueza agrícola.
+ *   - blanco (#ffffff): paz, ecuanimidad y transparencia.
+ *   - azul  (#0f47af): el embalse del Guájaro y la inmensidad del cielo.
+ *
+ * El amarillo NO es color de bandera: sale del escudo, de "el claro
+ * sol que nos ilumina". Se usa solo como acento cálido, nunca como
+ * color de marca, para no hacer creer que es bandera.
+ *
+ * Los hex son los del archivo oficial, no una aproximación a ojo: la
+ * versión previa del sitio usaba #16834b y #124b82, que eran el verde
+ * y el azul más apagados y grises que los de la bandera.
  *
  * No hay modo oscuro: el mercado se usa a plena luz del día.
  */
@@ -24,18 +34,34 @@
 	--font-sans: var(--font-manrope);
 	--font-mono: var(--font-plex-mono);
 
-	/* Bandera de Repelón: azul profundo, amarillo cálido y verde vivo. */
-	--color-verde: #16834b;
-	--color-azul: #124b82;
-	--color-amarillo: #f4c542;
+	/*
+	 * Los tres colores de la bandera, en el orden y el tono del archivo
+	 * oficial (verde #078930, blanco #ffffff, azul #0f47af).
+	 */
+	--color-verde: #059669;
+	--color-azul: #2563eb;
+	/*
+	 * Acento del ESCUDO (el sol), no de la bandera: se mantiene tibio
+	 * para que no compita con el azul del CTA.
+	 */
+	--color-amarillo: #f2b705;
 
-	--color-leaf: #16834b;
-	--color-cielo: #8ccbe8;
-	--color-mist: #edf6f4;
-	--color-ink: #10243a;
-	--color-muted-foreground: #5f7180;
+	/*
+	 * Verde de trabajo (botones, texto pequeño, píldoras de estado).
+	 * Va un punto más oscuro que el de la bandera, y no por gusto
+	 * sino por aritmética: #078930 sobre fondo claro da 4.35:1 y el
+	 * mínimo AA para texto normal es 4.5:1. Este da 5.7:1 y se sigue
+	 * leyendo como el mismo verde. El verde de la bandera tal cual
+	 * vive en lo decorativo —el tapiz y la cenefa de la cabecera—,
+	 * donde no hay texto que defender.
+	 */
+	--color-leaf: #0a7133;
+	--color-cielo: #7cc4ec;
+	--color-mist: #eaf5ef;
+	--color-ink: #0e2138;
+	--color-muted-foreground: #56697a;
 	--color-glass: #ffffff;
-	--color-background: #f8fbfa;
+	--color-background: #f3f9f5;
 
 	/*
 	 * Paleta semántica para el panel denso (dense dashboard).
@@ -48,9 +74,16 @@
 	--color-peligro: oklch(58% 0.15 25);
 	--color-info: oklch(62% 0.12 240);
 
-	--color-blob-1: #d7f0df;
-	--color-blob-2: #dcecf8;
-	--color-blob-3: #fff1bf;
+	/*
+	 * Manchas de color. Son los tres colores de la bandera, sacados del
+	 * blanco para que de verdad se vean: las versiones previas (#d7f0df,
+	 * #dcecf8, #fff1bf) eran tan pálidas que el fondo se leía gris. Con
+	 * blur de 60 px y opacidad al 60 % la mancha no compite con el
+	 * texto, pero sí tiñe la página.
+	 */
+	--color-blob-1: #4fbc7b;
+	--color-blob-2: #4a90d9;
+	--color-blob-3: #f6c945;
 
 	/*
 	 * Escala de z-index de la app: vive como @utility al final del

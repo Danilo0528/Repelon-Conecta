@@ -1,30 +1,38 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" fill="none">
 	<!--
-		Tapiz agrícola de Repelón — fondo del sitio.
+		Tapiz de Repelón — fondo del sitio.
 
-		Mosaico (tileable): las ondas de los surcos cruzan de borde a
-		borde con la misma fase, así que al repetir el campo se ve
-		continuo. Los motivos van todos DENTRO del cuadro 0-240: lo que
-		se sale del viewBox el navegador lo recorta y aparece un tajo.
+		No es solo agrícola: es el municipio entero, que según la
+		Alcaldía vive de tres renglones (agricultura, ganadería y pesca
+		artesanal) y que el escudo describe como "cultura anfibia". Por
+		eso el campo ocupa la parte de arriba y el embalse del Guájaro
+		la de abajo, con los peces nadando entre los surcos inundados.
+
+		Mosaico (tileable): las ondas cruzan de borde a borde con la
+		misma fase, así que al repetir el campo se ve continuo. Los
+		motivos van todos DENTRO del cuadro 0-240: lo que se sale del
+		viewBox el navegador lo recorta y aparece un tajo.
 
 		Profundidad: las plantas se sientan en surcos distintos (194,
 		206 y 218) y varían en alto. Eso rompe la fila parejita y hace
-		que se lea como un campo con perspectiva y no como un sello
-		que se repite.
+		que se lea como un campo con perspectiva y no como un sello que
+		se repite.
 
-		Motivos de lo que el pueblo siembra: sorgo (cultivo de
-		preferencia), maíz, yuca y plátano.
+		Motivos: sorgo (cultivo de preferencia de los repeloneros),
+		maíz, yuca y plátano; y bocachico y mojarra, que son las dos
+		especies que más se capturan en el Guájaro.
 
-		El verde va escrito acá y no en currentColor: cuando el SVG entra
-		como background-image es un recurso externo y no hereda el color
-		del documento, se quedaría en negro. La intensidad la regula el
-		contenedor con su opacidad.
+		El verde va escrito acá y no en currentColor: cuando el SVG
+		entra como background-image es un recurso externo y no hereda el
+		color del documento, se quedaría en negro. La intensidad la
+		regula el contenedor con su opacidad. El hex es el de la
+		bandera oficial (#078930).
 
 		Las ondas usan "q ... t ...": q dibuja la primera loma y t
 		refleja el punto de control, así alterna loma-valle cada 60px
 		y la onda entra y sale de la celda con la misma fase (4 x 60 = 240).
 	-->
-	<g stroke="#16834b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+	<g stroke="#078930" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
 
 		<!-- Surcos de campo: cuatro líneas paralelas, espaciadas a la
 		     desigualdad del arado, que atraviesan la celda entera. -->
@@ -122,6 +130,43 @@
 			<circle cx="58" cy="150" r="2" />
 			<circle cx="46" cy="176" r="1.6" />
 			<circle cx="186" cy="176" r="1.6" />
+		</g>
+
+		<!--
+			Pesca artesanal: el Guájaro baña el territorio y es la
+			fuente de alimentación. Los peces van nadando ENTRE los
+			surcos, no en una banda aparte, porque así se lee lo que
+			dice el escudo: la cultura anfibia, el campo que se inunda.
+
+			El pez es cuerpo en forma de lente + cola en abanico + ojo.
+			Los tres van a distinta altura y van y vienen (uno mira a
+			la izquierda), para que no parezca un sello.
+		-->
+		<g opacity=".62">
+			<!-- Bocachico, el de más arriba, hacia la derecha. -->
+			<g transform="translate(70 209)">
+				<path d="M-13 0c4-6 15-6 19 0-4 6-15 6-19 0z" />
+				<path d="M6 0 13-5v10z" />
+				<path d="M-2-4c2 3 2 5 0 8" />
+				<circle cx="-9" cy="-1.4" r="1" fill="#078930" stroke="none" />
+			</g>
+			<!-- Mojarra, a la izquierda y mirando al revés. -->
+			<g transform="translate(158 226) scale(-1 1)">
+				<path d="M-11 0c3.5-5 13-5 16.5 0-3.5 5-13 5-16.5 0z" />
+				<path d="M5.5 0 11-4.2v8.4z" />
+				<path d="M-1-3.4c1.7 2.5 1.7 4.3 0 6.8" />
+				<circle cx="-7.6" cy="-1.2" r=".9" fill="#078930" stroke="none" />
+			</g>
+			<!-- Otro pequeño, más abajo, para cerrar la celda. -->
+			<g transform="translate(206 202) scale(.8)" opacity=".8">
+				<path d="M-11 0c3.5-5 13-5 16.5 0-3.5 5-13 5-16.5 0z" />
+				<path d="M5.5 0 11-4.2v8.4z" />
+				<circle cx="-7.6" cy="-1.2" r=".9" fill="#078930" stroke="none" />
+			</g>
+			<!-- Burbujas del agua. -->
+			<circle cx="44" cy="221" r="1.6" opacity=".5" />
+			<circle cx="120" cy="214" r="1.3" opacity=".5" />
+			<circle cx="188" cy="230" r="1.5" opacity=".5" />
 		</g>
 	</g>
 </svg>

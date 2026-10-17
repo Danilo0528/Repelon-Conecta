@@ -150,7 +150,7 @@ export default function PaginaFondoEmprender() {
 								href={SITIO_SENA}
 								target="_blank"
 								rel="noreferrer"
-								className="glass-soft inline-flex min-h-12 items-center justify-center rounded-xl px-5 py-3 text-center font-semibold text-white transition hover:bg-white/85 active:scale-[.98]"
+								className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-5 py-3 text-center font-semibold text-leaf shadow-leaf transition hover:bg-white/90 active:scale-[.98]"
 							>
 								Ver información en sena.edu.co
 							</a>
