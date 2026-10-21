@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
 import { normalizarUrlImagen } from "@/components/ui";
 import { apiConSesion } from "@/lib/api";
+import { supabaseConfigurado } from "@/lib/env";
+import { subirImagen } from "@/lib/subirImagen";
 import type { ZonaTuristica } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 import { EditorUbicacion } from "./EditorUbicacion";
@@ -44,6 +46,12 @@ const MOTIVOS: { valor: string; etiqueta: string }[] = [
 	{ valor: "pueblo", etiqueta: "Pueblo" },
 ];
 
+/** Cuántas fotos admite la ficha (el home las desliza al pasar el cursor). */
+const MAXIMO = 4;
+
+const BTN_SUBIR =
+	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
+
 /** Texto de coordenada → número; vacío o basura → null. */
 function aNumero(texto: string): number | null {
 	const limpio = texto.trim();
@@ -67,6 +75,7 @@ export function SeccionZonas() {
 	const [imagenes, setImagenes] = useState<string[]>([]);
 	const [motivo, setMotivo] = useState("pueblo");
 	const [guardando, setGuardando] = useState(false);
+	const [subiendo, setSubiendo] = useState(false);
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [aviso, setAviso] = useState<string | null>(null);
 
@@ -200,6 +209,33 @@ export function SeccionZonas() {
 	}
 
 	/*
+	 * Subir archivo: el archivo vive en Supabase Storage y la URL que
+	 * devuelve se agrega a la lista de fotos. Se persiste con "Guardar
+	 * cambios", igual que las URLs escritas a mano — mismo trato para
+	 * las dos vías. Al crear la zona aún no hay id, así que la foto
+	 * cae en una carpeta fija hasta que el backend asigne el real.
+	 */
+	async function subirArchivo(evento: ChangeEvent<HTMLInputElement>) {
+		const archivo = evento.target.files?.[0];
+		evento.target.value = "";
+		if (!archivo) return;
+		if (imagenes.length >= MAXIMO) {
+			setErrorAccion(`La zona admite hasta ${MAXIMO} fotos.`);
+			return;
+		}
+		setSubiendo(true);
+		setErrorAccion(null);
+		try {
+			const subida = await subirImagen("zonas", editando ?? "nueva", archivo);
+			setImagenes((actuales) => [...actuales, subida]);
+		} catch (e) {
+			setErrorAccion(e instanceof Error ? e.message : "No se pudo subir la foto.");
+		} finally {
+			setSubiendo(false);
+		}
+	}
+
+	/*
 	 * Los avisos van UNA sola vez montados: dentro de la ventana cuando
 	 * está abierta (si no, quedarían tapados tras la capa oscura — es
 	 * donde avisan los errores de geolocalización y de guardado) y en la
@@ -277,7 +313,8 @@ export function SeccionZonas() {
 						<div className="grid gap-2">
 							<fieldset className="grid gap-2">
 								<legend className="text-xs text-black/55">
-									Fotos por URL (hasta 4; pasan al poner el cursor sobre la ficha)
+									Fotos (hasta 4; sube el archivo o pega una URL — pasan al
+									poner el cursor sobre la ficha)
 								</legend>
 								{imagenes.map((url, indice) => (
 									<div key={indice} className="flex items-center gap-2">
@@ -314,15 +351,33 @@ export function SeccionZonas() {
 										)}
 									</div>
 								))}
-								{imagenes.length < 4 && (
-									<button
-										type="button"
-										onClick={() => setImagenes((actuales) => [...actuales, ""])}
-										className={`${BTN_SECUNDARIO} justify-self-start`}
-									>
-										+ Añadir URL
-									</button>
-								)}
+								<div className="flex flex-wrap items-center gap-2">
+									{!supabaseConfigurado && (
+										<p className="w-full text-[12px] text-black/50">
+											Falta configurar Supabase para subir archivos; usa
+											&quot;+ Añadir URL&quot;.
+										</p>
+									)}
+									<label className={BTN_SUBIR}>
+										{subiendo ? "Subiendo…" : "Subir archivo"}
+										<input
+											type="file"
+											accept="image/*"
+											className="sr-only"
+											disabled={!supabaseConfigurado || subiendo || imagenes.length >= MAXIMO}
+											onChange={(e) => void subirArchivo(e)}
+										/>
+									</label>
+									{imagenes.length < MAXIMO && (
+										<button
+											type="button"
+											onClick={() => setImagenes((actuales) => [...actuales, ""])}
+											className={BTN_SECUNDARIO}
+										>
+											+ Añadir URL
+										</button>
+									)}
+								</div>
 							</fieldset>
 						</div>
 					</div>
