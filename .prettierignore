@@ -1,0 +1,7 @@
+# Dependencias y build
+node_modules
+ReplonConecta/frontend/.next
+
+# El código de la app no está formateado con Prettier (tabs y líneas
+# largas a propósito): el hook no debe reescribir el estilo existente.
+ReplonConecta/frontend/src/

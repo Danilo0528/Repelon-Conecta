@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { listaCreditos } from "@/lib/creditos";
+
 /*
  * Pie de la app pública.
  *
@@ -18,6 +20,8 @@ export default function PieConecta() {
 	const pathname = usePathname();
 
 	if (pathname.startsWith("/admin")) return null;
+
+	const creditos = listaCreditos();
 
 	return (
 		<footer className="mx-auto w-full max-w-6xl px-4 pb-nav-total pt-12 md:pb-10">
@@ -55,6 +59,29 @@ export default function PieConecta() {
 						Términos y condiciones
 					</Link>
 				</nav>
+			</div>
+
+			{/*
+			 * Derechos de autor: el aviso general va siempre; la
+			 * lista de créditos solo aparece cuando hay imágenes
+			 * registradas en src/lib/creditos.ts.
+			 */}
+			<div className="mt-4 text-center text-xs leading-relaxed text-muted-foreground md:text-left">
+				<p>
+					Imágenes de terceros © sus autores. Créditos de uso en
+					este sitio.
+				</p>
+				{creditos.length > 0 && (
+					<ul className="mt-1 space-y-0.5">
+						{creditos.map(({ imagen, credito }) => (
+							<li key={imagen}>
+								<span className="font-medium">{credito}</span>
+								{" — "}
+								<span className="opacity-75">{imagen}</span>
+							</li>
+						))}
+					</ul>
+				)}
 			</div>
 		</footer>
 	);

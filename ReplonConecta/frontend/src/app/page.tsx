@@ -12,6 +12,7 @@ import { SliderTurismo } from "@/components/SliderTurismo";
 import { Aviso, InsigniaAbierto } from "@/components/ui";
 import { api } from "@/lib/api";
 import { enAlcance } from "@/lib/alcance";
+import { creditoImagen } from "@/lib/creditos";
 import { supabaseConfigurado } from "@/lib/env";
 import { conCoordenadas, useCoordenadas } from "@/lib/geocodificar";
 import { imagenesInicio, textoInicio } from "@/lib/inicio";
@@ -237,6 +238,8 @@ export default function Inicio() {
 		return () => clearInterval(t);
 	}, [imagenesHero.length]);
 	const indiceHero = heroIdx % imagenesHero.length;
+	/* Crédito de la imagen visible (si está registrado en lib/creditos). */
+	const creditoHero = creditoImagen(imagenesHero[indiceHero] ?? "");
 
 	/*
 	 * Zonas turísticas: las carga el estudiante desde /admin (con su
@@ -390,9 +393,20 @@ export default function Inicio() {
 							</div>
 						</div>
 					</div>
+
+					{/*
+					 * Crédito de autor de la imagen del slider visible, si
+					 * tiene uno registrado en lib/creditos. En móvil sube
+					 * sobre la barra flotante de destinos (bottom-nav-total).
+					 */}
+					{creditoHero && (
+						<p className="absolute bottom-nav-total right-5 z-10 max-w-[70%] text-right text-[11px] leading-snug text-white/65 md:bottom-4 md:right-8">
+							{creditoHero}
+						</p>
+					)}
 				</section>
 
-				{/* ======================= El pueblo en el mapa ======================= */}
+			{/* ======================= El pueblo en el mapa ======================= */}
 			<section className="mx-auto max-w-6xl px-4 pt-12">
 				<div className="mb-5">
 					<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
