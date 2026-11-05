@@ -17,6 +17,7 @@ export type NombreIconoNav =
 	| "negocio"
 	| "perfil"
 	| "turismo"
+	| "cultura"
 	| "fondo";
 
 export function IconoNav({
@@ -91,6 +92,15 @@ export function IconoNav({
 					<path d="M12 21v-9" strokeLinecap="round" />
 					<path d="M12 12c4.4 0 8-3.6 8-8-4.4 0-8 3.6-8 8z" strokeLinejoin="round" />
 					<path d="M12 15c-3.3 0-6-2.7-6-6 3.3 0 6 2.7 6 6z" strokeLinejoin="round" />
+				</svg>
+			);
+		case "cultura":
+			// Lienzo enmarcado: arte, fotos y videos de la cultura del municipio.
+			return (
+				<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+					<rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+					<circle cx="9" cy="10" r="1.6" />
+					<path d="M4 17.5l4.5-4.5 3.5 3.5 3-3 4.5 4.5" strokeLinejoin="round" />
 				</svg>
 			);
 	}

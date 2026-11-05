@@ -10,7 +10,7 @@ import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
  * Navegación de la app.
  *
  * Arriba, la pastilla de vidrio con la marca y los accesos
- * directos (HeaderConecta). Abajo, seis destinos en una barra que
+ * directos (HeaderConecta). Abajo, siete destinos en una barra que
  * FLOTA sobre el fondo (12 px separada del borde) con acabado de
  * vidrio: ya no es una caja blanca pegada abajo, es una pastilla que
  * descansa sobre el contenido.
@@ -22,8 +22,8 @@ import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
  * barra se oculta porque los mismos destinos ya están en la
  * cabecera.
  *
- * El acceso del vendedor y del administrador NO vive aquí: meter un
- * séptimo destino descuadra la barra para todos. "Mi negocio" sí entra,
+ * El acceso del vendedor y del administrador NO vive aquí: ya hay
+ * siete destinos y otro más descuadraría la barra para todos. "Mi negocio" sí entra,
  * porque es de todos. "Turismo" es una ancla (#turismo) a la sección
  * de la home, así que nunca se marca como activo.
  */
@@ -40,9 +40,10 @@ const ENLACES: {
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
 	// Etiquetas cortas a proposito: en un Android angosto (320 px) cada
-	// destino tiene ~44 px de ancho y un texto largo queda truncado.
+	// destino tiene ~37 px de ancho y un texto largo queda truncado.
 	{ href: "/negocios", etiqueta: "Negocios", icono: "comercios" },
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
+	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
 	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
 	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
@@ -63,7 +64,7 @@ export default function BarraNavegacion() {
 				aria-label="Navegación principal"
 				className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-cromo md:hidden"
 			>
-				<div className="glass grid grid-cols-6 gap-0.5 rounded-[22px] px-1.5 py-1.5">
+				<div className="glass grid grid-cols-7 gap-0.5 rounded-[22px] px-1.5 py-1.5">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por

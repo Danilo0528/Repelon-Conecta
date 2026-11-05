@@ -33,6 +33,7 @@ const DESTINOS: { href: string; etiqueta: string; icono: NombreIconoNav }[] = [
 	// Ancla a la sección de la home: el acceso no queda escondido
 	// abajo del scroll, vive en la barra como los demás destinos.
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
+	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
 	{ href: "/fondo-emprender", etiqueta: "Fondo Emprender", icono: "fondo" },
 	// Oculto mientras COMPRAS_ACTIVAS sea false: la app es solo
 	// intermediaria. Con el interruptor en true vuelve sin mas cambios.
