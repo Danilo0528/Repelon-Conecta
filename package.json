@@ -5,6 +5,8 @@
     "prettier": "^3.9.10"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "npm run typecheck --prefix ReplonConecta/frontend",
+    "test": "npm run test --prefix ReplonConecta/frontend"
   }
 }
