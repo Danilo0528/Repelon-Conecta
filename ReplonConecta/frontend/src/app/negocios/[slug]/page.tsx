@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+import { BotonNumero } from "@/components/BotonNumero";
 import { GaleriaNegocio } from "@/components/GaleriaNegocio";
 import { MapaMini } from "@/components/Mapa";
 import {
@@ -30,7 +31,7 @@ import { enlaceWhatsApp, mensajeConsulta } from "@/lib/whatsapp";
  *
  * La pantalla responde tres preguntas en orden: ¿qué es?, ¿dónde está?,
  * ¿qué vende? El banner con el nombre superpuesto responde la primera de
- * un vistazo; el bloque de acciones (WhatsApp + Cómo llegar + mapa)
+ * un vistazo; el bloque de acciones (WhatsApp, número, Cómo llegar + mapa)
  * responde la segunda; la rejilla de productos la tercera.
  *
  * Todo enlace de ubicación va a Google Maps: "Cómo llegar" propone la
@@ -169,6 +170,12 @@ function Ficha() {
 							</svg>
 							Escribir por WhatsApp
 						</a>
+					)}
+
+					{negocio.telefono && (
+						<div className="mt-2">
+							<BotonNumero telefono={negocio.telefono} />
+						</div>
 					)}
 
 					<a
