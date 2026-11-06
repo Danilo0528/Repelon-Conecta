@@ -37,10 +37,10 @@
     "semantic_hash": "88ba3737a5fa2d91a91858adece02235"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/SecurityConfig.java": {
-    "mtime": 1793940332.3425725,
-    "seen": 1793972560.339641,
-    "ast_hash": "5f38006b17a25228043e460975ddd17d",
-    "semantic_hash": "5f38006b17a25228043e460975ddd17d"
+    "mtime": 1793993136.1104312,
+    "seen": 1793993482.7095532,
+    "ast_hash": "df1553905f8d4544c262d5154c55f1d3",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/SeedData.java": {
     "mtime": 1791300574.1568682,
@@ -1247,6 +1247,24 @@
     "mtime": 1793992645.6474566,
     "seen": 1793993001.4174318,
     "ast_hash": "badd285210f1d4f37be4cd259e1b62d4",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/CorsConfig.java": {
+    "mtime": 1793993136.0924368,
+    "seen": 1793993482.7095532,
+    "ast_hash": "4c5822a7d2974df0007398613b02bb3b",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/JwtAuthoritiesConfig.java": {
+    "mtime": 1793993135.9934344,
+    "seen": 1793993482.7095532,
+    "ast_hash": "66f42537ec040e103190effa91514456",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/JwtDecoderConfig.java": {
+    "mtime": 1793993135.9930058,
+    "seen": 1793993482.7095532,
+    "ast_hash": "a90699d49b58b38f776e5b121a6b31f1",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/package-lock.json": {
