@@ -51,7 +51,8 @@ Thumbs.db
 .ui-craft/
 
 # graphify: el grafo SI se versiona (graph.json + reporte + html) para que
-# cualquier agente lo consulte, pero la cache AST y la ruta absoluta de
-# esta maquina no.
+# cualquier agente lo consulte, pero la cache AST, la ruta absoluta de
+# esta maquina y los backups datados de graphify no.
 graphify-out/cache/
 graphify-out/.graphify_root
+graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/

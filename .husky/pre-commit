@@ -1,1 +1,14 @@
 npx lint-staged
+
+# El grafo de graphify se refresca con el codigo recien formateado: AST
+# local, sin LLM (GRAPHIFY_BACKEND=none salta el etiquetado que pediria
+# API key). Si graphify falta o falla, el commit NO se bloquea: solo avisa.
+if command -v graphify >/dev/null 2>&1; then
+	if GRAPHIFY_BACKEND=none graphify update .; then
+		git add graphify-out
+	else
+		echo "aviso: graphify update falto; grafo desactualizado en este commit"
+	fi
+else
+	echo "aviso: graphify no esta instalado; grafo sin actualizar (pip install graphifyy)"
+fi

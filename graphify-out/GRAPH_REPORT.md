@@ -1,7 +1,9 @@
 # Graph Report - Proyecto Edwin  (2026-11-06)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 214 files · ~141,468 words
+- Verdict: corpus is large enough that graph structure adds value.
+- Unclassified: 19 file(s) not represented in the graph (top: (none) 12, .properties 3, .cmd 2)
 
 ## Summary
 - 1733 nodes · 4550 edges · 109 communities (84 shown, 25 thin omitted)
@@ -9,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4e365b8c`
+- Built from commit: `32c82d92`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
