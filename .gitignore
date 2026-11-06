@@ -49,3 +49,9 @@ Thumbs.db
 
 # ui-craft deja su configuracion y brief aqui
 .ui-craft/
+
+# graphify: el grafo SI se versiona (graph.json + reporte + html) para que
+# cualquier agente lo consulte, pero la cache AST y la ruta absoluta de
+# esta maquina no.
+graphify-out/cache/
+graphify-out/.graphify_root

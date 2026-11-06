@@ -5,3 +5,7 @@ ReplonConecta/frontend/.next
 # El código de la app no está formateado con Prettier (tabs y líneas
 # largas a propósito): el hook no debe reescribir el estilo existente.
 ReplonConecta/frontend/src/
+
+# Grafo de graphify: archivos generados (JSON de 2.5 MB y HTML de 2.5 MB);
+# formatearlos los haría gigantes sin ningún beneficio.
+graphify-out
