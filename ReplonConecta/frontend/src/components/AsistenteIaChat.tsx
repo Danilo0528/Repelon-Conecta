@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ErrorApi, apiJson } from "@/lib/api";
 import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
@@ -108,6 +108,58 @@ function TarjetaNegocioIa({ n }: { n: NegocioIa }) {
 	);
 }
 
+/*
+ * Video del FAB del asistente: /public/img/ia-fab.mp4.
+ *
+ * Va como componente aparte para que monte y desmonte con el botón
+ * (cuando se abre/cierra el chat el FAB aparece y desaparece, y al
+ * remontar el effect vuelve a arrancar el loop).
+ *
+ * El video tapa el SVG animado recién en onCanPlay, así no hay
+ * flash negro; si el archivo falla, devuelve null y queda el SVG.
+ * El autoplay NO va como atributo: se dispara desde el effect con
+ * muted + play(), que es lo que mira la política de autoplay de
+ * Chrome. Quien pide movimiento reducido se queda con el primer
+ * cuadro quieto (pause y sin loop).
+ */
+function VideoFab() {
+	const videoRef = useRef<HTMLVideoElement>(null);
+	const [listo, setListo] = useState(false);
+	const [falla, setFalla] = useState(false);
+
+	useEffect(() => {
+		const video = videoRef.current;
+		if (!video) return;
+		video.muted = true;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			video.pause();
+			return;
+		}
+		void video.play().catch(() => {
+			/* Autoplay bloqueado por el navegador: queda el SVG animado. */
+		});
+	}, []);
+
+	if (falla) return null;
+
+	return (
+		<video
+			ref={videoRef}
+			src="/img/ia-fab.mp4"
+			loop
+			muted
+			playsInline
+			preload="auto"
+			aria-hidden
+			onCanPlay={() => setListo(true)}
+			onError={() => setFalla(true)}
+			className={`pointer-events-none absolute inset-0 size-full rounded-full object-cover transition-opacity duration-300 ${
+				listo ? "opacity-100" : "opacity-0"
+			}`}
+		/>
+	);
+}
+
 export function AsistenteIaChat() {
 	const [abierto, setAbierto] = useState(false);
 	const [mensajes, setMensajes] = useState<Mensaje[]>([
@@ -154,11 +206,45 @@ export function AsistenteIaChat() {
 				<button
 					onClick={() => setAbierto(true)}
 					aria-label="Abrir asistente de Repelón Conecta"
-					className="flex size-14 items-center justify-center rounded-full bg-leaf text-white shadow-xl transition hover:scale-105"
+					className="relative flex size-14 items-center justify-center rounded-full bg-leaf text-white shadow-xl transition hover:scale-105"
 				>
-					<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-						<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+					{/*
+					 * Halo que late hacia afuera (ia-halo): le da vida al
+					 * botón incluso cuando nadie lo toca. Va dentro del
+					 * botón y sin eventos para no estorbar al clic.
+					 */}
+					<span
+						aria-hidden
+						className="ia-halo pointer-events-none absolute inset-0 rounded-full border-2 border-leaf"
+					/>
+					{/*
+					 * SVG vivo: la buruja se mece (ia-burbuja) y los tres
+					 * puntos "escriben" en bucle (ia-punto, con delay
+					 * escalonado por punto). El relleno es blanco sobre el
+					 * verde del FAB y los puntos son verde hoja.
+					 */}
+					<svg
+						viewBox="0 0 24 24"
+						width="30"
+						height="30"
+						aria-hidden
+						className="ia-burbuja relative"
+					>
+						<path
+							fill="currentColor"
+							d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+						/>
+						<circle className="ia-punto" cx="8.4" cy="12.4" r="1.45" fill="var(--color-leaf)" style={{ animationDelay: "0s" }} />
+						<circle className="ia-punto" cx="12" cy="12.4" r="1.45" fill="var(--color-leaf)" style={{ animationDelay: "0.15s" }} />
+						<circle className="ia-punto" cx="15.6" cy="12.4" r="1.45" fill="var(--color-leaf)" style={{ animationDelay: "0.3s" }} />
 					</svg>
+					{/*
+					 * El video (si existe y el navegador lo deja correr)
+					 * queda encima del SVG en loop; mientras carga, el SVG
+					 * animado sigue visible por debajo (opacity-0 solo
+					 * cuando el video ya arrancó).
+					 */}
+					<VideoFab />
 				</button>
 			) : (
 				<div className="flex h-[400px] w-80 flex-col rounded-3xl border border-glass bg-white shadow-2xl">

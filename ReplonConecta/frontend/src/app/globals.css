@@ -281,3 +281,78 @@ textarea,
 	animation: drift 20s ease-in-out infinite;
 }
 
+/* ====================================================================
+ * Botón del asistente IA: burbuja viva
+ *
+ * El FAB verde lleva un SVG animado que no para: la burbuja se mece,
+ * los tres puntos "escriben" en bucle y un halo se expande hacia
+ * afuera. Todo con CSS (sin JS ni requestAnimationFrame) y todo se
+ * apaga con prefers-reduced-motion, como el resto de la app.
+ * ==================================================================== */
+
+/* La burbuja cabecea suave y rota poquito: nunca quieta, nunca atontada. */
+@keyframes ia-burbuja {
+	0%,
+	100% {
+		transform: translateY(0) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-1.4px) rotate(-4deg);
+	}
+}
+
+.ia-burbuja {
+	animation: ia-burbuja 2.6s ease-in-out infinite;
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+/* Los tres puntos rebotan escalonados (el delay va inline por punto). */
+@keyframes ia-punto {
+	0%,
+	60%,
+	100% {
+		transform: translateY(0);
+		opacity: 0.7;
+	}
+	30% {
+		transform: translateY(-1.6px);
+		opacity: 1;
+	}
+}
+
+.ia-punto {
+	animation: ia-punto 1.2s ease-in-out infinite;
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+/* Halo que late hacia afuera: hace que el botón se note en la pantalla. */
+@keyframes ia-halo {
+	0% {
+		transform: scale(1);
+		opacity: 0.55;
+	}
+	70%,
+	100% {
+		transform: scale(1.6);
+		opacity: 0;
+	}
+}
+
+.ia-halo {
+	animation: ia-halo 2.4s ease-out infinite;
+}
+
+/*
+ * Con movimiento reducido el botón se queda estático: burbuja quieta,
+ * puntos visibles y sin halo latiendo.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.ia-burbuja,
+	.ia-punto,
+	.ia-halo {
+		animation: none;
+	}
+}
+
