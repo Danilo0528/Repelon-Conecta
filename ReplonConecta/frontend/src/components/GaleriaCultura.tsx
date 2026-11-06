@@ -21,7 +21,7 @@ export function GaleriaCultura({ fotos }: { fotos: FotoCultura[] }) {
 
 	return (
 		<>
-			<ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+			<ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
 				{fotos.map((foto, i) => (
 					<li key={`${foto.src}-${i}`}>
 						<button

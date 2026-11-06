@@ -67,11 +67,11 @@ export default function Cultura() {
 					<p className="mt-1 text-sm text-muted-foreground">
 						Imágenes en movimiento de la vida del pueblo.
 					</p>
-					<div className="mt-4 grid gap-4 sm:grid-cols-2">
+					<div className="mt-4">
 						{CULTURA.videos.map((video) => (
 							<figure
 								key={video.id}
-								className="overflow-hidden rounded-2xl border border-black/10 bg-black/[.04]"
+								className="relative aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[20px] bg-black"
 							>
 								<iframe
 									src={`https://www.youtube-nocookie.com/embed/${video.id}`}
@@ -79,7 +79,7 @@ export default function Cultura() {
 									loading="lazy"
 									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 									allowFullScreen
-									className="aspect-video w-full"
+									className="h-full w-full"
 								/>
 								<figcaption className="px-3 py-2 text-xs text-muted-foreground">
 									{video.titulo}
