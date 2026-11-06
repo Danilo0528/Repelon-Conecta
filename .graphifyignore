@@ -1,0 +1,10 @@
+# Herramientas de agentes: configuracion de skills y plugins, NO es codigo
+# del producto. Sus YAML generaban ~25 comunidades basura ("interface") y
+# 192 nodos que inflaban el reporte sin aportar arquitectura.
+.agents/
+.claude/
+.opencode/
+
+# Artefactos generados por el propio graphify (no indexar el grafo dentro
+# del grafo).
+graphify-out/
