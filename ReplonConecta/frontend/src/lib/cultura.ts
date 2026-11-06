@@ -53,6 +53,60 @@ export type PublicacionCultura = {
 	meGusta: number;
 };
 
+/**
+ * Lo que devuelve GET /api/cultura/publicaciones (panel de admin →
+ * backend Spring). El feed lo traduce con `aPublicacion` para no
+ * mezclar el contrato del servidor con el modelo de pintura.
+ */
+export type PublicacionCulturaApi = {
+	id: string;
+	autor: string;
+	lugar: string | null;
+	/** yyyy-mm-dd. */
+	fecha: string;
+	texto: string;
+	/** "FOTO" o "VIDEO". */
+	tipo: string;
+	/** URL de la foto, o ID/enlace de YouTube, o URL de archivo .mp4. */
+	mediaUrl: string;
+	credito: string | null;
+};
+
+/** ¿La fuente de video es YouTube (enlace o ID pelado) o un archivo suelto? */
+export function esYouTube(fuente: string): boolean {
+	const t = fuente.trim();
+	return /(?:youtube\.com|youtu\.be|youtube-nocookie\.com)/i.test(t) || /^[\w-]{6,20}$/.test(t);
+}
+
+/** ID de YouTube a partir de un enlace (v=, youtu.be, shorts, embed) o del ID pelado. */
+export function idYouTube(fuente: string): string {
+	const m = fuente.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{6,20})/);
+	return m ? m[1] : fuente.trim();
+}
+
+/** Fila del backend → publicación lista para pintar. */
+export function aPublicacion(p: PublicacionCulturaApi): PublicacionCultura {
+	return {
+		id: p.id,
+		autor: p.autor,
+		lugar: p.lugar ?? undefined,
+		fecha: p.fecha,
+		texto: p.texto,
+		// El backend no guarda "me gusta": el contador nace en 0 y crece
+		// en el navegador de quien pulsa el corazón.
+		meGusta: 0,
+		media:
+			p.tipo === "VIDEO"
+				? { tipo: "video", id: p.mediaUrl, titulo: p.texto }
+				: {
+						tipo: "foto",
+						src: p.mediaUrl,
+						alt: p.texto,
+						credito: p.credito ?? undefined,
+					},
+	};
+}
+
 export const CULTURA = {
 	titulo: "Cultura de Repelón",
 	descripcion: [

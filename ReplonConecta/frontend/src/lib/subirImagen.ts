@@ -20,11 +20,15 @@ import { supabase } from "./supabase";
  * sin esto el bucket se llena de archivos que la lista no necesita.
  */
 
-export type CarpetaFotos = "negocios" | "productos" | "inicio" | "zonas";
+export type CarpetaFotos = "negocios" | "productos" | "inicio" | "zonas" | "cultura";
 
 const LADO_MAXIMO = 1280;
 const PESO_MAXIMO = 5 * 1024 * 1024;
 const CALIDAD = 0.82;
+
+/* Videos del feed de Cultura: sin redimensionar (no es imagen), pero
+ * con techo para que un archivo de celular no llene el bucket. */
+const PESO_MAXIMO_VIDEO = 60 * 1024 * 1024;
 
 async function redimensionar(archivo: File): Promise<{ cuerpo: Blob; tipo: string }> {
 	try {
@@ -111,6 +115,64 @@ export async function subirImagen(
 			throw new Error("La sesión expiró: sal y vuelve a entrar al panel.");
 		}
 		throw new Error(`No se pudo subir la imagen: ${error.message}`);
+	}
+
+	const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(ruta);
+	return data.publicUrl;
+}
+
+/**
+ * Sube un video (mp4/webm) al bucket y devuelve su URL pública.
+ *
+ * Misma vía que `subirImagen` (sesión del admin, clave pública, políticas
+ * RLS del bucket), pero sin redimensionar: el navegador manda el archivo
+ * tal cual y el límite es de 60 MB para que un video de celular no llene
+ * el bucket. Los mensajes de error son los mismos que los de la imagen,
+ * ya que las causas (sin configurar, sin sesión, bucket, RLS) son las
+ * mismas.
+ */
+export async function subirVideo(
+	carpeta: CarpetaFotos,
+	id: string,
+	archivo: File,
+): Promise<string> {
+	if (!supabaseConfigurado) {
+		throw new Error(
+			"Supabase no está configurado en .env.local (faltan NEXT_PUBLIC_SUPABASE_URL y la clave pública).",
+		);
+	}
+	if (!archivo.type.startsWith("video/")) {
+		throw new Error("El archivo debe ser un video (MP4 o WebM).");
+	}
+	if (archivo.size > PESO_MAXIMO_VIDEO) {
+		throw new Error("El video pesa más de 60 MB: recórtalo o comprímelo antes de subirlo.");
+	}
+
+	const ext = archivo.type.includes("webm") ? "webm" : "mp4";
+	const ruta = `${carpeta}/${id}/${Date.now()}.${ext}`;
+
+	const { error } = await supabase.storage.from(SUPABASE_BUCKET).upload(ruta, archivo, {
+		contentType: archivo.type || "video/mp4",
+		cacheControl: "31536000",
+		upsert: false,
+	});
+
+	if (error) {
+		const texto = error.message.toLowerCase();
+		if (texto.includes("bucket")) {
+			throw new Error(
+				`El bucket "${SUPABASE_BUCKET}" no existe en Supabase: créalo como público y repite la subida.`,
+			);
+		}
+		if (texto.includes("row-level security") || texto.includes("policy")) {
+			throw new Error(
+				"Supabase rechazó la subida: faltan las políticas RLS de escritura del bucket (SQL de las notas del ticket 02).",
+			);
+		}
+		if (texto.includes("unauthorized") || texto.includes("401")) {
+			throw new Error("La sesión expiró: sal y vuelve a entrar al panel.");
+		}
+		throw new Error(`No se pudo subir el video: ${error.message}`);
 	}
 
 	const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(ruta);

@@ -3,16 +3,28 @@
 import { useMemo, useState } from "react";
 
 import { LightboxGaleria } from "@/components/LightboxGaleria";
-import { Foto } from "@/components/ui";
-import { fecha } from "@/lib/format";
-import type {
-	FotoCultura,
-	MediaPublicacion,
-	PublicacionCultura,
+import { Aviso, Foto, Vacio } from "@/components/ui";
+import { api } from "@/lib/api";
+import {
+	aPublicacion,
+	esYouTube,
+	idYouTube,
+	type FotoCultura,
+	type MediaPublicacion,
+	type PublicacionCultura,
+	type PublicacionCulturaApi,
 } from "@/lib/cultura";
+import { useDatos } from "@/lib/useDatos";
 
 /*
- * Feed de Cultura: las fotos y videos del apartado como PUBLICACIONES.
+ * Feed de Cultura: las publicaciones del apartado /cultura.
+ *
+ * Los datos vienen del backend (GET /api/cultura/publicaciones), que es
+ * lo que carga el admin desde su panel. Si el servidor no responde, el
+ * feed cae en las publicaciones de ejemplo de lib/cultura.ts con un
+ * aviso; si responde vacío, muestra el estado "aún no hay nada" — así
+ * nunca queda una pantalla en blanco ni se confunde "sin conexión"
+ * con "el admin todavía no subió nada".
  *
  * Cada entrada es una tarjeta con autor, lugar, fecha, pie, medio y una
  * fila de acciones (me gusta + compartir), igual que el muro de una red
@@ -39,18 +51,73 @@ function iniciales(autor: string): string {
 		.toUpperCase();
 }
 
-export function FeedCultura({ publicaciones }: { publicaciones: PublicacionCultura[] }) {
+/*
+ * Fecha del feed sin hora: el backend manda "yyyy-mm-dd" (medianoche
+ * UTC) y formatear eso en hora de Bogotá correría el día para atrás
+ * (las 7 p.m. del día anterior). Se formatea en UTC para que el día en
+ * pantalla sea el día que escribió el admin.
+ */
+function fechaCorta(iso: string): string {
+	const fecha = new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso);
+	return new Intl.DateTimeFormat("es-CO", {
+		dateStyle: "medium",
+		timeZone: "UTC",
+	}).format(fecha);
+}
+
+export function FeedCultura({ ejemplos }: { ejemplos: PublicacionCultura[] }) {
+	const { datos, cargando, error } = useDatos<PublicacionCulturaApi[]>(() =>
+		api<PublicacionCulturaApi[]>("/api/cultura/publicaciones"),
+	);
+
 	const [abierta, setAbierta] = useState<number | null>(null);
 	const [meGusta, setMeGusta] = useState<Record<string, boolean>>({});
 	const [copiado, setCopiado] = useState<string | null>(null);
 
+	/* Mientras carga o si el servidor falla, se ve el feed de ejemplo. */
+	const usandoEjemplos = datos == null;
+	const publicaciones = useMemo(
+		() => (datos ? datos.map(aPublicacion) : ejemplos),
+		[datos, ejemplos],
+	);
+
 	/* Solo las publicaciones con foto, en orden, para el lightbox. */
 	const fotos = useMemo(
-		() => publicaciones.filter((pub) => esFoto(pub.media)).map((pub) => pub.media as { tipo: "foto" } & FotoCultura),
+		() =>
+			publicaciones
+				.filter((pub) => esFoto(pub.media))
+				.map((pub) => pub.media as { tipo: "foto" } & FotoCultura),
 		[publicaciones],
 	);
 
-	if (publicaciones.length === 0) return null;
+	if (cargando) {
+		return (
+			<div className="space-y-6" role="status" aria-live="polite">
+				{Array.from({ length: 3 }, (_, i) => (
+					<div key={i} className="glass animate-pulse rounded-3xl">
+						<div className="flex items-center gap-3 p-4">
+							<div className="size-10 rounded-full bg-black/10" />
+							<div className="h-3 w-32 rounded bg-black/10" />
+						</div>
+						<div className="mx-4 mb-4 aspect-[4/3] rounded-2xl bg-black/10" />
+					</div>
+				))}
+				<span className="sr-only">Cargando publicaciones…</span>
+			</div>
+		);
+	}
+
+	/* El servidor respondió y no hay nada: el admin aún sube contenido. */
+	if (!usandoEjemplos && publicaciones.length === 0) {
+		return (
+			<div className="rounded-3xl border border-black/10 bg-white">
+				<Vacio
+					titulo="Aún no hay publicaciones"
+					texto="El apartado de Cultura se llena desde el panel de administración."
+				/>
+			</div>
+		);
+	}
 
 	const alternarGusto = (id: string) =>
 		setMeGusta((previo) => ({ ...previo, [id]: !previo[id] }));
@@ -72,6 +139,15 @@ export function FeedCultura({ publicaciones }: { publicaciones: PublicacionCultu
 
 	return (
 		<>
+			{error && (
+				<div className="mb-5">
+					<Aviso tono="info">
+						No se pudo conectar con el servidor: se muestran publicaciones de
+						ejemplo de <code>src/lib/cultura.ts</code>.
+					</Aviso>
+				</div>
+			)}
+
 			<ul className="space-y-6">
 				{publicaciones.map((pub) => {
 					const media = pub.media;
@@ -102,7 +178,7 @@ export function FeedCultura({ publicaciones }: { publicaciones: PublicacionCultu
 										</p>
 										<p className="truncate text-xs text-muted-foreground">
 											{pub.lugar ? `${pub.lugar} · ` : ""}
-											{fecha(pub.fecha)}
+											{fechaCorta(pub.fecha)}
 										</p>
 									</div>
 								</header>
@@ -112,7 +188,7 @@ export function FeedCultura({ publicaciones }: { publicaciones: PublicacionCultu
 									{pub.texto}
 								</p>
 
-								{/* Medio: foto (abre lightbox) o video embebido */}
+								{/* Medio: foto (abre lightbox) o video (YouTube o archivo) */}
 								<div className="mt-3">
 									{media.tipo === "foto" ? (
 										<button
@@ -128,16 +204,28 @@ export function FeedCultura({ publicaciones }: { publicaciones: PublicacionCultu
 											/>
 										</button>
 									) : media.tipo === "video" ? (
-										<figure className="aspect-video w-full bg-black">
-											<iframe
-												src={`https://www.youtube-nocookie.com/embed/${media.id}`}
-												title={media.titulo}
-												loading="lazy"
-												allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-												allowFullScreen
-												className="h-full w-full"
+										esYouTube(media.id) ? (
+											<figure className="aspect-video w-full bg-black">
+												<iframe
+													src={`https://www.youtube-nocookie.com/embed/${idYouTube(media.id)}`}
+													title={media.titulo}
+													loading="lazy"
+													allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+													allowFullScreen
+													className="h-full w-full"
+												/>
+											</figure>
+										) : (
+											/* Archivo suelto (mp4/webm) subido al bucket. */
+											<video
+												src={media.id}
+												controls
+												loop
+												playsInline
+												preload="metadata"
+												className="aspect-video w-full bg-black object-contain"
 											/>
-										</figure>
+										)
 									) : null}
 								</div>
 

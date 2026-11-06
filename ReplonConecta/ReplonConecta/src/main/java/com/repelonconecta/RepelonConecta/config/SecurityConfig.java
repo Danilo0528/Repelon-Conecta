@@ -110,7 +110,9 @@ public class SecurityConfig {
 						"/api/inicio/textos",
 						// Zonas turisticas del home: mismo motivo que los
 						// textos, el visitante sin sesion las tiene que ver.
-						"/api/zonas")
+						"/api/zonas",
+						// Publicaciones de Cultura: el feed se lee sin sesion.
+						"/api/cultura/publicaciones")
 					.permitAll()
 				// Asistente IA del home: lo usa el visitante sin sesion,
 				// asi que va abierto. La key de Groq NO sale de aca: vive

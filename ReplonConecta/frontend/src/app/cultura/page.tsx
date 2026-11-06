@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { FeedCultura } from "@/components/FeedCultura";
-import { Aviso } from "@/components/ui";
 import { CULTURA } from "@/lib/cultura";
 
 export const metadata: Metadata = {
@@ -13,15 +12,16 @@ export const metadata: Metadata = {
 /*
  * Apartado "Cultura" (/cultura).
  *
- * Página de servidor con contenido estático (lib/cultura.ts): sin
- * llamadas al backend, así carga rápido y se cachea. El feed de
- * publicaciones es un componente cliente (tarjetas + lightbox + me
- * gusta/compartir) y los videos van embebidos de YouTube con dominio
- * sin cookies (youtube-nocookie.com) para no mandar cookies de
- * seguimiento antes de que el vecino los reproduzca.
+ * Página de servidor para el encabezado (título y descripción, estáticos
+ * en lib/cultura.ts). El feed de publicaciones es un componente cliente
+ * que las pide a la API (GET /api/cultura/publicaciones): todo lo que se
+ * ve aquí lo sube el admin desde /admin/contenido. Si el backend no
+ * responde, el feed cae en las publicaciones de ejemplo con un aviso;
+ * si responde y está vacío, muestra "aún no hay publicaciones".
  *
- * El aviso de "contenido de ejemplo" se borra de aquí cuando
- * lib/cultura.ts tenga el material real del municipio.
+ * Los videos van embebidos de YouTube con dominio sin cookies
+ * (youtube-nocookie.com) o, cuando son archivos subidos al bucket, se
+ * reproducen directo con <video>.
  */
 export default function Cultura() {
 	return (
@@ -39,14 +39,6 @@ export default function Cultura() {
 				))}
 			</div>
 
-			<div className="mt-5">
-				<Aviso tono="info">
-					Contenido de ejemplo: la descripción y las publicaciones son
-					provisionales. Reemplázalas por el material real del municipio en{" "}
-					<code>src/lib/cultura.ts</code>.
-				</Aviso>
-			</div>
-
 			<section className="mt-10" aria-label="Publicaciones de cultura">
 				<h2 className="font-display text-2xl font-semibold text-ink">
 					Publicaciones
@@ -56,7 +48,7 @@ export default function Cultura() {
 					una foto para verla en gran tamaño.
 				</p>
 				<div className="mt-5">
-					<FeedCultura publicaciones={CULTURA.publicaciones} />
+					<FeedCultura ejemplos={CULTURA.publicaciones} />
 				</div>
 			</section>
 		</article>
