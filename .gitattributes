@@ -1,0 +1,5 @@
+# Los hooks de husky los ejecuta sh (Git for Windows): si llegan con CRLF
+# fallan con "$'\r': command not found". Con autocrlf=true en Windows el
+# resto del repo se convierte a CRLF al checkout, así que estos archivos
+# se fuerzan a LF siempre (. y index).
+.husky/* text eol=lf
