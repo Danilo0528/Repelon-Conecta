@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { Aviso, Vacio } from "@/components/ui";
+
+import {
+	filtrarYOrdenar,
+	paginar,
+	type ColumnaOrden,
+	type Direccion,
+} from "./tabla";
 
 /*
  * Piezas compartidas del panel /admin — estilo dense dashboard.
@@ -24,6 +31,10 @@ export const BTN_PRIMARIO =
 /** Botón secundario (editar, aprobar, cancelar…). */
 export const BTN_SECUNDARIO =
 	"inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
+
+/** Botón compacto del paginador (mismo alto h-9, menos padding). */
+const BTN_PAGINA =
+	"inline-flex h-9 items-center justify-center rounded-md border border-black/15 bg-white px-2.5 text-[12px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-40";
 
 /** Campo de texto / select del panel. */
 export const INPUT =
@@ -169,6 +180,200 @@ export function TablaDensa({ children }: { children: ReactNode }) {
 	return (
 		<div className="mt-3 overflow-x-auto rounded-lg border border-black/10 bg-white">
 			{children}
+		</div>
+	);
+}
+
+/**
+ * Estado de una tabla: texto buscado, columna ordenada y página.
+ * La lógica de filtrar/ordenar/paginar vive en `tabla.ts` (probada aparte).
+ */
+export function useTabla<T>(
+	filas: readonly T[],
+	config: {
+		buscar: (fila: T) => string;
+		columnas?: readonly ColumnaOrden<T>[];
+		porPagina?: number;
+		ordenInicial?: string;
+		direccionInicial?: Direccion;
+	},
+) {
+	const { buscar, columnas = [], porPagina: tamanoInicial = 10 } = config;
+	const [texto, setTextoBase] = useState("");
+	const [campo, setCampo] = useState<string | null>(config.ordenInicial ?? null);
+	const [direccion, setDireccion] = useState<Direccion>(
+		config.direccionInicial ?? "asc",
+	);
+	const [pagina, setPagina] = useState(1);
+	const [porPagina, setPorPaginaBase] = useState(tamanoInicial);
+
+	const filtradas = useMemo(
+		() => filtrarYOrdenar(filas, texto, buscar, columnas, campo, direccion),
+		[filas, texto, buscar, columnas, campo, direccion],
+	);
+	const recorte = paginar(filtradas, pagina, porPagina);
+
+	return {
+		...recorte,
+		filtradas,
+		texto,
+		campo,
+		direccion,
+		porPagina,
+		setTexto: (valor: string) => {
+			setTextoBase(valor);
+			setPagina(1);
+		},
+		setPagina,
+		setPorPagina: (valor: number) => {
+			setPorPaginaBase(valor);
+			setPagina(1);
+		},
+		alternarOrden: (columna: string) => {
+			if (campo === columna) {
+				setDireccion((actual) => (actual === "asc" ? "desc" : "asc"));
+			} else {
+				setCampo(columna);
+				setDireccion("asc");
+			}
+			setPagina(1);
+		},
+	};
+}
+
+/** Buscador del toolbar de una tabla (h-9, ancho cómodo en desktop). */
+export function BuscadorTabla({
+	valor,
+	onChange,
+	placeholder,
+	ariaLabel,
+}: {
+	valor: string;
+	onChange: (valor: string) => void;
+	placeholder: string;
+	ariaLabel: string;
+}) {
+	return (
+		<input
+			type="search"
+			value={valor}
+			onChange={(e) => onChange(e.target.value)}
+			placeholder={placeholder}
+			aria-label={ariaLabel}
+			className={`${INPUT} w-full sm:w-64`}
+		/>
+	);
+}
+
+/**
+ * Encabezado ordenable. Mantiene el look de ThDensa y anuncia
+ * `aria-sort` para lectores de pantalla.
+ */
+export function ThOrdenable({
+	children,
+	campo,
+	orden,
+	onOrdenar,
+	num,
+	className = "",
+}: {
+	children: ReactNode;
+	campo: string;
+	orden: { campo: string | null; direccion: Direccion };
+	onOrdenar: (campo: string) => void;
+	num?: boolean;
+	className?: string;
+}) {
+	const activo = orden.campo === campo;
+	const flecha = activo ? (orden.direccion === "asc" ? "↑" : "↓") : "↕";
+	return (
+		<th
+			scope="col"
+			aria-sort={
+				activo ? (orden.direccion === "asc" ? "ascending" : "descending") : "none"
+			}
+			className={`px-3 py-2 text-[12px] font-medium text-black/50 ${
+				num ? "text-right" : "text-left"
+			} ${className}`}
+		>
+			<button
+				type="button"
+				onClick={() => onOrdenar(campo)}
+				className={`inline-flex items-center gap-1 transition-colors hover:text-black/80 ${
+					num ? "flex-row-reverse" : ""
+				}`}
+			>
+				{children}
+				<span aria-hidden className={activo ? "text-black/60" : "text-black/25"}>
+					{flecha}
+				</span>
+			</button>
+		</th>
+	);
+}
+
+/** Pie de tabla: rango visible, tamaño de página y navegación. */
+export function Paginador({
+	pagina,
+	paginas,
+	desde,
+	hasta,
+	total,
+	porPagina,
+	onPagina,
+	onPorPagina,
+}: {
+	pagina: number;
+	paginas: number;
+	desde: number;
+	hasta: number;
+	total: number;
+	porPagina: number;
+	onPagina: (pagina: number) => void;
+	onPorPagina: (porPagina: number) => void;
+}) {
+	if (total === 0) return null;
+	return (
+		<div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[12px] text-black/50">
+			<span>
+				<span className="tabular">{desde}</span>–<span className="tabular">{hasta}</span>{" "}
+				de <span className="tabular">{total}</span>
+			</span>
+			<div className="flex items-center gap-2">
+				<label className="flex items-center gap-1.5">
+					<span className="sr-only">Filas por página</span>
+					<select
+						value={porPagina}
+						onChange={(e) => onPorPagina(Number(e.target.value))}
+						className={`${INPUT} w-auto`}
+					>
+						{[10, 25, 50].map((n) => (
+							<option key={n} value={n}>
+								{n} por página
+							</option>
+						))}
+					</select>
+				</label>
+				<button
+					type="button"
+					onClick={() => onPagina(pagina - 1)}
+					disabled={pagina <= 1}
+					className={BTN_PAGINA}
+				>
+					Anterior
+				</button>
+				<span className="tabular px-1">
+					{pagina} / {paginas}
+				</span>
+				<button
+					type="button"
+					onClick={() => onPagina(pagina + 1)}
+					disabled={pagina >= paginas}
+					className={BTN_PAGINA}
+				>
+					Siguiente
+				</button>
+			</div>
 		</div>
 	);
 }

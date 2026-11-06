@@ -14,14 +14,19 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	BuscadorTabla,
 	CeldaTabla,
 	FilaTabla,
 	INPUT,
+	Paginador,
 	SeccionAdmin,
 	TablaDensa,
 	ThDensa,
+	ThOrdenable,
+	useTabla,
 	VentanaAdmin,
 } from "./ui-admin";
+import type { ColumnaOrden } from "./tabla";
 
 /*
  * Sección "Zonas turísticas" del panel (P2, fila 14).
@@ -48,6 +53,21 @@ const MOTIVOS: { valor: string; etiqueta: string }[] = [
 
 /** Cuántas fotos admite la ficha (el home las desliza al pasar el cursor). */
 const MAXIMO = 4;
+
+const COLUMNAS_ZONAS: ColumnaOrden<ZonaTuristica>[] = [
+	{ id: "zona", valor: (z) => z.nombre },
+	{
+		id: "motivo",
+		valor: (z) => MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? "Pueblo",
+	},
+	{ id: "orden", valor: (z) => z.orden },
+	{ id: "fotos", valor: (z) => z.imagenes?.length || (z.imagenUrl ? 1 : 0) },
+];
+
+const buscarZona = (z: ZonaTuristica) =>
+	`${z.nombre} ${z.direccion} ${
+		MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? ""
+	}`;
 
 const BTN_SUBIR =
 	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
@@ -78,6 +98,12 @@ export function SeccionZonas() {
 	const [subiendo, setSubiendo] = useState(false);
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [aviso, setAviso] = useState<string | null>(null);
+
+	const tabla = useTabla(datos ?? [], {
+		buscar: buscarZona,
+		columnas: COLUMNAS_ZONAS,
+		ordenInicial: "orden",
+	});
 
 	function limpiar() {
 		setEditando(null);
@@ -258,10 +284,22 @@ export function SeccionZonas() {
 		>
 			{!ventana && avisos}
 
-			<div className="mt-3">
+			<div className="mt-3 flex flex-wrap items-center gap-2">
 				<button type="button" onClick={nuevaZona} className={BTN_PRIMARIO}>
 					Nueva zona
 				</button>
+				<BuscadorTabla
+					valor={tabla.texto}
+					onChange={tabla.setTexto}
+					placeholder="Filtrar por nombre, dirección o motivo"
+					ariaLabel="Filtrar zonas turísticas"
+				/>
+				{tabla.filtradas.length < (datos ?? []).length && (
+					<span className="text-[12px] text-black/40">
+						<span className="tabular">{tabla.filtradas.length}</span> de{" "}
+						<span className="tabular">{(datos ?? []).length}</span>
+					</span>
+				)}
 			</div>
 
 			<VentanaAdmin
@@ -425,61 +463,103 @@ export function SeccionZonas() {
 				vacioTitulo="No hay zonas turísticas"
 				skeletonColumnas={4}
 			>
-				<TablaDensa>
-					<table className="w-full min-w-[560px] border-collapse">
-						<thead className="sticky top-0 z-10 bg-white">
-							<tr className="border-b border-black/10">
-								<ThDensa>Zona</ThDensa>
-								<ThDensa>Ilustración</ThDensa>
-								<ThDensa>Coordenadas</ThDensa>
-								<ThDensa className="text-right">Acción</ThDensa>
-							</tr>
-						</thead>
-						<tbody>
-							{(datos ?? []).map((z) => (
-								<FilaTabla key={z.id}>
-									<CeldaTabla className="max-w-[220px]">
-										<p className="truncate font-medium">{z.nombre}</p>
-										<p className="truncate text-[11px] text-black/45">{z.direccion}</p>
-									</CeldaTabla>
-									<CeldaTabla>
-										<span className="text-[12px] text-black/60">
-											{MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ?? "Pueblo"}
-										</span>
-										{(z.imagenes?.length ?? (z.imagenUrl ? 1 : 0)) > 0 && (
-											<span className="ml-2 text-[11px] text-black/35">
-												{z.imagenes?.length || 1} foto(s)
-											</span>
-										)}
-									</CeldaTabla>
-									<CeldaTabla mono>
-										{z.latitud != null && z.longitud != null
-											? `${z.latitud}, ${z.longitud}`
-											: "—"}
-									</CeldaTabla>
-									<CeldaTabla className="text-right">
-										<span className="inline-flex gap-1.5">
-											<button
-												type="button"
-												onClick={() => editar(z)}
-												className={BTN_SECUNDARIO}
-											>
-												Editar
-											</button>
-											<button
-												type="button"
-												onClick={() => void eliminar(z)}
-												className={BTN_SECUNDARIO}
-											>
-												Borrar
-											</button>
-										</span>
-									</CeldaTabla>
-								</FilaTabla>
-							))}
-						</tbody>
-					</table>
-				</TablaDensa>
+				{tabla.filtradas.length === 0 ? (
+					<p className="mt-3 text-[13px] text-black/50">
+						Ninguna zona coincide con el filtro.
+					</p>
+				) : (
+					<>
+						<TablaDensa>
+							<table className="w-full min-w-[560px] border-collapse">
+								<thead className="sticky top-0 z-10 bg-white">
+									<tr className="border-b border-black/10">
+										<ThOrdenable
+											campo="zona"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Zona
+										</ThOrdenable>
+										<ThOrdenable
+											campo="motivo"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Ilustración
+										</ThOrdenable>
+										<ThOrdenable
+											campo="fotos"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+											num
+										>
+											Fotos
+										</ThOrdenable>
+										<ThOrdenable
+											campo="orden"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+											num
+										>
+											Orden
+										</ThOrdenable>
+										<ThDensa className="text-right">Acción</ThDensa>
+									</tr>
+								</thead>
+								<tbody>
+									{tabla.visibles.map((z) => (
+										<FilaTabla key={z.id}>
+											<CeldaTabla className="max-w-[220px]">
+												<p className="truncate font-medium">{z.nombre}</p>
+												<p className="truncate text-[11px] text-black/45">
+													{z.direccion}
+												</p>
+											</CeldaTabla>
+											<CeldaTabla>
+												<span className="text-[12px] text-black/60">
+													{MOTIVOS.find((m) => m.valor === z.motivo)?.etiqueta ??
+														"Pueblo"}
+												</span>
+											</CeldaTabla>
+											<CeldaTabla num>
+												{z.imagenes?.length || (z.imagenUrl ? 1 : 0)}
+											</CeldaTabla>
+											<CeldaTabla num>{z.orden}</CeldaTabla>
+											<CeldaTabla className="text-right">
+												<span className="inline-flex gap-1.5">
+													<button
+														type="button"
+														onClick={() => editar(z)}
+														className={BTN_SECUNDARIO}
+													>
+														Editar
+													</button>
+													<button
+														type="button"
+														onClick={() => void eliminar(z)}
+														className={BTN_SECUNDARIO}
+													>
+														Borrar
+													</button>
+												</span>
+											</CeldaTabla>
+										</FilaTabla>
+									))}
+								</tbody>
+							</table>
+						</TablaDensa>
+						<Paginador
+							pagina={tabla.pagina}
+							paginas={tabla.paginas}
+							desde={tabla.desde}
+							hasta={tabla.hasta}
+							total={tabla.total}
+							porPagina={tabla.porPagina}
+							onPagina={tabla.setPagina}
+							onPorPagina={tabla.setPorPagina}
+						/>
+					</>
+				)}
 			</BloqueEstado>
 		</SeccionAdmin>
 	);

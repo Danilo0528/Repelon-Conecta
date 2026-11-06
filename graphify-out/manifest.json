@@ -529,16 +529,16 @@
     "semantic_hash": "8c4fd91f51c301df6370eafcce96fd06"
   },
   "ReplonConecta/frontend/src/app/admin/SeccionCategorias.tsx": {
-    "mtime": 1792537518.2705288,
-    "seen": 1793972560.4914868,
-    "ast_hash": "e2ee132156cfda3b7adfb8930ffcff1e",
-    "semantic_hash": "e2ee132156cfda3b7adfb8930ffcff1e"
+    "mtime": 1793991970.5602758,
+    "seen": 1793992435.1977158,
+    "ast_hash": "838d3b9ff649b1cca0edaa1e103ee337",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionCultura.tsx": {
-    "mtime": 1793940738.7441049,
-    "seen": 1793972560.4933915,
-    "ast_hash": "30dd466188355c453b56dc81cf0665ae",
-    "semantic_hash": "30dd466188355c453b56dc81cf0665ae"
+    "mtime": 1793992239.7132766,
+    "seen": 1793992435.1977158,
+    "ast_hash": "b39ef0869fb35a8d122fe9bf13a0f935",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionHeroInicio.tsx": {
     "mtime": 1792537518.2760718,
@@ -553,10 +553,10 @@
     "semantic_hash": "8c83bdef0b587c1a2dbc4b3e52b92d8d"
   },
   "ReplonConecta/frontend/src/app/admin/SeccionPedidos.tsx": {
-    "mtime": 1792537518.2810843,
-    "seen": 1793972560.4977062,
-    "ast_hash": "1c7cb493ad57bf25c668c6a7f1d23f6e",
-    "semantic_hash": "1c7cb493ad57bf25c668c6a7f1d23f6e"
+    "mtime": 1793991911.7767746,
+    "seen": 1793992435.1977158,
+    "ast_hash": "928064b288ae28ae7c937cc6dac03242",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionTextosInicio.tsx": {
     "mtime": 1792537518.2810843,
@@ -565,16 +565,16 @@
     "semantic_hash": "b644ddfd640dff8e10ff63c1edb4c1b0"
   },
   "ReplonConecta/frontend/src/app/admin/SeccionUsuarios.tsx": {
-    "mtime": 1792537518.2810843,
-    "seen": 1793972560.499392,
-    "ast_hash": "a94fb0c50a18a4dcd2812029b346b116",
-    "semantic_hash": "a94fb0c50a18a4dcd2812029b346b116"
+    "mtime": 1793991939.868859,
+    "seen": 1793992435.1977158,
+    "ast_hash": "b55362b506730ecff0a009efb7ae9702",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionZonas.tsx": {
-    "mtime": 1792552884.1695938,
-    "seen": 1793972560.500391,
-    "ast_hash": "c6f31e4d816273bfa804ad8402249cee",
-    "semantic_hash": "c6f31e4d816273bfa804ad8402249cee"
+    "mtime": 1793992260.7130165,
+    "seen": 1793992435.1977158,
+    "ast_hash": "f17cfaa5de3d78e7d7c8bd0b3d3b085d",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/contenido/page.tsx": {
     "mtime": 1793940633.126604,
@@ -607,10 +607,10 @@
     "semantic_hash": "b1dc5352aaf53d42b6e2277212d98b0f"
   },
   "ReplonConecta/frontend/src/app/admin/ui-admin.tsx": {
-    "mtime": 1792537518.2907815,
-    "seen": 1793972560.5083594,
-    "ast_hash": "93b2ed060e0acfb7a6ecfd6c47188268",
-    "semantic_hash": "93b2ed060e0acfb7a6ecfd6c47188268"
+    "mtime": 1793991877.5661082,
+    "seen": 1793992435.1977158,
+    "ast_hash": "4861be427493b9e55a29d82cdb0fb1ca",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/usuarios/page.tsx": {
     "mtime": 1792080804.669486,
@@ -1223,6 +1223,30 @@
     "mtime": 1791820998.4057064,
     "seen": 1793984593.3708968,
     "ast_hash": "f0ea62702f96dcdc78b28b509e213286",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/tabla.test.ts": {
+    "mtime": 1793992084.8231423,
+    "seen": 1793992435.1977158,
+    "ast_hash": "8d957310a67ffdad00cad9ccdf191935",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/tabla.ts": {
+    "mtime": 1793992084.7255905,
+    "seen": 1793992435.1977158,
+    "ast_hash": "d157ee2549b5cb558626c63d24b55464",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/package-lock.json": {
+    "mtime": 1793934574.9980133,
+    "seen": 1793992435.1986928,
+    "ast_hash": "843d4aec398b18047394c6ba95c8b8ee",
+    "semantic_hash": ""
+  },
+  "package-lock.json": {
+    "mtime": 1793973149.882262,
+    "seen": 1793992435.1986928,
+    "ast_hash": "24f01dd10518d762a64aa4bd55f7982a",
     "semantic_hash": ""
   }
 }

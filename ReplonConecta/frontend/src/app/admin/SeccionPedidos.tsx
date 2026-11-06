@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { apiConSesion } from "@/lib/api";
 import { ETIQUETA_ESTADO, fecha, pesos } from "@/lib/format";
@@ -10,14 +10,19 @@ import {
 	AvisosSeccion,
 	BloqueEstado,
 	BTN_SECUNDARIO,
+	BuscadorTabla,
 	CeldaTabla,
 	FilaTabla,
 	INPUT,
+	Paginador,
 	PuntoEstado,
 	SeccionAdmin,
 	TablaDensa,
 	ThDensa,
+	ThOrdenable,
+	useTabla,
 } from "./ui-admin";
+import type { ColumnaOrden } from "./tabla";
 
 /*
  * Sección "Pedidos" — dense table.
@@ -48,6 +53,18 @@ const COLOR_ESTADO: Record<EstadoPedido, "info" | "exito" | "peligro" | "neutro"
 	RECHAZADO: "peligro",
 };
 
+/** Columnas ordenables (módulo, no componente: lista estable). */
+const COLUMNAS_PEDIDOS: ColumnaOrden<Pedido>[] = [
+	{ id: "numero", valor: (p) => p.numero },
+	{ id: "estado", valor: (p) => p.estadoEtiqueta ?? ETIQUETA_ESTADO[p.estado] },
+	{ id: "negocio", valor: (p) => p.negocioNombre },
+	{ id: "items", valor: (p) => p.cantidadItems },
+	{ id: "total", valor: (p) => p.total },
+	{ id: "fecha", valor: (p) => p.creadoEn },
+];
+
+const buscarPedido = (p: Pedido) => `${p.numero} ${p.negocioNombre}`;
+
 export function SeccionPedidos() {
 	const {
 		datos,
@@ -57,18 +74,20 @@ export function SeccionPedidos() {
 	} = useDatos<Pedido[]>(() => apiConSesion<Pedido[]>("/api/admin/pedidos"), []);
 
 	const [estado, setEstado] = useState<EstadoPedido | "TODOS">("TODOS");
-	const [texto, setTexto] = useState("");
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [anulando, setAnulando] = useState<string | null>(null);
 
-	const termino = texto.trim().toLocaleLowerCase("es");
-	const filtrados = (datos ?? []).filter(
-		(p) =>
-			(estado === "TODOS" || p.estado === estado) &&
-			(!termino ||
-				p.numero.toLocaleLowerCase("es").includes(termino) ||
-				p.negocioNombre.toLocaleLowerCase("es").includes(termino)),
+	const porEstado = useMemo(
+		() =>
+			(datos ?? []).filter((p) => estado === "TODOS" || p.estado === estado),
+		[datos, estado],
 	);
+	const tabla = useTabla(porEstado, {
+		buscar: buscarPedido,
+		columnas: COLUMNAS_PEDIDOS,
+		ordenInicial: "fecha",
+		direccionInicial: "desc",
+	});
 
 	async function anular(p: Pedido) {
 		if (!window.confirm(`¿Anular el pedido ${p.numero}? El stock vuelve al negocio.`)) {
@@ -104,13 +123,11 @@ export function SeccionPedidos() {
 
 			{/* Toolbar: ghost controls, h-9, gap-2. */}
 			<div className="mt-3 flex flex-wrap items-center gap-2">
-				<input
-					type="search"
-					value={texto}
-					onChange={(e) => setTexto(e.target.value)}
+				<BuscadorTabla
+					valor={tabla.texto}
+					onChange={tabla.setTexto}
 					placeholder="Filtrar por número o negocio"
-					aria-label="Filtrar pedidos"
-					className={`${INPUT} w-full sm:w-64`}
+					ariaLabel="Filtrar pedidos"
 				/>
 				<label className="text-[12px] text-black/50">
 					<span className="sr-only">Filtrar por estado</span>
@@ -127,9 +144,9 @@ export function SeccionPedidos() {
 						))}
 					</select>
 				</label>
-				{filtrados.length < (datos ?? []).length && (
+				{tabla.filtradas.length < (datos ?? []).length && (
 					<span className="text-[12px] text-black/40">
-						<span className="tabular">{filtrados.length}</span> de{" "}
+						<span className="tabular">{tabla.filtradas.length}</span> de{" "}
 						<span className="tabular">{(datos ?? []).length}</span>
 					</span>
 				)}
@@ -141,61 +158,111 @@ export function SeccionPedidos() {
 				vacioTitulo="Todavía no hay pedidos"
 				skeletonColumnas={5}
 			>
-				{filtrados.length === 0 ? (
+				{tabla.filtradas.length === 0 ? (
 					<p className="mt-3 text-[13px] text-black/50">
 						Ningún pedido coincide con el filtro.
 					</p>
 				) : (
-					<TablaDensa>
-						<table className="w-full min-w-[640px] border-collapse">
-							<thead className="sticky top-0 z-10 bg-white">
-								<tr className="border-b border-black/10">
-									<ThDensa>Número</ThDensa>
-									<ThDensa>Estado</ThDensa>
-									<ThDensa>Negocio</ThDensa>
-									<ThDensa num>Items</ThDensa>
-									<ThDensa num>Total</ThDensa>
-									<ThDensa>Fecha</ThDensa>
-									<ThDensa className="text-right">Acción</ThDensa>
-								</tr>
-							</thead>
-							<tbody>
-								{filtrados.map((p) => (
-									<FilaTabla key={p.id}>
-										<CeldaTabla mono>{p.numero}</CeldaTabla>
-										<CeldaTabla>
-											<PuntoEstado
-												color={COLOR_ESTADO[p.estado]}
-												etiqueta={p.estadoEtiqueta ?? ETIQUETA_ESTADO[p.estado]}
-											/>
-										</CeldaTabla>
-										<CeldaTabla className="max-w-[180px] truncate">
-											{p.negocioNombre}
-										</CeldaTabla>
-										<CeldaTabla num>{p.cantidadItems}</CeldaTabla>
-										<CeldaTabla num className="font-medium">
-											{pesos(p.total)}
-										</CeldaTabla>
-										<CeldaTabla mono>{fecha(p.creadoEn)}</CeldaTabla>
-										<CeldaTabla className="text-right">
-											{ANULABLES.includes(p.estado) ? (
-												<button
-													type="button"
-													disabled={anulando === p.id}
-													onClick={() => void anular(p)}
-													className={BTN_SECUNDARIO}
-												>
-													{anulando === p.id ? "Anulando…" : "Anular"}
-												</button>
-											) : (
-												<span className="text-[12px] text-black/25">—</span>
-											)}
-										</CeldaTabla>
-									</FilaTabla>
-								))}
-							</tbody>
-						</table>
-					</TablaDensa>
+					<>
+						<TablaDensa>
+							<table className="w-full min-w-[640px] border-collapse">
+								<thead className="sticky top-0 z-10 bg-white">
+									<tr className="border-b border-black/10">
+										<ThOrdenable
+											campo="numero"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Número
+										</ThOrdenable>
+										<ThOrdenable
+											campo="estado"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Estado
+										</ThOrdenable>
+										<ThOrdenable
+											campo="negocio"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Negocio
+										</ThOrdenable>
+										<ThOrdenable
+											campo="items"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+											num
+										>
+											Items
+										</ThOrdenable>
+										<ThOrdenable
+											campo="total"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+											num
+										>
+											Total
+										</ThOrdenable>
+										<ThOrdenable
+											campo="fecha"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Fecha
+										</ThOrdenable>
+										<ThDensa className="text-right">Acción</ThDensa>
+									</tr>
+								</thead>
+								<tbody>
+									{tabla.visibles.map((p) => (
+										<FilaTabla key={p.id}>
+											<CeldaTabla mono>{p.numero}</CeldaTabla>
+											<CeldaTabla>
+												<PuntoEstado
+													color={COLOR_ESTADO[p.estado]}
+													etiqueta={p.estadoEtiqueta ?? ETIQUETA_ESTADO[p.estado]}
+												/>
+											</CeldaTabla>
+											<CeldaTabla className="max-w-[180px] truncate">
+												{p.negocioNombre}
+											</CeldaTabla>
+											<CeldaTabla num>{p.cantidadItems}</CeldaTabla>
+											<CeldaTabla num className="font-medium">
+												{pesos(p.total)}
+											</CeldaTabla>
+											<CeldaTabla mono>{fecha(p.creadoEn)}</CeldaTabla>
+											<CeldaTabla className="text-right">
+												{ANULABLES.includes(p.estado) ? (
+													<button
+														type="button"
+														disabled={anulando === p.id}
+														onClick={() => void anular(p)}
+														className={BTN_SECUNDARIO}
+													>
+														{anulando === p.id ? "Anulando…" : "Anular"}
+													</button>
+												) : (
+													<span className="text-[12px] text-black/25">—</span>
+												)}
+											</CeldaTabla>
+										</FilaTabla>
+									))}
+								</tbody>
+							</table>
+						</TablaDensa>
+						<Paginador
+							pagina={tabla.pagina}
+							paginas={tabla.paginas}
+							desde={tabla.desde}
+							hasta={tabla.hasta}
+							total={tabla.total}
+							porPagina={tabla.porPagina}
+							onPagina={tabla.setPagina}
+							onPorPagina={tabla.setPorPagina}
+						/>
+					</>
 				)}
 			</BloqueEstado>
 		</SeccionAdmin>

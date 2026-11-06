@@ -10,15 +10,20 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	BuscadorTabla,
 	CeldaTabla,
 	FilaTabla,
 	INPUT,
+	Paginador,
 	PuntoEstado,
 	SeccionAdmin,
 	TablaDensa,
 	ThDensa,
+	ThOrdenable,
+	useTabla,
 	VentanaAdmin,
 } from "./ui-admin";
+import type { ColumnaOrden } from "./tabla";
 
 /*
  * Sección "Categorías" del panel (P2, fila 12).
@@ -30,6 +35,16 @@ import {
  */
 
 const ALCANCE = new Set(["agro", "pesca", "turismo"]);
+
+const COLUMNAS_CATEGORIAS: ColumnaOrden<Categoria>[] = [
+	{ id: "nombre", valor: (c) => c.nombre },
+	{ id: "slug", valor: (c) => c.slug },
+	{ id: "orden", valor: (c) => c.orden },
+	{ id: "estado", valor: (c) => (c.activa ? "Activa" : "Inactiva") },
+];
+
+const buscarCategoria = (c: Categoria) =>
+	`${c.nombre} ${c.slug} ${c.icono ?? ""}`;
 
 export function SeccionCategorias() {
 	const {
@@ -48,6 +63,12 @@ export function SeccionCategorias() {
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [aviso, setAviso] = useState<string | null>(null);
 	const [ventana, setVentana] = useState(false);
+
+	const tabla = useTabla(datos ?? [], {
+		buscar: buscarCategoria,
+		columnas: COLUMNAS_CATEGORIAS,
+		porPagina: 25,
+	});
 
 	// Cerrar descarta lo escrito (mismo criterio que Zonas): Cancelar,
 	// la ✕ y Escape pasan por acá para que la próxima apertura no
@@ -123,7 +144,7 @@ export function SeccionCategorias() {
 		>
 			{!ventana && avisos}
 
-			<div className="mt-3">
+			<div className="mt-3 flex flex-wrap items-center gap-2">
 				<button
 					type="button"
 					onClick={() => {
@@ -135,6 +156,18 @@ export function SeccionCategorias() {
 				>
 					Nueva categoría
 				</button>
+				<BuscadorTabla
+					valor={tabla.texto}
+					onChange={tabla.setTexto}
+					placeholder="Filtrar por nombre, slug o icono"
+					ariaLabel="Filtrar categorías"
+				/>
+				{tabla.filtradas.length < (datos ?? []).length && (
+					<span className="text-[12px] text-black/40">
+						<span className="tabular">{tabla.filtradas.length}</span> de{" "}
+						<span className="tabular">{(datos ?? []).length}</span>
+					</span>
+				)}
 			</div>
 
 			<VentanaAdmin
@@ -203,54 +236,97 @@ export function SeccionCategorias() {
 				vacioTitulo="No hay categorías"
 				skeletonColumnas={4}
 			>
-				<TablaDensa>
-					<table className="w-full min-w-[520px] border-collapse">
-						<thead className="sticky top-0 z-10 bg-white">
-							<tr className="border-b border-black/10">
-								<ThDensa>Nombre</ThDensa>
-								<ThDensa>Slug</ThDensa>
-								<ThDensa num>Orden</ThDensa>
-								<ThDensa>Estado</ThDensa>
-								<ThDensa className="text-right">Acción</ThDensa>
-							</tr>
-						</thead>
-						<tbody>
-							{(datos ?? []).map((c) => (
-								<FilaTabla key={c.id}>
-									<CeldaTabla>
-										<span className="font-medium">{c.nombre}</span>
-										{c.icono && (
-											<span className="ml-2 font-mono text-[11px] text-black/35">
-												{c.icono}
-											</span>
-										)}
-									</CeldaTabla>
-									<CeldaTabla mono>{c.slug}</CeldaTabla>
-									<CeldaTabla num>{c.orden}</CeldaTabla>
-									<CeldaTabla>
-										<PuntoEstado
-											color={c.activa ? "exito" : "neutro"}
-											etiqueta={c.activa ? "Activa" : "Inactiva"}
-										/>
-									</CeldaTabla>
-									<CeldaTabla className="text-right">
-										{c.activa ? (
-											<button
-												type="button"
-												onClick={() => void desactivar(c)}
-												className={BTN_SECUNDARIO}
-											>
-												Desactivar
-											</button>
-										) : (
-											<span className="text-[12px] text-black/25">—</span>
-										)}
-									</CeldaTabla>
-								</FilaTabla>
-							))}
-						</tbody>
-					</table>
-				</TablaDensa>
+				{tabla.filtradas.length === 0 ? (
+					<p className="mt-3 text-[13px] text-black/50">
+						Ninguna categoría coincide con el filtro.
+					</p>
+				) : (
+					<>
+						<TablaDensa>
+							<table className="w-full min-w-[520px] border-collapse">
+								<thead className="sticky top-0 z-10 bg-white">
+									<tr className="border-b border-black/10">
+										<ThOrdenable
+											campo="nombre"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Nombre
+										</ThOrdenable>
+										<ThOrdenable
+											campo="slug"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Slug
+										</ThOrdenable>
+										<ThOrdenable
+											campo="orden"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+											num
+										>
+											Orden
+										</ThOrdenable>
+										<ThOrdenable
+											campo="estado"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Estado
+										</ThOrdenable>
+										<ThDensa className="text-right">Acción</ThDensa>
+									</tr>
+								</thead>
+								<tbody>
+									{tabla.visibles.map((c) => (
+										<FilaTabla key={c.id}>
+											<CeldaTabla>
+												<span className="font-medium">{c.nombre}</span>
+												{c.icono && (
+													<span className="ml-2 font-mono text-[11px] text-black/35">
+														{c.icono}
+													</span>
+												)}
+											</CeldaTabla>
+											<CeldaTabla mono>{c.slug}</CeldaTabla>
+											<CeldaTabla num>{c.orden}</CeldaTabla>
+											<CeldaTabla>
+												<PuntoEstado
+													color={c.activa ? "exito" : "neutro"}
+													etiqueta={c.activa ? "Activa" : "Inactiva"}
+												/>
+											</CeldaTabla>
+											<CeldaTabla className="text-right">
+												{c.activa ? (
+													<button
+														type="button"
+														onClick={() => void desactivar(c)}
+														className={BTN_SECUNDARIO}
+													>
+														Desactivar
+													</button>
+												) : (
+													<span className="text-[12px] text-black/25">—</span>
+												)}
+											</CeldaTabla>
+										</FilaTabla>
+									))}
+								</tbody>
+							</table>
+						</TablaDensa>
+						<Paginador
+							pagina={tabla.pagina}
+							paginas={tabla.paginas}
+							desde={tabla.desde}
+							hasta={tabla.hasta}
+							total={tabla.total}
+							porPagina={tabla.porPagina}
+							onPagina={tabla.setPagina}
+							onPorPagina={tabla.setPorPagina}
+						/>
+					</>
+				)}
 			</BloqueEstado>
 		</SeccionAdmin>
 	);

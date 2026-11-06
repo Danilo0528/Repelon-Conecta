@@ -13,14 +13,19 @@ import {
 	BloqueEstado,
 	BTN_PRIMARIO,
 	BTN_SECUNDARIO,
+	BuscadorTabla,
 	CeldaTabla,
 	FilaTabla,
 	INPUT,
+	Paginador,
 	SeccionAdmin,
 	TablaDensa,
 	ThDensa,
+	ThOrdenable,
+	useTabla,
 	VentanaAdmin,
 } from "./ui-admin";
+import type { ColumnaOrden } from "./tabla";
 
 /*
  * Sección "Cultura" del panel (/admin/contenido).
@@ -59,6 +64,15 @@ function medioValido(tipo: "FOTO" | "VIDEO", valor: string): boolean {
 
 type Tipo = "FOTO" | "VIDEO";
 
+const COLUMNAS_CULTURA: ColumnaOrden<PublicacionCulturaApi>[] = [
+	{ id: "fecha", valor: (p) => p.fecha },
+	{ id: "autor", valor: (p) => p.autor },
+	{ id: "tipo", valor: (p) => p.tipo },
+];
+
+const buscarPublicacion = (p: PublicacionCulturaApi) =>
+	`${p.autor} ${p.lugar ?? ""} ${p.texto} ${p.tipo}`;
+
 export function SeccionCultura() {
 	const { datos, cargando, error, setDatos } = useDatos<PublicacionCulturaApi[]>(() =>
 		apiConSesion<PublicacionCulturaApi[]>("/api/cultura/publicaciones"),
@@ -77,6 +91,13 @@ export function SeccionCultura() {
 	const [subiendo, setSubiendo] = useState(false);
 	const [errorAccion, setErrorAccion] = useState<string | null>(null);
 	const [aviso, setAviso] = useState<string | null>(null);
+
+	const tabla = useTabla(datos ?? [], {
+		buscar: buscarPublicacion,
+		columnas: COLUMNAS_CULTURA,
+		ordenInicial: "fecha",
+		direccionInicial: "desc",
+	});
 
 	function limpiar() {
 		setEditando(null);
@@ -226,10 +247,22 @@ export function SeccionCultura() {
 		>
 			{!ventana && avisos}
 
-			<div className="mt-3">
+			<div className="mt-3 flex flex-wrap items-center gap-2">
 				<button type="button" onClick={nueva} className={BTN_PRIMARIO}>
 					Nueva publicación
 				</button>
+				<BuscadorTabla
+					valor={tabla.texto}
+					onChange={tabla.setTexto}
+					placeholder="Filtrar por autor, lugar o texto"
+					ariaLabel="Filtrar publicaciones"
+				/>
+				{tabla.filtradas.length < (datos ?? []).length && (
+					<span className="text-[12px] text-black/40">
+						<span className="tabular">{tabla.filtradas.length}</span> de{" "}
+						<span className="tabular">{(datos ?? []).length}</span>
+					</span>
+				)}
 			</div>
 
 			<VentanaAdmin
@@ -401,65 +434,107 @@ export function SeccionCultura() {
 				vacioTitulo="No hay publicaciones de Cultura"
 				skeletonColumnas={5}
 			>
-				<TablaDensa>
-					<table className="w-full min-w-[640px] border-collapse">
-						<thead className="sticky top-0 z-10 bg-white">
-							<tr className="border-b border-black/10">
-								<ThDensa>Fecha</ThDensa>
-								<ThDensa>Autor</ThDensa>
-								<ThDensa>Texto</ThDensa>
-								<ThDensa>Medio</ThDensa>
-								<ThDensa className="text-right">Acción</ThDensa>
-							</tr>
-						</thead>
-						<tbody>
-							{(datos ?? []).map((p) => (
-								<FilaTabla key={p.id}>
-									<CeldaTabla mono>{fechaCorta(p.fecha)}</CeldaTabla>
-									<CeldaTabla className="max-w-[140px]">
-										<p className="truncate font-medium">{p.autor}</p>
-										{p.lugar && (
-											<p className="truncate text-[11px] text-black/45">{p.lugar}</p>
-										)}
-									</CeldaTabla>
-									<CeldaTabla className="max-w-[260px]">
-										<span className="line-clamp-2">{p.texto}</span>
-									</CeldaTabla>
-									<CeldaTabla>
-										{p.tipo === "VIDEO" ? (
-											esYouTube(p.mediaUrl) ? "Video (YouTube)" : "Video (archivo)"
-										) : (
-											// eslint-disable-next-line @next/next/no-img-element
-											<img
-												src={normalizarUrlImagen(p.mediaUrl)}
-												alt=""
-												className="h-9 w-14 rounded border border-black/10 object-cover"
-											/>
-										)}
-									</CeldaTabla>
-									<CeldaTabla className="text-right">
-										<span className="inline-flex gap-1.5">
-											<button
-												type="button"
-												onClick={() => editar(p)}
-												className={BTN_SECUNDARIO}
-											>
-												Editar
-											</button>
-											<button
-												type="button"
-												onClick={() => void eliminar(p)}
-												className={BTN_SECUNDARIO}
-											>
-												Borrar
-											</button>
-										</span>
-									</CeldaTabla>
-								</FilaTabla>
-							))}
-						</tbody>
-					</table>
-				</TablaDensa>
+				{tabla.filtradas.length === 0 ? (
+					<p className="mt-3 text-[13px] text-black/50">
+						Ninguna publicación coincide con el filtro.
+					</p>
+				) : (
+					<>
+						<TablaDensa>
+							<table className="w-full min-w-[640px] border-collapse">
+								<thead className="sticky top-0 z-10 bg-white">
+									<tr className="border-b border-black/10">
+										<ThOrdenable
+											campo="fecha"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Fecha
+										</ThOrdenable>
+										<ThOrdenable
+											campo="autor"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Autor
+										</ThOrdenable>
+										<ThDensa>Texto</ThDensa>
+										<ThOrdenable
+											campo="tipo"
+											orden={tabla}
+											onOrdenar={tabla.alternarOrden}
+										>
+											Medio
+										</ThOrdenable>
+										<ThDensa className="text-right">Acción</ThDensa>
+									</tr>
+								</thead>
+								<tbody>
+									{tabla.visibles.map((p) => (
+										<FilaTabla key={p.id}>
+											<CeldaTabla mono>{fechaCorta(p.fecha)}</CeldaTabla>
+											<CeldaTabla className="max-w-[140px]">
+												<p className="truncate font-medium">{p.autor}</p>
+												{p.lugar && (
+													<p className="truncate text-[11px] text-black/45">
+														{p.lugar}
+													</p>
+												)}
+											</CeldaTabla>
+											<CeldaTabla className="max-w-[260px]">
+												<span className="line-clamp-2">{p.texto}</span>
+											</CeldaTabla>
+											<CeldaTabla>
+												{p.tipo === "VIDEO" ? (
+													esYouTube(p.mediaUrl) ? (
+														"Video (YouTube)"
+													) : (
+														"Video (archivo)"
+													)
+												) : (
+													// eslint-disable-next-line @next/next/no-img-element
+													<img
+														src={normalizarUrlImagen(p.mediaUrl)}
+														alt=""
+														className="h-9 w-14 rounded border border-black/10 object-cover"
+													/>
+												)}
+											</CeldaTabla>
+											<CeldaTabla className="text-right">
+												<span className="inline-flex gap-1.5">
+													<button
+														type="button"
+														onClick={() => editar(p)}
+														className={BTN_SECUNDARIO}
+													>
+														Editar
+													</button>
+													<button
+														type="button"
+														onClick={() => void eliminar(p)}
+														className={BTN_SECUNDARIO}
+													>
+														Borrar
+													</button>
+												</span>
+											</CeldaTabla>
+										</FilaTabla>
+									))}
+								</tbody>
+							</table>
+						</TablaDensa>
+						<Paginador
+							pagina={tabla.pagina}
+							paginas={tabla.paginas}
+							desde={tabla.desde}
+							hasta={tabla.hasta}
+							total={tabla.total}
+							porPagina={tabla.porPagina}
+							onPagina={tabla.setPagina}
+							onPorPagina={tabla.setPorPagina}
+						/>
+					</>
+				)}
 			</BloqueEstado>
 		</SeccionAdmin>
 	);
