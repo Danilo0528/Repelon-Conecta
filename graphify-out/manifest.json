@@ -1237,6 +1237,18 @@
     "ast_hash": "d157ee2549b5cb558626c63d24b55464",
     "semantic_hash": ""
   },
+  "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/CulturaServiceTests.java": {
+    "mtime": 1793992627.4712992,
+    "seen": 1793993001.4174318,
+    "ast_hash": "36eeb1bd65fdcc3f004919c7de42344d",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/NegocioServiceTests.java": {
+    "mtime": 1793992645.6474566,
+    "seen": 1793993001.4174318,
+    "ast_hash": "badd285210f1d4f37be4cd259e1b62d4",
+    "semantic_hash": ""
+  },
   "ReplonConecta/frontend/package-lock.json": {
     "mtime": 1793934574.9980133,
     "seen": 1793992435.1986928,
