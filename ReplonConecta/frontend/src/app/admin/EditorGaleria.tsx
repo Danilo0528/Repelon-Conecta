@@ -33,26 +33,30 @@ const BTN_ICONO =
 export function EditorGaleria({
 	negocioId,
 	imagenes,
+	creditos,
 	onCambio,
 	onAviso,
 	onError,
 }: {
 	negocioId: string;
 	imagenes: string[];
-	onCambio: (nuevas: string[]) => void;
+	creditos: string[];
+	onCambio: (nuevas: string[], nuevosCreditos: string[]) => void;
 	onAviso: (mensaje: string) => void;
 	onError: (mensaje: string | null) => void;
 }) {
 	const [url, setUrl] = useState("");
 	const [subiendo, setSubiendo] = useState(false);
+	const listaCreditos = imagenes.map((_, i) => creditos[i] ?? "");
 
-	async function guardar(nuevas: string[]) {
+	async function guardar(nuevas: string[], nuevosCreditos: string[]) {
 		onError(null);
 		const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${negocioId}`, {
 			method: "PUT",
-			body: JSON.stringify({ imagenes: nuevas }),
+			// Van juntos para que un crédito no se corra de su foto.
+			body: JSON.stringify({ imagenes: nuevas, creditos: nuevosCreditos }),
 		});
-		onCambio(actualizado.imagenes);
+		onCambio(actualizado.imagenes, actualizado.creditos);
 	}
 
 	function lleno() {
@@ -70,7 +74,7 @@ export function EditorGaleria({
 		setSubiendo(true);
 		try {
 			const subida = await subirImagen("negocios", negocioId, archivo);
-			await guardar([...imagenes, subida]);
+			await guardar([...imagenes, subida], [...listaCreditos, ""]);
 			onAviso("Foto agregada a la galería.");
 		} catch (e) {
 			onError(e instanceof Error ? e.message : "No se pudo subir la foto.");
@@ -87,13 +91,16 @@ export function EditorGaleria({
 			return;
 		}
 		setUrl("");
-		guardar([...imagenes, limpia]).catch((e: unknown) =>
+		guardar([...imagenes, limpia], [...listaCreditos, ""]).catch((e: unknown) =>
 			onError(e instanceof Error ? e.message : "No se pudo agregar la foto."),
 		);
 	}
 
 	function quitar(indice: number) {
-		guardar(imagenes.filter((_, i) => i !== indice)).catch((e: unknown) =>
+		guardar(
+			imagenes.filter((_, i) => i !== indice),
+			listaCreditos.filter((_, i) => i !== indice),
+		).catch((e: unknown) =>
 			onError(e instanceof Error ? e.message : "No se pudo quitar la foto."),
 		);
 	}
@@ -102,9 +109,24 @@ export function EditorGaleria({
 		const destino = indice + delta;
 		if (destino < 0 || destino >= imagenes.length) return;
 		const nuevas = [...imagenes];
+		const nuevosCreditos = [...listaCreditos];
 		[nuevas[indice], nuevas[destino]] = [nuevas[destino], nuevas[indice]];
-		guardar(nuevas).catch((e: unknown) =>
+		[nuevosCreditos[indice], nuevosCreditos[destino]] = [
+			nuevosCreditos[destino],
+			nuevosCreditos[indice],
+		];
+		guardar(nuevas, nuevosCreditos).catch((e: unknown) =>
 			onError(e instanceof Error ? e.message : "No se pudo reordenar la galería."),
+		);
+	}
+
+	function cambiarCredito(indice: number, texto: string) {
+		const limpio = texto.trim();
+		if (limpio === (creditos[indice] ?? "")) return;
+		const nuevosCreditos = [...listaCreditos];
+		nuevosCreditos[indice] = limpio;
+		guardar(imagenes, nuevosCreditos).catch((e: unknown) =>
+			onError(e instanceof Error ? e.message : "No se pudo guardar la fuente."),
 		);
 	}
 
@@ -156,6 +178,15 @@ export function EditorGaleria({
 									</button>
 								</div>
 							</div>
+							<input
+								type="text"
+								defaultValue={creditos[i] ?? ""}
+								maxLength={300}
+								placeholder="Fuente de la foto"
+								aria-label={`Fuente de la foto ${i + 1}`}
+								className={`${INPUT} text-[12px]`}
+								onBlur={(e) => cambiarCredito(i, e.target.value)}
+							/>
 						</li>
 					))}
 				</ul>

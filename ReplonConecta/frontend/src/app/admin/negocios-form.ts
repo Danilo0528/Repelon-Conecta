@@ -20,6 +20,7 @@ export type FormNegocio = {
 	whatsapp: string;
 	horario: string;
 	logoUrl: string;
+	logoCredito: string;
 };
 
 export const FORM_VACIO: FormNegocio = {
@@ -33,6 +34,7 @@ export const FORM_VACIO: FormNegocio = {
 	whatsapp: "",
 	horario: "",
 	logoUrl: "",
+	logoCredito: "",
 };
 
 /** Formulario de nuevo producto (dentro del modal de edición). */
@@ -44,6 +46,7 @@ export type FormProducto = {
 	categoriaId: string;
 	stock: string;
 	imagenUrl: string;
+	imagenCredito: string;
 };
 
 export const PRODUCTO_VACIO: FormProducto = {
@@ -54,6 +57,7 @@ export const PRODUCTO_VACIO: FormProducto = {
 	categoriaId: "",
 	stock: "",
 	imagenUrl: "",
+	imagenCredito: "",
 };
 
 /** Texto de un input numérico opcional a número o null. */
@@ -77,6 +81,7 @@ export function formDesdeDetalle(d: NegocioDetalle): FormNegocio {
 		whatsapp: d.whatsapp ?? "",
 		horario: d.horario ?? "",
 		logoUrl: d.logoUrl ?? "",
+		logoCredito: d.logoCredito ?? "",
 	};
 }
 
@@ -96,6 +101,7 @@ export function cuerpoNegocio(form: FormNegocio, conLogo: boolean): string {
 		telefono: form.telefono.trim() || null,
 		whatsapp: form.whatsapp.trim() || null,
 		horario: form.horario.trim() || null,
+		logoCredito: form.logoCredito.trim() || null,
 	};
 
 	if (conLogo) {
@@ -106,13 +112,18 @@ export function cuerpoNegocio(form: FormNegocio, conLogo: boolean): string {
 }
 
 /** PUT de producto: reenvía todos los campos y cambia solo la foto. */
-export function cuerpoFotoProducto(p: Producto, imagenUrl: string): string {
+export function cuerpoFotoProducto(
+	p: Producto,
+	imagenUrl: string | null,
+	imagenCredito: string | null,
+): string {
 	return JSON.stringify({
 		nombre: p.nombre,
 		descripcion: p.descripcion,
 		precio: p.precio,
 		unidad: p.unidad,
 		imagenUrl,
+		imagenCredito,
 		categoriaId: p.categoriaId,
 		disponible: p.disponible,
 		stock: p.stock,

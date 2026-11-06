@@ -5,7 +5,13 @@ import { useState, type ChangeEvent } from "react";
 import { Foto } from "@/components/ui";
 import { api, apiConSesion } from "@/lib/api";
 import { supabaseConfigurado } from "@/lib/env";
-import { CLAVE_IMAGENES_HERO, imagenesInicio } from "@/lib/inicio";
+import { creditoImagen } from "@/lib/creditos";
+import {
+	CLAVE_CREDITOS_HERO,
+	CLAVE_IMAGENES_HERO,
+	creditosInicio,
+	imagenesInicio,
+} from "@/lib/inicio";
 import { subirImagen } from "@/lib/subirImagen";
 import { useDatos } from "@/lib/useDatos";
 import {
@@ -51,19 +57,35 @@ export function SeccionHeroInicio() {
 	// imágenes por defecto, ya parseadas. Cada cambio se guarda de
 	// inmediato, así que no hay una copia local que sincronizar.
 	const lista = imagenesInicio(datos);
+	const guardadosCreditos = creditosInicio(datos);
+	// Se muestra lo que de verdad pinta la portada: el crédito guardado o,
+	// si aún no hay override, el del registro de respaldo de lib/creditos.
+	const creditos = lista.map(
+		(src, i) => guardadosCreditos[i]?.trim() || creditoImagen(src) || "",
+	);
 
-	async function guardar(nuevas: string[]) {
+	async function guardar(nuevas: string[], nuevosCreditos: string[]) {
 		setErrorAccion(null);
 		setAviso(null);
 		try {
 			// Lista vacía = clave en blanco = el backend la borra y el
-			// home vuelve a las imágenes por defecto.
-			const cuerpo = nuevas.length
-				? JSON.stringify(nuevas)
+			// home vuelve a las imágenes por defecto. Los créditos se
+			// guardan alineados y solo si alguna imagen tiene fuente.
+			const imagenesCuerpo = nuevas.length ? JSON.stringify(nuevas) : "";
+			const hayCreditos =
+				nuevas.length > 0 && nuevosCreditos.some((credito) => credito.trim());
+			const creditosCuerpo = hayCreditos
+				? JSON.stringify(nuevas.map((_, i) => (nuevosCreditos[i] ?? "").trim()))
 				: "";
 			const guardados = await apiConSesion<Record<string, string>>(
 				"/api/inicio/textos",
-				{ method: "PUT", body: JSON.stringify({ [CLAVE_IMAGENES_HERO]: cuerpo }) },
+				{
+					method: "PUT",
+					body: JSON.stringify({
+						[CLAVE_IMAGENES_HERO]: imagenesCuerpo,
+						[CLAVE_CREDITOS_HERO]: creditosCuerpo,
+					}),
+				},
 			);
 			setDatos(guardados);
 			setAviso(
@@ -93,7 +115,7 @@ export function SeccionHeroInicio() {
 		setSubiendo(true);
 		try {
 			const subida = await subirImagen("inicio", "hero", archivo);
-			await guardar([...lista, subida]);
+			await guardar([...lista, subida], [...creditos, ""]);
 		} catch (e) {
 			setErrorAccion(
 				e instanceof Error ? e.message : "No se pudo subir la imagen.",
@@ -111,19 +133,35 @@ export function SeccionHeroInicio() {
 			return;
 		}
 		setUrl("");
-		void guardar([...lista, limpia]);
+		void guardar([...lista, limpia], [...creditos, ""]);
 	}
 
 	function quitar(indice: number) {
-		void guardar(lista.filter((_, i) => i !== indice));
+		void guardar(
+			lista.filter((_, i) => i !== indice),
+			creditos.filter((_, i) => i !== indice),
+		);
 	}
 
 	function mover(indice: number, delta: number) {
 		const destino = indice + delta;
 		if (destino < 0 || destino >= lista.length) return;
 		const nuevas = [...lista];
+		const nuevosCreditos = [...creditos];
 		[nuevas[indice], nuevas[destino]] = [nuevas[destino], nuevas[indice]];
-		void guardar(nuevas);
+		[nuevosCreditos[indice], nuevosCreditos[destino]] = [
+			nuevosCreditos[destino],
+			nuevosCreditos[indice],
+		];
+		void guardar(nuevas, nuevosCreditos);
+	}
+
+	function cambiarCredito(indice: number, texto: string) {
+		const limpio = texto.trim();
+		if (limpio === (creditos[indice] ?? "")) return;
+		const nuevosCreditos = [...creditos];
+		nuevosCreditos[indice] = limpio;
+		void guardar(lista, nuevosCreditos);
 	}
 
 	function abrir() {
@@ -234,6 +272,15 @@ export function SeccionHeroInicio() {
 												</button>
 											</div>
 										</div>
+										<input
+											type="text"
+											defaultValue={creditos[i] ?? ""}
+											maxLength={300}
+											placeholder="Fuente de la imagen"
+											aria-label={`Fuente de la imagen ${i + 1}`}
+											className={`${INPUT} text-[12px]`}
+											onBlur={(e) => cambiarCredito(i, e.target.value)}
+										/>
 									</li>
 								))}
 							</ul>

@@ -91,6 +91,6 @@ describe("LightboxGaleria", () => {
 				onCerrar={vi.fn()}
 			/>,
 		);
-		expect(screen.getByText("Foto: Juan Pérez")).toBeTruthy();
+		expect(screen.getByText("Fuente: Juan Pérez")).toBeTruthy();
 	});
 });

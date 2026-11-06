@@ -21,6 +21,7 @@ public final class ZonaDtos {
 			Double longitud,
 			String imagenUrl,
 			List<String> imagenes,
+			List<String> creditos,
 			String motivo,
 			int orden) {
 	}
@@ -52,6 +53,10 @@ public final class ZonaDtos {
 
 			@Size(max = 4, message = "La galería admite hasta 4 imágenes")
 			List<@Size(max = 500, message = "Cada URL admite hasta 500 caracteres") String> imagenes,
+
+			/** Fuente de cada foto, en el mismo orden que `imagenes`. */
+			@Size(max = 4, message = "La galería admite hasta 4 créditos")
+			List<@Size(max = 500, message = "Cada crédito admite hasta 500 caracteres") String> creditos,
 
 			@Size(max = 20)
 			String motivo,

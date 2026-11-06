@@ -188,6 +188,7 @@ function FormularioNegocio({
 	const [lat, setLat] = useState<number | null>(null);
 	const [lng, setLng] = useState<number | null>(null);
 	const [whatsapp, setWhatsapp] = useState("");
+	const [telefono, setTelefono] = useState("");
 	const [enviando, setEnviando] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -195,8 +196,8 @@ function FormularioNegocio({
 		e.preventDefault();
 		setError(null);
 
-		if (!nombre.trim() || !direccion.trim()) {
-			setError("El nombre y la dirección son obligatorios.");
+		if (!nombre.trim() || !direccion.trim() || !telefono.trim()) {
+			setError("El nombre, la dirección y el teléfono son obligatorios.");
 			return;
 		}
 
@@ -212,7 +213,7 @@ function FormularioNegocio({
 					latitud: lat,
 					longitud: lng,
 					referenciaUbicacion: referencia.trim(),
-					telefono: "",
+					telefono: telefono.trim(),
 					whatsapp: whatsapp.trim(),
 					horario: null,
 				}),
@@ -281,6 +282,17 @@ function FormularioNegocio({
 					/>
 				</label>
 			</div>
+			<label className="block">
+				<span className="sr-only">Teléfono del negocio</span>
+				<input
+					value={telefono}
+					onChange={(e) => setTelefono(e.target.value)}
+					placeholder="Teléfono del negocio (300 000 0000)"
+					inputMode="tel"
+					required
+					className={CLASE_INPUT}
+				/>
+			</label>
 			<label className="block">
 				<span className="sr-only">Referencia</span>
 				<input

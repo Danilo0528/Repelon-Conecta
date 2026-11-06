@@ -22,6 +22,13 @@ const IMAGENES_HERO_POR_DEFECTO = [
 /** La lista de imágenes del slider vive en la misma tabla que los textos. */
 export const CLAVE_IMAGENES_HERO = "inicio.hero.imagenes";
 
+/**
+ * Créditos del slider, alineados por índice con `CLAVE_IMAGENES_HERO`.
+ * Se guardan aparte para que una foto propia pueda quedar sin crédito
+ * sin mover las demás.
+ */
+export const CLAVE_CREDITOS_HERO = "inicio.hero.creditos";
+
 export const TEXTO_INICIO = {
 	"inicio.hero.titulo1": "Todo el pueblo,",
 	"inicio.hero.titulo2": "a un toque de tu celular.",
@@ -71,4 +78,27 @@ export function imagenesInicio(
 		// JSON inválido: el defecto de abajo evita el hueco.
 	}
 	return [...IMAGENES_HERO_POR_DEFECTO];
+}
+
+/**
+ * Créditos del slider en el mismo orden que las imágenes. Una lista
+ * vacía o un JSON roto se leen como "ninguna foto tiene crédito"; el
+ * respaldo de `lib/creditos.ts` se aplica después, en el home.
+ */
+export function creditosInicio(
+	guardado: Record<string, string> | null | undefined,
+): string[] {
+	const crudo = guardado?.[CLAVE_CREDITOS_HERO];
+	if (!crudo) return [];
+	try {
+		const lista: unknown = JSON.parse(crudo);
+		if (Array.isArray(lista)) {
+			return lista.map((credito) =>
+				typeof credito === "string" ? credito.trim() : "",
+			);
+		}
+	} catch {
+		// JSON inválido: se trata como si no hubiera créditos.
+	}
+	return [];
 }

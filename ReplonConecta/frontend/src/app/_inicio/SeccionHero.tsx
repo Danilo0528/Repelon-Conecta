@@ -125,7 +125,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 			 */}
 			{creditoHero && (
 				<p className="absolute bottom-nav-total right-5 z-10 max-w-[70%] text-right text-[11px] leading-snug text-white/65 md:bottom-4 md:right-8">
-					{creditoHero}
+					Fuente: {creditoHero}
 				</p>
 			)}
 		</section>

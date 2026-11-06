@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { FuenteImagen } from "@/components/ui";
 import { useUbicacion } from "@/lib/ubicacion";
 import { enlaceRutaDesde } from "@/lib/maps";
 import type { LugarTuristico } from "@/lib/turismo";
@@ -36,6 +37,7 @@ export function VentanaLugar({
 	}, [onCerrar]);
 
 	const { origen, pidiendo, preguntado, pedir } = useUbicacion();
+	const credito = lugar.creditos[0]?.trim();
 
 	return (
 		<div
@@ -94,6 +96,7 @@ export function VentanaLugar({
 				</div>
 
 				<div className="p-5">
+					<FuenteImagen credito={credito} className="mb-2" />
 					<h3 className="font-display text-xl font-semibold text-ink">
 						{lugar.nombre}
 					</h3>

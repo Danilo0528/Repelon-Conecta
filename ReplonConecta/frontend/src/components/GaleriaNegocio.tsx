@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { Foto } from "@/components/ui";
+import { Foto, FuenteImagen } from "@/components/ui";
 
 /*
  * Galería de la ficha del negocio: las fotos que el panel admin cargó.
@@ -15,9 +15,25 @@ import { Foto } from "@/components/ui";
  * Pinta solo el área de fotos. El degradado con el nombre, el estado y
  * la dirección lo pone la página encima, igual que con la foto única de
  * antes.
+ *
+ * `creditos` va alineado por índice con `fotos`: al filtrar una foto
+ * vacía se lleva su crédito, para que nunca se muestre la fuente de otra.
  */
-export function GaleriaNegocio({ fotos, alt }: { fotos: string[]; alt: string }) {
-	const lista = fotos.map((f) => f.trim()).filter(Boolean);
+export function GaleriaNegocio({
+	fotos,
+	creditos = [],
+	alt,
+}: {
+	fotos: string[];
+	creditos?: string[];
+	alt: string;
+}) {
+	const lista = fotos
+		.map((foto, i) => ({
+			foto: foto.trim(),
+			credito: creditos[i]?.trim() ?? "",
+		}))
+		.filter((item) => item.foto);
 	const [activo, setActivo] = useState(0);
 	const [sinMovimiento, setSinMovimiento] = useState(false);
 	const toque = useRef<number | null>(null);
@@ -50,11 +66,18 @@ export function GaleriaNegocio({ fotos, alt }: { fotos: string[]; alt: string })
 
 	if (lista.length <= 1) {
 		return (
-			<Foto
-				src={lista[0] ?? null}
-				alt={alt}
-				className="h-52 w-full object-cover sm:h-64 md:h-80"
-			/>
+			<div className="relative">
+				<Foto
+					src={lista[0]?.foto ?? null}
+					alt={alt}
+					className="h-52 w-full object-cover sm:h-64 md:h-80"
+				/>
+				<FuenteImagen
+					credito={lista[0]?.credito}
+					oscuro
+					className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)] truncate rounded bg-black/45 px-2 py-1 text-white/85"
+				/>
+			</div>
 		);
 	}
 
@@ -82,15 +105,25 @@ export function GaleriaNegocio({ fotos, alt }: { fotos: string[]; alt: string })
 				ir(indice + (delta < 0 ? 1 : -1));
 			}}
 		>
-			{lista.map((foto, i) => (
+			{lista.map((item, i) => (
 				<div
-					key={`${foto}-${i}`}
+					key={`${item.foto}-${i}`}
 					className={`absolute inset-0 transition-opacity duration-700 ${i === indice ? "opacity-100" : "opacity-0"}`}
 					aria-hidden={i !== indice}
 				>
-					<Foto src={foto} alt={i === indice ? alt : ""} className="h-full w-full object-cover" />
+					<Foto
+						src={item.foto}
+						alt={i === indice ? alt : ""}
+						className="h-full w-full object-cover"
+					/>
 				</div>
 			))}
+
+			<FuenteImagen
+				credito={lista[indice]?.credito}
+				oscuro
+				className="absolute left-3 top-3 z-10 max-w-[calc(100%-6rem)] truncate rounded bg-black/45 px-2 py-1 text-white/85"
+			/>
 
 			{/* Flechas: solo de escritorio. En el celular manda el dedo. */}
 			<button
@@ -116,9 +149,9 @@ export function GaleriaNegocio({ fotos, alt }: { fotos: string[]; alt: string })
 
 			{/* Puntos arriba a la derecha: abajo vive el texto del negocio. */}
 			<div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/30 px-2 py-1.5 backdrop-blur-sm">
-				{lista.map((foto, i) => (
+				{lista.map((item, i) => (
 					<button
-						key={`punto-${foto}-${i}`}
+						key={`punto-${item.foto}-${i}`}
 						type="button"
 						onClick={() => ir(i)}
 						aria-label={`Ver foto ${i + 1} de ${lista.length}`}

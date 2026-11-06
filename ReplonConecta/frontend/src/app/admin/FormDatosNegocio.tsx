@@ -74,11 +74,12 @@ export function FormDatosNegocio({
 			</div>
 			<div className="grid gap-2 sm:grid-cols-2">
 				<label className="block text-[12px] text-black/55">
-					Teléfono
+					Teléfono *
 					<input
 						value={form.telefono}
 						onChange={(e) => campo("telefono", e.target.value)}
 						pattern="[0-9+\s-]{7,20}"
+						required
 						placeholder={conPlaceholders ? "300 123 4567" : undefined}
 						className={INPUT}
 					/>
@@ -95,6 +96,16 @@ export function FormDatosNegocio({
 				</label>
 			</div>
 			{children}
+			<label className="block text-[12px] text-black/55">
+				Fuente del logo (opcional)
+				<input
+					value={form.logoCredito}
+					onChange={(e) => campo("logoCredito", e.target.value)}
+					maxLength={300}
+					placeholder="https://… o nombre del autor"
+					className={INPUT}
+				/>
+			</label>
 		</fieldset>
 	);
 }

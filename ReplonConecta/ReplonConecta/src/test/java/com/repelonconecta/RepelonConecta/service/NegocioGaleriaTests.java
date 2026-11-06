@@ -101,6 +101,40 @@ class NegocioGaleriaTests {
 	}
 
 	@Test
+	void losCreditosSiguenASuFotoCuandoSeDescartaUnaRepetida() {
+		NegocioDtos.NegocioDetalleResponse creado = negocioDePrueba();
+
+		NegocioDtos.NegocioDetalleResponse actualizado = negocios.actualizar(
+				creado.id(), galeriaConCreditos(
+						List.of(
+								"https://fotos.test/a.jpg",
+								"https://fotos.test/b.jpg",
+								"https://fotos.test/a.jpg",
+								"https://fotos.test/c.jpg"),
+						List.of("Fuente A", "Fuente B", "Repetida", "Fuente C")));
+
+		assertThat(actualizado.imagenes()).containsExactly(
+				"https://fotos.test/a.jpg",
+				"https://fotos.test/b.jpg",
+				"https://fotos.test/c.jpg");
+		// El crédito de la foto descartada se va con ella: C conserva el suyo.
+		assertThat(actualizado.creditos())
+				.containsExactly("Fuente A", "Fuente B", "Fuente C");
+	}
+
+	@Test
+	void rellenaConVaciosCuandoFaltanCreditos() {
+		NegocioDtos.NegocioDetalleResponse creado = negocioDePrueba();
+
+		NegocioDtos.NegocioDetalleResponse actualizado = negocios.actualizar(
+				creado.id(), galeriaConCreditos(
+						List.of("https://fotos.test/a.jpg", "https://fotos.test/b.jpg"),
+						List.of("Solo la primera")));
+
+		assertThat(actualizado.creditos()).containsExactly("Solo la primera", "");
+	}
+
+	@Test
 	void aceptaRutaRelativaPeroRechazaOtrosEsquemas() {
 		NegocioDtos.NegocioDetalleResponse creado = negocioDePrueba();
 
@@ -157,9 +191,15 @@ class NegocioGaleriaTests {
 
 	/** Único campo informado: la galería. El resto llega en null. */
 	private static NegocioDtos.NegocioUpdateRequest soloGaleria(List<String> imagenes) {
+		return galeriaConCreditos(imagenes, null);
+	}
+
+	/** Galería completa con sus fuentes alineadas por índice. */
+	private static NegocioDtos.NegocioUpdateRequest galeriaConCreditos(
+			List<String> imagenes, List<String> creditos) {
 		return new NegocioDtos.NegocioUpdateRequest(
 				null, null, null, null, null, null, null, null, null, null, null,
-				imagenes, null);
+				null, imagenes, creditos, null);
 	}
 
 	private void autenticar(UUID id) {

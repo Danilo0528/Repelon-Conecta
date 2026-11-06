@@ -176,6 +176,7 @@ public class IaAsistenteService {
 				n.getLongitud(),
 				n.getWhatsapp(),
 				n.getLogoUrl(),
+				n.getLogoCredito(),
 				n.isAbierto());
 	}
 }

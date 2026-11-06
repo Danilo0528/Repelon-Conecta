@@ -119,7 +119,7 @@ class NegocioServiceTests {
 		NegocioDtos.NegocioDetalleResponse cambiado = negocios.actualizar(
 				creado.id(), new NegocioDtos.NegocioUpdateRequest(
 						nombreNuevo, null, null, null, null, null, null,
-						"300 111 2233", "300 444 5566", null, null, null, null));
+						"300 111 2233", "300 444 5566", null, null, null, null, null, null));
 
 		assertThat(cambiado.nombre()).isEqualTo(nombreNuevo);
 		assertThat(cambiado.telefono()).isEqualTo("300 111 2233");
@@ -157,6 +157,29 @@ class NegocioServiceTests {
 
 		assertThat(negocios.detallePorSlug(creado.slug()).latitud()).isNull();
 		assertThat(negocios.detallePorSlug(creado.slug()).longitud()).isNull();
+	}
+
+	@Test
+	void actualizarRechazaDejarElTelefonoEnBlanco() {
+		Usuario dueno = usuario("Vendedor");
+		autenticar(dueno.getId());
+		NegocioDtos.NegocioDetalleResponse creado =
+				registrar("Tienda " + sufijo(), "Calle 10", "Centro " + sufijo());
+
+		NegocioDtos.NegocioDetalleResponse conTelefono = negocios.actualizar(
+				creado.id(), conTelefono("300 123 4567"));
+		assertThat(conTelefono.telefono()).isEqualTo("300 123 4567");
+
+		// Un PUT parcial no puede borrar el teléfono: el perfil público lo
+		// necesita para que el cliente llame al negocio.
+		assertThatThrownBy(() -> negocios.actualizar(creado.id(), conTelefono("   ")))
+				.isInstanceOf(ApiException.class)
+				.hasMessageContaining("obligatorio")
+				.satisfies(e -> assertThat(((ApiException) e).getStatus())
+						.isEqualTo(HttpStatus.BAD_REQUEST));
+
+		assertThat(negocios.detallePorSlug(creado.slug()).telefono())
+				.isEqualTo("300 123 4567");
 	}
 
 	@Test
@@ -245,7 +268,14 @@ class NegocioServiceTests {
 			Double longitud) {
 		return new NegocioDtos.NegocioUpdateRequest(
 				null, null, null, null, latitud, longitud,
-				null, null, null, null, null, null, null);
+				null, null, null, null, null, null, null, null, null);
+	}
+
+	/** Único campo informado: el teléfono del negocio. */
+	private static NegocioDtos.NegocioUpdateRequest conTelefono(String telefono) {
+		return new NegocioDtos.NegocioUpdateRequest(
+				null, null, null, null, null, null, null,
+				telefono, null, null, null, null, null, null, null);
 	}
 
 	private Usuario usuario(String etiqueta) {

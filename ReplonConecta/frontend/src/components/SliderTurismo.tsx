@@ -2,21 +2,33 @@
 
 import { useEffect, useState } from "react";
 
+import { FuenteImagen } from "@/components/ui";
+
 /**
  * Galería de una ficha turística. Solo avanza automáticamente mientras
  * el cursor está sobre la imagen; con movimiento reducido queda quieta.
+ *
+ * `creditos` va alineado por índice con `imagenes`: al filtrar una foto
+ * vacía se lleva su crédito, para que nunca se muestre la fuente de otra.
  */
 export function SliderTurismo({
 	imagenes,
+	creditos = [],
 	nombre,
 }: {
 	imagenes: string[];
+	creditos?: string[];
 	nombre: string;
 }) {
 	const [activa, setActiva] = useState(0);
 	const [encima, setEncima] = useState(false);
 	const [movimientoReducido, setMovimientoReducido] = useState(false);
-	const lista = imagenes.filter((imagen) => imagen.trim());
+	const lista = imagenes
+		.map((imagen, i) => ({
+			imagen: imagen.trim(),
+			credito: creditos[i]?.trim() ?? "",
+		}))
+		.filter((item) => item.imagen);
 
 	useEffect(() => {
 		const consulta = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -37,6 +49,7 @@ export function SliderTurismo({
 
 	if (lista.length === 0) return null;
 	const indice = activa % lista.length;
+	const credito = lista[indice]?.credito ?? "";
 
 	return (
 		<div
@@ -46,11 +59,11 @@ export function SliderTurismo({
 			onMouseEnter={() => setEncima(true)}
 			onMouseLeave={() => setEncima(false)}
 		>
-			{lista.map((imagen, i) => (
+			{lista.map((foto, i) => (
 				// eslint-disable-next-line @next/next/no-img-element
 				<img
-					key={`${imagen}-${i}`}
-					src={imagen}
+					key={`${foto.imagen}-${i}`}
+					src={foto.imagen}
 					alt=""
 					aria-hidden="true"
 					onError={(e) => {
@@ -61,8 +74,15 @@ export function SliderTurismo({
 					}`}
 				/>
 			))}
+			{credito && (
+				<FuenteImagen
+					credito={credito}
+					oscuro
+					className="absolute bottom-2 left-2 z-10 max-w-[calc(100%-5rem)] truncate rounded bg-black/45 px-2 py-1 text-white/85"
+				/>
+			)}
 			{lista.length > 1 && (
-				<span className="absolute bottom-2 right-2 rounded-full bg-black/45 px-2 py-1 text-[10px] font-medium text-white">
+				<span className="absolute bottom-2 right-2 z-10 rounded-full bg-black/45 px-2 py-1 text-[10px] font-medium text-white">
 					{indice + 1}/{lista.length}
 				</span>
 			)}

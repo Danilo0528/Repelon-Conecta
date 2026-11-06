@@ -3,9 +3,12 @@
 import { useState } from "react";
 
 import { CLASE_ESTADO, ETIQUETA_ESTADO } from "@/lib/format";
+import { normalizarUrlImagen } from "@/lib/imagenes";
 import type { EstadoPedido } from "@/lib/tipos";
 
 /** Piezas de interfaz pequeñas y repetidas en varias pantallas. */
+
+export { normalizarUrlImagen };
 
 /*
  * Clases de los botones de acción.
@@ -188,18 +191,32 @@ export function InsigniaAbierto({ abierto }: { abierto: boolean }) {
 }
 
 /**
- * Normaliza URLs de imagen para que funcionen como <img src>.
+ * Crédito o fuente de una imagen, en letra pequeña debajo de la foto.
  *
- * Imgur: "https://imgur.com/abc123" no sirve como imagen directa;
- * necesita "https://i.imgur.com/abc123.jpg". Las URLs que ya apuntan a
- * i.imgur.com o que no son de Imgur pasan sin tocar.
+ * `oscuro` es para cuando el texto va sobre una foto o un fondo oscuro.
+ * Si no hay crédito no pinta nada: una imagen propia no necesita aviso.
  */
-export function normalizarUrlImagen(url: string): string {
-	const t = url.trim();
-	// https://imgur.com/XXXXX o http://imgur.com/XXXXX (sin /a/ ni /gallery/)
-	const m = t.match(/^https?:\/\/imgur\.com\/([a-zA-Z0-9]+)$/);
-	if (m) return `https://i.imgur.com/${m[1]}.jpg`;
-	return t;
+export function FuenteImagen({
+	credito,
+	oscuro = false,
+	className = "",
+}: {
+	credito: string | null | undefined;
+	oscuro?: boolean;
+	className?: string;
+}) {
+	const texto = credito?.trim();
+	if (!texto) return null;
+
+	return (
+		<p
+			className={`text-[11px] leading-snug ${
+				oscuro ? "text-white/75" : "text-black/45"
+			} ${className}`}
+		>
+			Fuente: {texto}
+		</p>
+	);
 }
 
 /*

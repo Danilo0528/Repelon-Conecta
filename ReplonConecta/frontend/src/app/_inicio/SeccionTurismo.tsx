@@ -59,7 +59,11 @@ export function SeccionTurismo({ inicio }: { inicio: InicioState }) {
 								className={`relative -mx-5 -mt-5 mb-4 h-36 overflow-hidden rounded-t-3xl ${FONDO_MOTIVO[lugar.motivo]}`}
 							>
 								{lugar.imagenes.length > 0 ? (
-									<SliderTurismo imagenes={lugar.imagenes} nombre={lugar.nombre} />
+									<SliderTurismo
+										imagenes={lugar.imagenes}
+										creditos={lugar.creditos}
+										nombre={lugar.nombre}
+									/>
 								) : (
 									<svg
 										viewBox="0 0 24 24"

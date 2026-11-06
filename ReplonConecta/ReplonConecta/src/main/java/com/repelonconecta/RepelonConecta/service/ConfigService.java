@@ -37,6 +37,7 @@ public class ConfigService {
 			"inicio.hero.titulo2",
 			"inicio.hero.texto",
 			"inicio.hero.imagenes",
+			"inicio.hero.creditos",
 			"inicio.mapa.texto",
 			"inicio.turismo.texto",
 			"inicio.fondo.titulo",
@@ -49,6 +50,12 @@ public class ConfigService {
 	 * que rotan solas, como un array JSON de URLs en una sola clave.
 	 */
 	public static final String CLAVE_IMAGENES_HERO = "inicio.hero.imagenes";
+
+	/**
+	 * Fuente de cada imagen del slider, en el mismo orden que las URLs.
+	 * Igual que las imágenes, se guarda como array JSON de strings.
+	 */
+	public static final String CLAVE_CREDITOS_HERO = "inicio.hero.creditos";
 
 	/** Cuantas imagenes caben en el deslizamiento automatico. */
 	public static final int MAX_IMAGENES_HERO = 10;
@@ -122,6 +129,9 @@ public class ConfigService {
 			if (CLAVE_IMAGENES_HERO.equals(clave) && !vacio) {
 				validarImagenesHero(valor);
 			}
+			if (CLAVE_CREDITOS_HERO.equals(clave) && !vacio) {
+				validarCreditosHero(valor);
+			}
 
 			if (vacio) {
 				textos.deleteById(clave);
@@ -168,6 +178,36 @@ public class ConfigService {
 			if (url == null || !ESQUEMA_IMAGEN.matcher(url.trim()).matches()) {
 				throw ApiException.peticionInvalida(
 						"Cada imagen tiene que ser una URL https:// o un archivo del sitio que empiece con /");
+			}
+		}
+	}
+
+	/**
+	 * Los créditos del slider son texto libre (normalmente la URL de la
+	 * fuente) y se muestran debajo de cada foto. La lista debe ser JSON y
+	 * no puede tener más entradas que imágenes admite el slider; una
+	 * entrada vacía significa "sin crédito" y es válida.
+	 */
+	private void validarCreditosHero(String valor) {
+		List<String> creditos;
+		try {
+			creditos = JSON.readValue(valor, new TypeReference<List<String>>() {});
+		} catch (JacksonException e) {
+			throw ApiException.peticionInvalida(
+					"Las fuentes del inicio tienen que ser una lista JSON");
+		}
+
+		if (creditos == null) {
+			throw ApiException.peticionInvalida("La lista de fuentes no puede ser nula");
+		}
+		if (creditos.size() > MAX_IMAGENES_HERO) {
+			throw ApiException.peticionInvalida(
+					"El deslizamiento admite hasta " + MAX_IMAGENES_HERO + " fuentes");
+		}
+		for (String credito : creditos) {
+			if (credito != null && credito.trim().length() > 500) {
+				throw ApiException.peticionInvalida(
+						"Cada fuente admite hasta 500 caracteres");
 			}
 		}
 	}

@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { Aviso, Cargando, Chip, Foto, InsigniaAbierto, Vacio } from "@/components/ui";
+import { Aviso, Cargando, Chip, Foto, FuenteImagen, InsigniaAbierto, Vacio } from "@/components/ui";
 import { api } from "@/lib/api";
 import { PISTA_SIN_PRODUCTOS, enAlcance } from "@/lib/alcance";
-import { fotoNegocio } from "@/lib/imagenes";
+import { creditoNegocio, fotoNegocio } from "@/lib/imagenes";
 import type { Categoria, Negocio } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
 
@@ -147,6 +147,10 @@ export default function ListaNegocios() {
 								src={fotoNegocio(n)}
 								alt={`Foto de ${n.nombre}`}
 								className="h-36 w-full"
+							/>
+							<FuenteImagen
+								credito={creditoNegocio(n)}
+								className="px-3 pt-1.5"
 							/>
 							<div className="flex flex-1 flex-col p-3">
 								<p className="line-clamp-2 font-semibold leading-tight text-ink">

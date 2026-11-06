@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { FuenteImagen } from "@/components/ui";
 import { ErrorApi, apiJson } from "@/lib/api";
-import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
+import { creditoNegocio, fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
 import type { NegocioIa, RespuestaIa } from "@/lib/tipos";
 
 type Mensaje = {
@@ -38,6 +39,7 @@ function soloDigitos(valor: string): string {
  */
 function TarjetaNegocioIa({ n }: { n: NegocioIa }) {
 	const logo = fotoNegocio(n);
+	const credito = creditoNegocio(n);
 	const whatsapp = n.whatsapp ? soloDigitos(n.whatsapp) : "";
 
 	return (
@@ -69,6 +71,8 @@ function TarjetaNegocioIa({ n }: { n: NegocioIa }) {
 					</p>
 				</div>
 			</div>
+
+			<FuenteImagen credito={credito} className="mt-1" />
 
 			<a
 				href={urlGoogleMaps(n)}

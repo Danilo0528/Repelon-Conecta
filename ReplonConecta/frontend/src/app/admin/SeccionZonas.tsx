@@ -93,6 +93,7 @@ export function SeccionZonas() {
 	const [latitud, setLatitud] = useState("");
 	const [longitud, setLongitud] = useState("");
 	const [imagenes, setImagenes] = useState<string[]>([]);
+	const [creditos, setCreditos] = useState<string[]>([]);
 	const [motivo, setMotivo] = useState("pueblo");
 	const [guardando, setGuardando] = useState(false);
 	const [subiendo, setSubiendo] = useState(false);
@@ -113,6 +114,7 @@ export function SeccionZonas() {
 		setLatitud("");
 		setLongitud("");
 		setImagenes([]);
+		setCreditos([]);
 		setMotivo("pueblo");
 	}
 
@@ -136,6 +138,11 @@ export function SeccionZonas() {
 		setLatitud(z.latitud != null ? String(z.latitud) : "");
 		setLongitud(z.longitud != null ? String(z.longitud) : "");
 		setImagenes(z.imagenes?.length ? z.imagenes : z.imagenUrl ? [z.imagenUrl] : []);
+		setCreditos(
+			z.imagenes?.length
+				? z.imagenes.map((_, i) => z.creditos?.[i] ?? "")
+				: [],
+		);
 		setMotivo(MOTIVOS.some((m) => m.valor === z.motivo) ? z.motivo : "pueblo");
 		setErrorAccion(null);
 		setAviso(null);
@@ -185,13 +192,18 @@ export function SeccionZonas() {
 		setGuardando(true);
 		setErrorAccion(null);
 		setAviso(null);
+		// Se filtran juntos para que cada crédito siga a su foto.
+		const fotos = imagenes
+			.map((url, i) => ({ url: url.trim(), credito: creditos[i]?.trim() ?? "" }))
+			.filter((foto) => foto.url);
 		const cuerpo = JSON.stringify({
 			nombre: nombre.trim(),
 			descripcion: descripcion.trim() || null,
 			direccion: direccion.trim(),
 			latitud: coords.lat,
 			longitud: coords.lng,
-			imagenes: imagenes.map((url) => url.trim()).filter(Boolean),
+			imagenes: fotos.map((foto) => foto.url),
+			creditos: fotos.map((foto) => foto.credito),
 			motivo,
 		});
 		try {
@@ -254,6 +266,7 @@ export function SeccionZonas() {
 		try {
 			const subida = await subirImagen("zonas", editando ?? "nueva", archivo);
 			setImagenes((actuales) => [...actuales, subida]);
+			setCreditos((actuales) => [...actuales, ""]);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo subir la foto.");
 		} finally {
@@ -355,38 +368,60 @@ export function SeccionZonas() {
 									poner el cursor sobre la ficha)
 								</legend>
 								{imagenes.map((url, indice) => (
-									<div key={indice} className="flex items-center gap-2">
-										<label className="min-w-0 flex-1">
-											<span className="sr-only">URL de la foto {indice + 1}</span>
+									<div key={indice} className="space-y-1">
+										<div className="flex items-center gap-2">
+											<label className="min-w-0 flex-1">
+												<span className="sr-only">URL de la foto {indice + 1}</span>
+												<input
+													value={url}
+													onChange={(e) =>
+														setImagenes((actuales) =>
+															actuales.map((actual, i) => i === indice ? e.target.value : actual),
+														)
+													}
+													maxLength={500}
+													type="url"
+													placeholder="https://…/foto.jpg"
+													className={INPUT}
+												/>
+											</label>
+											<button
+												type="button"
+												onClick={() => {
+													setImagenes((actuales) => actuales.filter((_, i) => i !== indice));
+													setCreditos((actuales) => actuales.filter((_, i) => i !== indice));
+												}}
+												aria-label={`Quitar foto ${indice + 1}`}
+												className={`${BTN_SECUNDARIO} shrink-0`}
+											>
+												Quitar
+											</button>
+											{url.trim().startsWith("http") && (
+												// eslint-disable-next-line @next/next/no-img-element
+												<img
+													src={normalizarUrlImagen(url)}
+													alt={`Vista previa de la foto ${indice + 1}`}
+													className="h-10 w-16 shrink-0 rounded-md border border-black/10 object-cover"
+												/>
+											)}
+										</div>
+										<label className="block">
+											<span className="sr-only">Fuente de la foto {indice + 1}</span>
 											<input
-												value={url}
-												onChange={(e) =>
-													setImagenes((actuales) =>
-														actuales.map((actual, i) => i === indice ? e.target.value : actual),
-													)
-												}
-												maxLength={500}
-												type="url"
-												placeholder="https://…/foto.jpg"
+												value={creditos[indice] ?? ""}
+												onChange={(e) => {
+													const texto = e.target.value;
+													setCreditos((actuales) => {
+														const nuevos = imagenes.map((_, i) => actuales[i] ?? "");
+														nuevos[indice] = texto;
+														return nuevos;
+													});
+												}}
+												maxLength={300}
+												placeholder="Fuente de la foto (https://… o autor)"
 												className={INPUT}
 											/>
 										</label>
-										<button
-											type="button"
-											onClick={() => setImagenes((actuales) => actuales.filter((_, i) => i !== indice))}
-											aria-label={`Quitar foto ${indice + 1}`}
-											className={`${BTN_SECUNDARIO} shrink-0`}
-										>
-											Quitar
-										</button>
-										{url.trim().startsWith("http") && (
-											// eslint-disable-next-line @next/next/no-img-element
-											<img
-												src={normalizarUrlImagen(url)}
-												alt={`Vista previa de la foto ${indice + 1}`}
-												className="h-10 w-16 shrink-0 rounded-md border border-black/10 object-cover"
-											/>
-										)}
 									</div>
 								))}
 								<div className="flex flex-wrap items-center gap-2">
@@ -409,7 +444,10 @@ export function SeccionZonas() {
 									{imagenes.length < MAXIMO && (
 										<button
 											type="button"
-											onClick={() => setImagenes((actuales) => [...actuales, ""])}
+											onClick={() => {
+												setImagenes((actuales) => [...actuales, ""]);
+												setCreditos((actuales) => [...actuales, ""]);
+											}}
 											className={BTN_SECUNDARIO}
 										>
 											+ Añadir URL

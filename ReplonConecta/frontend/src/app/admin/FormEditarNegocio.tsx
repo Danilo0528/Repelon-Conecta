@@ -97,8 +97,11 @@ export function FormEditarNegocio({
 				<EditorGaleria
 					negocioId={negocioId}
 					imagenes={detalle?.imagenes ?? []}
-					onCambio={(nuevas) =>
-						setDetalle((d) => (d ? { ...d, imagenes: nuevas } : d))
+					creditos={detalle?.creditos ?? []}
+					onCambio={(nuevas, nuevosCreditos) =>
+						setDetalle((d) =>
+							d ? { ...d, imagenes: nuevas, creditos: nuevosCreditos } : d,
+						)
 					}
 					onAviso={setAviso}
 					onError={setErrorAccion}

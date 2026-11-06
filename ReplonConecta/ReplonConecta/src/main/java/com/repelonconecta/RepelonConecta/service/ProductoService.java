@@ -86,6 +86,11 @@ public class ProductoService {
 		if (request.imagenUrl() != null) {
 			producto.setImagenUrl(request.imagenUrl().isBlank() ? null : request.imagenUrl().trim());
 		}
+		if (request.imagenCredito() != null) {
+			producto.setImagenCredito(request.imagenCredito().isBlank()
+					? null
+					: request.imagenCredito().trim());
+		}
 		if (request.categoriaId() != null) {
 			producto.setCategoria(resolverCategoria(request.categoriaId()));
 		}
@@ -154,6 +159,9 @@ public class ProductoService {
 		producto.setImagenUrl(request.imagenUrl() == null || request.imagenUrl().isBlank()
 				? null
 				: request.imagenUrl().trim());
+		producto.setImagenCredito(request.imagenCredito() == null || request.imagenCredito().isBlank()
+				? null
+				: request.imagenCredito().trim());
 
 		if (request.unidad() != null) {
 			producto.setUnidad(request.unidad());

@@ -37,6 +37,7 @@ public final class IaDtos {
 			Double longitud,
 			String whatsapp,
 			String logoUrl,
+			String logoCredito,
 			boolean abierto) {
 	}
 }

@@ -48,6 +48,13 @@ public class ZonaTuristica {
 	@Column(name = "imagenes", columnDefinition = "text")
 	private String imagenes;
 
+	/**
+	 * Fuente de cada foto, en el mismo orden que `imagenes`. JSON de
+	 * strings; una entrada vacía significa que esa foto no tiene crédito.
+	 */
+	@Column(name = "creditos", columnDefinition = "text")
+	private String creditos;
+
 	/** Tema de la ilustración de respaldo: agua, barco, aves, ... */
 	@Column(name = "motivo", length = 20)
 	private String motivo;
@@ -124,6 +131,14 @@ public class ZonaTuristica {
 
 	public void setImagenes(String imagenes) {
 		this.imagenes = imagenes;
+	}
+
+	public String getCreditos() {
+		return creditos;
+	}
+
+	public void setCreditos(String creditos) {
+		this.creditos = creditos;
 	}
 
 	public String getMotivo() {

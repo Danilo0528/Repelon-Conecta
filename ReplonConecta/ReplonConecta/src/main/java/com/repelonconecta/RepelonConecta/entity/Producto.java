@@ -59,6 +59,10 @@ public class Producto {
 	@Column(name = "imagen_url", length = 500)
 	private String imagenUrl;
 
+	/** Fuente o crédito de la foto del producto. */
+	@Column(name = "imagen_credito", length = 500)
+	private String imagenCredito;
+
 	/**
 	 * El vendedor apago el producto a mano (se agoto, quedo paused por
 	 * vacaciones). Un producto con disponible=false sigue apareciendo en
@@ -167,6 +171,14 @@ public class Producto {
 
 	public void setImagenUrl(String imagenUrl) {
 		this.imagenUrl = imagenUrl;
+	}
+
+	public String getImagenCredito() {
+		return imagenCredito;
+	}
+
+	public void setImagenCredito(String imagenCredito) {
+		this.imagenCredito = imagenCredito;
 	}
 
 	public boolean isDisponible() {

@@ -54,6 +54,8 @@ export type LugarTuristico = {
 	imagen: string | null;
 	/** Fotos para el slider de la portada. */
 	imagenes: string[];
+	/** Crédito o fuente de cada foto, alineado por índice con `imagenes`. */
+	creditos: string[];
 	motivo: MotivoTurismo;
 };
 
@@ -67,6 +69,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "agua",
 	},
 	{
@@ -78,6 +81,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "barco",
 	},
 	{
@@ -89,6 +93,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "aves",
 	},
 	{
@@ -100,6 +105,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "naturaleza",
 	},
 	{
@@ -111,6 +117,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "parque",
 	},
 	{
@@ -122,6 +129,7 @@ export const LUGARES_TURISMO: LugarTuristico[] = [
 		longitud: null,
 		imagen: null,
 		imagenes: [],
+		creditos: [],
 		motivo: "pueblo",
 	},
 ];
@@ -147,6 +155,9 @@ export function zonaALugar(zona: ZonaTuristica): LugarTuristico {
 		: zona.imagenUrl
 			? [zona.imagenUrl]
 			: [];
+	const creditos = zona.imagenes?.length
+		? imagenes.map((_, i) => zona.creditos?.[i]?.trim() ?? "")
+		: imagenes.map(() => "");
 
 	return {
 		nombre: zona.nombre,
@@ -156,6 +167,7 @@ export function zonaALugar(zona: ZonaTuristica): LugarTuristico {
 		longitud: zona.longitud,
 		imagen: imagenes[0] ?? null,
 		imagenes,
+		creditos,
 		motivo,
 	};
 }

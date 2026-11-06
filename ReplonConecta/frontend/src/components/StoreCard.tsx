@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { InsigniaAbierto } from "@/components/ui";
-import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
+import { FuenteImagen, InsigniaAbierto } from "@/components/ui";
+import { creditoNegocio, fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
 import type { Negocio } from "@/lib/tipos";
 
 /*
@@ -24,6 +24,7 @@ export function StoreCard({ n }: { n: Negocio }) {
 	const logo = fotoNegocio(n);
 	const [fallaEn, setFallaEn] = useState<string | null>(null);
 	const foto = fallaEn === logo ? fotoRespaldo(n.nombre) : logo;
+	const credito = fallaEn === logo ? null : creditoNegocio(n);
 
 	return (
 		<article className="glass group rounded-3xl p-4 transition-transform hover:-translate-y-1">
@@ -38,6 +39,8 @@ export function StoreCard({ n }: { n: Negocio }) {
 						className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
 					/>
 				</div>
+
+				<FuenteImagen credito={credito} className="pt-2" />
 
 				<div className="flex items-center justify-between gap-2 pt-4">
 					<h3 className="min-w-0 truncate font-display text-lg font-semibold text-ink">

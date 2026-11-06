@@ -12,6 +12,7 @@ import {
 	CLASE_BOTON_VERDE,
 	Cargando,
 	Foto,
+	FuenteImagen,
 	InsigniaAbierto,
 	Vacio,
 } from "@/components/ui";
@@ -20,7 +21,7 @@ import { api } from "@/lib/api";
 import { COMPRAS_ACTIVAS } from "@/lib/compras";
 import { pesos } from "@/lib/format";
 import { useCoordenadas } from "@/lib/geocodificar";
-import { fotoNegocio } from "@/lib/imagenes";
+import { fotoNegocio, creditoNegocio } from "@/lib/imagenes";
 import { enlaceComoLlegar, enlaceVerEnGoogleMaps } from "@/lib/maps";
 import type { NegocioDetalle, Producto } from "@/lib/tipos";
 import { useDatos } from "@/lib/useDatos";
@@ -111,6 +112,11 @@ function Ficha() {
 			<div className="relative">
 				<GaleriaNegocio
 					fotos={negocio.imagenes.length > 0 ? negocio.imagenes : [fotoNegocio(negocio)]}
+					creditos={
+						negocio.imagenes.length > 0
+							? negocio.creditos
+							: [creditoNegocio(negocio) ?? ""]
+					}
 					alt={negocio.nombre}
 				/>
 				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-4 pb-4 pt-16">
@@ -309,6 +315,10 @@ function Ficha() {
 										src={p.imagenUrl}
 										alt={p.nombre}
 										className="aspect-square w-full"
+									/>
+									<FuenteImagen
+										credito={p.imagenCredito}
+										className="px-3 pt-1.5"
 									/>
 									<div className="flex flex-1 flex-col p-3">
 										<p className="line-clamp-2 text-sm font-medium leading-tight">

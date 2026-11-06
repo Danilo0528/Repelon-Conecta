@@ -120,7 +120,9 @@ public class NegocioService {
 				negocio.getTelefono(),
 				negocio.getWhatsapp(),
 				negocio.getLogoUrl(),
+				negocio.getLogoCredito(),
 				leerImagenes(negocio.getImagenes()),
+				leerCreditos(negocio.getCreditos()),
 				negocio.getHorario(),
 				negocio.isAbierto(),
 				negocio.isDestacado(),
@@ -233,7 +235,12 @@ public class NegocioService {
 			negocio.setReferenciaUbicacion(textoVacioANulo(request.referenciaUbicacion()));
 		}
 		if (request.telefono() != null) {
-			negocio.setTelefono(textoVacioANulo(request.telefono()));
+			// El teléfono del negocio es obligatorio; no se puede vaciar
+			// con un PUT parcial aunque el resto de campos sí sea opcional.
+			if (request.telefono().isBlank()) {
+				throw ApiException.peticionInvalida("El teléfono del negocio es obligatorio");
+			}
+			negocio.setTelefono(request.telefono().trim());
 		}
 		if (request.whatsapp() != null) {
 			negocio.setWhatsapp(WhatsappService.normalizarNumero(request.whatsapp()));
@@ -244,10 +251,23 @@ public class NegocioService {
 		if (request.logoUrl() != null) {
 			negocio.setLogoUrl(textoVacioANulo(request.logoUrl()));
 		}
+		if (request.logoCredito() != null) {
+			negocio.setLogoCredito(textoVacioANulo(request.logoCredito()));
+		}
 		// Lista entera y en orden: si llega null no se toca la galería,
 		// si llega vacía se borra (el panel admin siempre manda la lista).
 		if (request.imagenes() != null) {
-			negocio.setImagenes(escribirImagenes(limpiarGaleria(request.imagenes())));
+			// Fotos y créditos se limpian juntos: si se descarta una
+			// repetida, su crédito sale con ella y los demás no se corren.
+			Galeria galeria = limpiarGaleria(request.imagenes(), request.creditos());
+			negocio.setImagenes(escribirImagenes(galeria.imagenes()));
+			if (request.creditos() != null) {
+				negocio.setCreditos(escribirCreditos(galeria.creditos()));
+			}
+		} else if (request.creditos() != null) {
+			// Sin fotos nuevas: solo se reacomodan los créditos actuales.
+			int total = leerImagenes(negocio.getImagenes()).size();
+			negocio.setCreditos(escribirCreditos(limpiarCreditos(request.creditos(), total)));
 		}
 		if (request.abierto() != null) {
 			negocio.setAbierto(request.abierto());
@@ -308,6 +328,7 @@ public class NegocioService {
 				negocio.getTelefono(),
 				negocio.getWhatsapp(),
 				negocio.getLogoUrl(),
+				negocio.getLogoCredito(),
 				negocio.isAbierto(),
 				negocio.isDestacado(),
 				productos.countByNegocioId(negocio.getId()));
@@ -332,7 +353,9 @@ public class NegocioService {
 				negocio.getTelefono(),
 				negocio.getWhatsapp(),
 				negocio.getLogoUrl(),
+				negocio.getLogoCredito(),
 				leerImagenes(negocio.getImagenes()),
+				leerCreditos(negocio.getCreditos()),
 				negocio.getHorario(),
 				negocio.isAbierto(),
 				negocio.isDestacado(),
@@ -354,6 +377,7 @@ public class NegocioService {
 				producto.getPrecio(),
 				producto.getUnidad(),
 				producto.getImagenUrl(),
+				producto.getImagenCredito(),
 				producto.isDisponible(),
 				producto.getStock());
 	}
@@ -422,16 +446,71 @@ public class NegocioService {
 	}
 
 	/**
+	 * Créditos de la galería. A diferencia de las imágenes, aquí sí
+	 * importan las posiciones vacías: cada entrada corresponde a la foto
+	 * del mismo índice.
+	 */
+	private List<String> leerCreditos(String jsonCreditos) {
+		if (jsonCreditos == null || jsonCreditos.isBlank()) {
+			return List.of();
+		}
+		try {
+			List<String> creditos = JSON.readValue(jsonCreditos, new TypeReference<List<String>>() {});
+			return creditos.stream().map(c -> c == null ? "" : c).toList();
+		} catch (JacksonException | ClassCastException e) {
+			return List.of();
+		}
+	}
+
+	private String escribirCreditos(List<String> creditos) {
+		try {
+			return JSON.writeValueAsString(creditos);
+		} catch (JacksonException e) {
+			throw ApiException.peticionInvalida("No se pudo guardar la fuente de las fotos");
+		}
+	}
+
+	/** Alinea los créditos con la galería: recorta o rellena con vacíos. */
+	private List<String> limpiarCreditos(List<String> creditos, int total) {
+		List<String> limpias = new ArrayList<>();
+		for (int i = 0; i < total; i++) {
+			limpias.add(limpiarCredito(i < creditos.size() ? creditos.get(i) : null));
+		}
+		return limpias;
+	}
+
+	/** Un crédito suelto: nulo es "sin fuente" y más de 500 es inválido. */
+	private String limpiarCredito(String credito) {
+		if (credito == null) {
+			return "";
+		}
+		String recortado = credito.trim();
+		if (recortado.length() > 500) {
+			throw ApiException.peticionInvalida(
+					"Un crédito de imagen no puede pasar de 500 caracteres");
+		}
+		return recortado;
+	}
+
+	/** Fotos y créditos ya limpios, con la misma cantidad de entradas. */
+	private record Galeria(List<String> imagenes, List<String> creditos) {
+	}
+
+	/**
 	 * Limpia lo que manda el panel: recorta, descarta repetidos (el mismo
-	 * enlace pegado dos veces) y corta en el límite.
+	 * enlace pegado dos veces) y corta en el límite. Los créditos viajan
+	 * en paralelo, así que una foto descartada se lleva su crédito y las
+	 * demás fuentes no se corren de sitio.
 	 *
 	 * Solo entran http(s) o una ruta relativa que empiece con "/". Sin
 	 * esto un texto pegado en el campo de URL llegaría a la base y
 	 * acabaría pintado en la ficha pública.
 	 */
-	private List<String> limpiarGaleria(List<String> imagenes) {
+	private Galeria limpiarGaleria(List<String> imagenes, List<String> creditos) {
 		List<String> limpias = new ArrayList<>();
-		for (String url : imagenes) {
+		List<String> creditosLimpios = new ArrayList<>();
+		for (int i = 0; i < imagenes.size(); i++) {
+			String url = imagenes.get(i);
 			if (url == null) {
 				continue;
 			}
@@ -451,11 +530,13 @@ public class NegocioService {
 						"Una URL de imagen no puede pasar de 500 caracteres");
 			}
 			limpias.add(recortada);
+			creditosLimpios.add(limpiarCredito(
+					creditos != null && i < creditos.size() ? creditos.get(i) : null));
 			if (limpias.size() == 10) {
 				break;
 			}
 		}
-		return limpias;
+		return new Galeria(limpias, creditosLimpios);
 	}
 
 	private String textoVacioANulo(String texto) {

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { LightboxGaleria } from "@/components/LightboxGaleria";
-import { Aviso, Foto, Vacio } from "@/components/ui";
+import { Aviso, Foto, FuenteImagen, Vacio } from "@/components/ui";
 import { api } from "@/lib/api";
 import {
 	aPublicacion,
@@ -191,18 +191,24 @@ export function FeedCultura({ ejemplos }: { ejemplos: PublicacionCultura[] }) {
 								{/* Medio: foto (abre lightbox) o video (YouTube o archivo) */}
 								<div className="mt-3">
 									{media.tipo === "foto" ? (
-										<button
-											type="button"
-											onClick={() => setAbierta(indiceFoto)}
-											aria-label={`Ampliar: ${media.alt}`}
-											className="block w-full transition hover:opacity-95 active:scale-[.995]"
-										>
-											<Foto
-												src={media.src}
-												alt={media.alt}
-												className="aspect-[4/3] w-full"
+										<>
+											<button
+												type="button"
+												onClick={() => setAbierta(indiceFoto)}
+												aria-label={`Ampliar: ${media.alt}`}
+												className="block w-full transition hover:opacity-95 active:scale-[.995]"
+											>
+												<Foto
+													src={media.src}
+													alt={media.alt}
+													className="aspect-[4/3] w-full"
+												/>
+											</button>
+											<FuenteImagen
+												credito={media.credito}
+												className="mt-1.5 px-4"
 											/>
-										</button>
+										</>
 									) : media.tipo === "video" ? (
 										esYouTube(media.id) ? (
 											<figure className="aspect-video w-full bg-black">

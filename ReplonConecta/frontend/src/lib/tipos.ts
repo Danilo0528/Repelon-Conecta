@@ -54,6 +54,8 @@ export interface ZonaTuristica {
 	longitud: number | null;
 	imagenUrl: string | null;
 	imagenes: string[];
+	/** Crédito o fuente de cada imagen, alineado por índice con `imagenes`. */
+	creditos: string[];
 	motivo: string;
 	orden: number;
 }
@@ -81,6 +83,7 @@ export interface Negocio {
 	telefono: string | null;
 	whatsapp: string | null;
 	logoUrl: string | null;
+	logoCredito: string | null;
 	abierto: boolean;
 	destacado: boolean;
 	cantidadProductos: number;
@@ -101,6 +104,7 @@ export interface NegocioIa {
 	longitud: number | null;
 	whatsapp: string | null;
 	logoUrl: string | null;
+	logoCredito: string | null;
 	abierto: boolean;
 }
 
@@ -123,8 +127,11 @@ export interface NegocioDetalle {
 	telefono: string | null;
 	whatsapp: string | null;
 	logoUrl: string | null;
+	logoCredito: string | null;
 	/** Galería de la ficha, en el orden en que se desliza. */
 	imagenes: string[];
+	/** Crédito o fuente de cada foto, alineado por índice con `imagenes`. */
+	creditos: string[];
 	horario: string | null;
 	abierto: boolean;
 	destacado: boolean;
@@ -165,6 +172,7 @@ export interface Producto {
 	precio: number;
 	unidad: Unidad;
 	imagenUrl: string | null;
+	imagenCredito: string | null;
 	disponible: boolean;
 	stock: number | null;
 }

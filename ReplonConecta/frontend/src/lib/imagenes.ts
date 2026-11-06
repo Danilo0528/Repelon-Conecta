@@ -21,6 +21,27 @@ const FALLAS: { prueba: RegExp; imagen: string }[] = [
 const GENERICA = "/img/tienda.jpg";
 
 /**
+ * Normaliza URLs de imagen para que funcionen como <img src>.
+ *
+ * Imgur: "https://imgur.com/abc123" no sirve como imagen directa;
+ * necesita "https://i.imgur.com/abc123.jpg". Las URLs que ya apuntan a
+ * i.imgur.com o que no son de Imgur pasan sin tocar.
+ */
+export function normalizarUrlImagen(url: string): string {
+	const t = url.trim();
+	// https://imgur.com/XXXXX o http://imgur.com/XXXXX (sin /a/ ni /gallery/)
+	const m = t.match(/^https?:\/\/imgur\.com\/([a-zA-Z0-9]+)$/);
+	if (m) return `https://i.imgur.com/${m[1]}.jpg`;
+	return t;
+}
+
+/** Una URL solo cuenta como logo si es absoluta o una ruta pública. */
+function esUrlDeImagen(url: string | null | undefined): url is string {
+	const t = url?.trim();
+	return Boolean(t && (/^https?:\/\//.test(t) || t.startsWith("/")));
+}
+
+/**
  * Foto de respaldo: la del oficio si se reconoce el nombre, la tienda
  * genérica si no. Es la que se usa cuando el negocio no tiene logo y
  * también cuando el logo existe pero la URL ya no responde.
@@ -39,7 +60,22 @@ export function fotoNegocio(n: {
 	logoUrl?: string | null;
 }): string {
 	const logo = n.logoUrl?.trim();
-	if (logo && (/^https?:\/\//.test(logo) || logo.startsWith("/"))) return logo;
+	if (esUrlDeImagen(logo)) return normalizarUrlImagen(logo);
 
 	return fotoRespaldo(n.nombre);
+}
+
+/**
+ * Crédito del logo, solo cuando de verdad se está mostrando esa foto.
+ * Si el negocio cayó en la foto de respaldo, el crédito del logo no
+ * aplica y no debe aparecer.
+ */
+export function creditoNegocio(n: {
+	nombre: string;
+	logoUrl?: string | null;
+	logoCredito?: string | null;
+}): string | null {
+	const credito = n.logoCredito?.trim();
+	if (!credito || !esUrlDeImagen(n.logoUrl)) return null;
+	return credito;
 }

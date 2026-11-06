@@ -29,6 +29,7 @@ public final class NegocioDtos {
 			String telefono,
 			String whatsapp,
 			String logoUrl,
+			String logoCredito,
 			boolean abierto,
 			boolean destacado,
 			long cantidadProductos) {
@@ -48,7 +49,9 @@ public final class NegocioDtos {
 			String telefono,
 			String whatsapp,
 			String logoUrl,
+			String logoCredito,
 			List<String> imagenes,
+			List<String> creditos,
 			String horario,
 			boolean abierto,
 			boolean destacado,
@@ -85,6 +88,7 @@ public final class NegocioDtos {
 			@Size(max = 200, message = "La referencia no puede pasar de 200 caracteres")
 			String referenciaUbicacion,
 
+			@NotBlank(message = "El teléfono del negocio es obligatorio")
 			@Pattern(regexp = "^$|^[0-9+\\s-]{7,20}$",
 					message = "Telefono invalido: solo numeros, espacios, + y -")
 			String telefono,
@@ -115,6 +119,8 @@ public final class NegocioDtos {
 			String whatsapp,
 			@Size(max = 60) String horario,
 			@Size(max = 500) String logoUrl,
+			/** Fuente del logo; vacío borra el crédito anterior. */
+			@Size(max = 500) String logoCredito,
 			/**
 			 * Galería completa y en orden. `null` = no se toca (el PUT es
 			 * parcial); una lista vacía = borrar todas las fotos. El
@@ -122,6 +128,9 @@ public final class NegocioDtos {
 			 */
 			@Size(max = 10, message = "La galería admite hasta 10 fotos")
 			List<@Size(max = 500) String> imagenes,
+			/** Fuente de cada foto, en el mismo orden que `imagenes`. */
+			@Size(max = 10, message = "La galería admite hasta 10 créditos")
+			List<@Size(max = 500) String> creditos,
 			Boolean abierto) {
 	}
 

@@ -74,6 +74,10 @@ public class Negocio {
 	@Column(name = "logo_url", length = 500)
 	private String logoUrl;
 
+	/** Fuente o crédito del logo: la URL de donde salió la imagen. */
+	@Column(name = "logo_credito", length = 500)
+	private String logoCredito;
+
 	/**
 	 * Galería de la ficha: las fotos que el visitante ve deslizar en
 	 * /negocios/{slug}.
@@ -87,6 +91,14 @@ public class Negocio {
 	 */
 	@Column(name = "imagenes", columnDefinition = "text")
 	private String imagenes;
+
+	/**
+	 * Fuente de cada foto de la galería, en el mismo orden que `imagenes`.
+	 * Se guarda como JSON de strings; una entrada vacía significa que esa
+	 * foto no tiene crédito registrado.
+	 */
+	@Column(name = "creditos", columnDefinition = "text")
+	private String creditos;
 
 	/**
 	 * Horario en JSON: {"lunes":{"abre":"08:00","cierra":"18:00"}, ...}
@@ -239,12 +251,28 @@ public class Negocio {
 		this.logoUrl = logoUrl;
 	}
 
+	public String getLogoCredito() {
+		return logoCredito;
+	}
+
+	public void setLogoCredito(String logoCredito) {
+		this.logoCredito = logoCredito;
+	}
+
 	public String getImagenes() {
 		return imagenes;
 	}
 
 	public void setImagenes(String imagenes) {
 		this.imagenes = imagenes;
+	}
+
+	public String getCreditos() {
+		return creditos;
+	}
+
+	public void setCreditos(String creditos) {
+		this.creditos = creditos;
 	}
 
 	public String getHorario() {

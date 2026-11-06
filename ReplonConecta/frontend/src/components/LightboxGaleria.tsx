@@ -151,7 +151,7 @@ export function LightboxGaleria({
 				<p className="text-xs text-white/75">{foto.alt}</p>
 				{foto.credito && (
 					<p className="mt-0.5 text-xs font-medium text-white/90">
-						Foto: {foto.credito}
+						Fuente: {foto.credito}
 					</p>
 				)}
 			</div>

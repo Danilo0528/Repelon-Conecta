@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { creditoImagen } from "@/lib/creditos";
 import { conCoordenadas, useCoordenadas } from "@/lib/geocodificar";
-import { imagenesInicio, textoInicio } from "@/lib/inicio";
+import { imagenesInicio, textoInicio, creditosInicio } from "@/lib/inicio";
 import type { Categoria, Negocio, ZonaTuristica } from "@/lib/tipos";
 import { LUGARES_TURISMO, zonaALugar, type LugarTuristico } from "@/lib/turismo";
 import { useDatos } from "@/lib/useDatos";
@@ -65,8 +65,12 @@ export function useInicio() {
 	}, [imagenesHero.length]);
 	const indiceHero = heroIdx % imagenesHero.length;
 
-	/* Crédito de la imagen visible (si está registrado en lib/creditos). */
-	const creditoHero = creditoImagen(imagenesHero[indiceHero] ?? "");
+	/* Crédito de la imagen visible: primero el editable del panel, luego
+	 * el registro de respaldo de lib/creditos.ts. */
+	const creditosHero = creditosInicio(textos.datos);
+	const creditoHero =
+		creditosHero[indiceHero]?.trim() ||
+		creditoImagen(imagenesHero[indiceHero] ?? "");
 
 	/*
 	 * Zonas turísticas: las carga el estudiante desde /admin (con su

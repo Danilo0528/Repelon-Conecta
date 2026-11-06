@@ -45,7 +45,11 @@ export function EditorProductos({
 	onCrear: () => void;
 	onEliminar: (p: Producto) => void;
 	onSubirFoto: (p: Producto, evento: ChangeEvent<HTMLInputElement>) => void;
-	onActualizarFoto: (p: Producto, url: string) => Promise<void>;
+	onActualizarFoto: (
+		p: Producto,
+		url: string | null,
+		credito: string | null,
+	) => Promise<void>;
 }) {
 	return (
 		<fieldset className="mt-4 space-y-2">
@@ -157,6 +161,18 @@ export function EditorProductos({
 							className={INPUT}
 						/>
 					</label>
+					<label className="block text-[12px] text-black/55">
+						Fuente de la foto (opcional)
+						<input
+							value={nuevoProd.imagenCredito}
+							onChange={(e) =>
+								setNuevoProd((p) => ({ ...p, imagenCredito: e.target.value }))
+							}
+							maxLength={300}
+							placeholder="https://… o nombre del autor"
+							className={INPUT}
+						/>
+					</label>
 					{nuevoProd.imagenUrl.trim().startsWith("http") && (
 						// eslint-disable-next-line @next/next/no-img-element
 						<img
@@ -220,8 +236,23 @@ export function EditorProductos({
 					<CampoUrlImagen
 						valor={p.imagenUrl}
 						etiqueta={`foto de ${p.nombre}`}
-						onGuardar={(url) => onActualizarFoto(p, url)}
+						onGuardar={(url) => onActualizarFoto(p, url, null)}
 					/>
+					<label className="w-full text-[11px] text-black/50">
+						Fuente de la foto
+						<input
+							type="text"
+							defaultValue={p.imagenCredito ?? ""}
+							maxLength={300}
+							placeholder="https://… o nombre del autor"
+							className={`${INPUT} mt-0.5 h-8 text-[12px]`}
+							onBlur={(e) => {
+								const texto = e.target.value.trim();
+								if (texto === (p.imagenCredito ?? "").trim()) return;
+								void onActualizarFoto(p, p.imagenUrl, texto || null);
+							}}
+						/>
+					</label>
 					<button
 						type="button"
 						onClick={() => onEliminar(p)}

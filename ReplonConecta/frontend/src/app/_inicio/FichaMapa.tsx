@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { InsigniaAbierto } from "@/components/ui";
-import { fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
+import { FuenteImagen, InsigniaAbierto } from "@/components/ui";
+import { creditoNegocio, fotoNegocio, fotoRespaldo } from "@/lib/imagenes";
 import { enlaceComoLlegar } from "@/lib/maps";
 import type { Negocio } from "@/lib/tipos";
 
@@ -18,6 +18,7 @@ export function FichaMapa({ n, onCerrar }: { n: Negocio; onCerrar: () => void })
 	const logo = fotoNegocio(n);
 	const [fallaEn, setFallaEn] = useState<string | null>(null);
 	const foto = fallaEn === logo ? fotoRespaldo(n.nombre) : logo;
+	const credito = fallaEn === logo ? null : creditoNegocio(n);
 
 	return (
 		<div className="glass rounded-2xl p-3">
@@ -48,6 +49,8 @@ export function FichaMapa({ n, onCerrar }: { n: Negocio; onCerrar: () => void })
 					×
 				</button>
 			</div>
+
+			<FuenteImagen credito={credito} className="mt-1" />
 
 			<div className="mt-3 flex gap-2">
 				<Link

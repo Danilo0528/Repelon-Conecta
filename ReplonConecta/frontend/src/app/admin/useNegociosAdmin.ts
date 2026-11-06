@@ -142,6 +142,10 @@ export function useNegociosAdmin(filtroInicial?: FiltroNegocios) {
 			setErrorAccion("La dirección es obligatoria.");
 			return;
 		}
+		if (!form.telefono.trim()) {
+			setErrorAccion("El teléfono del negocio es obligatorio.");
+			return;
+		}
 		const { lat, lng } = coordenadas();
 		if ((lat == null) !== (lng == null)) {
 			setErrorAccion("Falta un valor del par de coordenadas.");
@@ -257,11 +261,16 @@ export function useNegociosAdmin(filtroInicial?: FiltroNegocios) {
 	async function aplicarLogo(id: string, url: string) {
 		const actualizado = await apiConSesion<NegocioDetalle>(`/api/negocios/${id}`, {
 			method: "PUT",
-			body: JSON.stringify({ logoUrl: url }),
+			body: JSON.stringify({ logoUrl: url, logoCredito: null }),
 		});
-		setDetalle((d) => (d ? { ...d, logoUrl: actualizado.logoUrl } : d));
+		setDetalle((d) =>
+			d ? { ...d, logoUrl: actualizado.logoUrl, logoCredito: actualizado.logoCredito } : d,
+		);
+		setForm((f) => ({ ...f, logoCredito: "" }));
 		setDatos((actual) =>
-			(actual ?? []).map((x) => (x.id === id ? { ...x, logoUrl: actualizado.logoUrl } : x)),
+			(actual ?? []).map((x) =>
+				x.id === id ? { ...x, logoUrl: actualizado.logoUrl } : x,
+			),
 		);
 	}
 
@@ -273,7 +282,7 @@ export function useNegociosAdmin(filtroInicial?: FiltroNegocios) {
 		setSubiendo(`foto-${p.id}`);
 		try {
 			const url = await subirImagen("productos", p.id, archivo);
-			await actualizarFotoProducto(p, url);
+			await actualizarFotoProducto(p, url, null);
 		} catch (e) {
 			setErrorAccion(e instanceof Error ? e.message : "No se pudo subir la foto.");
 		} finally {
@@ -281,10 +290,14 @@ export function useNegociosAdmin(filtroInicial?: FiltroNegocios) {
 		}
 	}
 
-	async function actualizarFotoProducto(p: Producto, imagenUrl: string) {
+	async function actualizarFotoProducto(
+		p: Producto,
+		imagenUrl: string | null,
+		imagenCredito: string | null,
+	) {
 		const actualizado = await apiConSesion<Producto>(`/api/productos/${p.id}`, {
 			method: "PUT",
-			body: cuerpoFotoProducto(p, imagenUrl),
+			body: cuerpoFotoProducto(p, imagenUrl, imagenCredito),
 		});
 		setProductos((ps) => ps.map((x) => (x.id === p.id ? actualizado : x)));
 	}
@@ -313,6 +326,7 @@ export function useNegociosAdmin(filtroInicial?: FiltroNegocios) {
 				precio,
 				unidad: nuevoProd.unidad,
 				imagenUrl: nuevoProd.imagenUrl.trim() || null,
+				imagenCredito: nuevoProd.imagenCredito.trim() || null,
 				categoriaId: nuevoProd.categoriaId || null,
 				disponible: true,
 				stock: nuevoProd.stock ? Number(nuevoProd.stock) : null,

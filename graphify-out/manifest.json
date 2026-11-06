@@ -133,10 +133,10 @@
     "semantic_hash": "d31e41b4a6ebb98ee8a386486ee5aaf2"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/IaDtos.java": {
-    "mtime": 1791920904.253294,
-    "seen": 1793972560.3605883,
-    "ast_hash": "617f0cdda589598df6d3c1d706bd3346",
-    "semantic_hash": "617f0cdda589598df6d3c1d706bd3346"
+    "mtime": 1794003152.0255547,
+    "seen": 1794003940.6039436,
+    "ast_hash": "28c2c0dfa4b6988d25f34aa55f3aa2f1",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/MetricasDtos.java": {
     "mtime": 1790911690.4620862,
@@ -145,10 +145,10 @@
     "semantic_hash": "4f3cb413d750d70c7d62706e9b2d12fa"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/NegocioDtos.java": {
-    "mtime": 1791922887.3416672,
-    "seen": 1793972560.3625875,
-    "ast_hash": "4b7770b27db1e922b74a8ec4a2a1e026",
-    "semantic_hash": "4b7770b27db1e922b74a8ec4a2a1e026"
+    "mtime": 1794001719.528311,
+    "seen": 1794003940.6039436,
+    "ast_hash": "302321c519999ad4c725aa6a318d9e56",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/PedidoDtos.java": {
     "mtime": 1790911690.721358,
@@ -157,10 +157,10 @@
     "semantic_hash": "8246e2d4ceb13ea03a92e921c4ee7a71"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/ProductoDtos.java": {
-    "mtime": 1791220901.8632848,
-    "seen": 1793972560.3666146,
-    "ast_hash": "50c7a3dc9ad0809df454771969869018",
-    "semantic_hash": "50c7a3dc9ad0809df454771969869018"
+    "mtime": 1794001730.8557477,
+    "seen": 1794003940.6039436,
+    "ast_hash": "af6fd151d3a0c4de61ddcd942b911201",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/UsuarioDtos.java": {
     "mtime": 1791242548.1317542,
@@ -169,10 +169,10 @@
     "semantic_hash": "3f24c870de64f3d950ee3ebb9b0eb396"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/dto/ZonaDtos.java": {
-    "mtime": 1791928074.0547752,
-    "seen": 1793972560.3736143,
-    "ast_hash": "52451715bb5e2a8ce273883249254510",
-    "semantic_hash": "52451715bb5e2a8ce273883249254510"
+    "mtime": 1794001743.2141259,
+    "seen": 1794003940.6039436,
+    "ast_hash": "505621a074a66928017f7a5bca8a0099",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Categoria.java": {
     "mtime": 1790911690.8277967,
@@ -223,10 +223,10 @@
     "semantic_hash": "d9b11c7f0dd0e7aa498f14cd18d81da1"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Negocio.java": {
-    "mtime": 1791922835.4596634,
-    "seen": 1793972560.387604,
-    "ast_hash": "607469a391eb810042a8b4d1d811e87b",
-    "semantic_hash": "607469a391eb810042a8b4d1d811e87b"
+    "mtime": 1794001674.6669333,
+    "seen": 1794003940.6039436,
+    "ast_hash": "4ff5d0f4f9f906168edc7be418cd757e",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Pedido.java": {
     "mtime": 1790911690.9295163,
@@ -235,10 +235,10 @@
     "semantic_hash": "1cd9e530bcee25597037d5ea075ce6c2"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Producto.java": {
-    "mtime": 1791220886.311573,
-    "seen": 1793972560.392518,
-    "ast_hash": "7c8b2be0989249be7da95bd6bc819c03",
-    "semantic_hash": "7c8b2be0989249be7da95bd6bc819c03"
+    "mtime": 1794001684.5283546,
+    "seen": 1794003940.6039436,
+    "ast_hash": "ed49117d2c836da2d9c4cab96ed92623",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Rol.java": {
     "mtime": 1790911690.9363687,
@@ -259,10 +259,10 @@
     "semantic_hash": "62bd50fc05e11ccf4ba6b07479cf2aec"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/ZonaTuristica.java": {
-    "mtime": 1791928451.5624387,
-    "seen": 1793972560.4068742,
-    "ast_hash": "a70cd5d221d504557a8579c9a799770c",
-    "semantic_hash": "a70cd5d221d504557a8579c9a799770c"
+    "mtime": 1794001694.51579,
+    "seen": 1794003940.6039436,
+    "ast_hash": "eae6a894fb813874049fa1f2a8c1101d",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/repository/CategoriaRepository.java": {
     "mtime": 1791222028.9487023,
@@ -343,10 +343,10 @@
     "semantic_hash": "69f03733e01546c0f95fe0bb7e783de0"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/ConfigService.java": {
-    "mtime": 1791927231.2983525,
-    "seen": 1793972560.4291718,
-    "ast_hash": "4375aca9822f7a8b6cde41d5a81683b0",
-    "semantic_hash": "4375aca9822f7a8b6cde41d5a81683b0"
+    "mtime": 1794001840.2184513,
+    "seen": 1794003940.6039436,
+    "ast_hash": "5d08a25c615a4ccb258564b796e2e122",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/CulturaService.java": {
     "mtime": 1793940315.1009243,
@@ -367,16 +367,16 @@
     "semantic_hash": "1d1d030b3725b6efb25bb7ac90f78872"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/IaAsistenteService.java": {
-    "mtime": 1791920928.991445,
-    "seen": 1793972560.4371693,
-    "ast_hash": "8c01ac3da5340fca257f8a526c3dc182",
-    "semantic_hash": "8c01ac3da5340fca257f8a526c3dc182"
+    "mtime": 1794003152.0255547,
+    "seen": 1794003940.6039436,
+    "ast_hash": "a4e2633756bb6bb6b316aa76a2dd891f",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/NegocioService.java": {
-    "mtime": 1791923194.9606397,
-    "seen": 1793972560.4381673,
-    "ast_hash": "d26d8c5224753e5eb281afc6531ece3b",
-    "semantic_hash": "d26d8c5224753e5eb281afc6531ece3b"
+    "mtime": 1794003763.356989,
+    "seen": 1794003940.6039436,
+    "ast_hash": "ac6c515fc262568c09e3fd488f878b2a",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/PedidoService.java": {
     "mtime": 1791243186.7099323,
@@ -385,10 +385,10 @@
     "semantic_hash": "e4aaf844bd9aa3c6823b4f9f2e20989f"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/ProductoService.java": {
-    "mtime": 1791220932.4147165,
-    "seen": 1793972560.4451723,
-    "ast_hash": "019fb7a27414e08a4c50428ec4ab2e0e",
-    "semantic_hash": "019fb7a27414e08a4c50428ec4ab2e0e"
+    "mtime": 1794001796.1751046,
+    "seen": 1794003940.6039436,
+    "ast_hash": "ca675846f8aac2f321bb8a45370d865c",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/SlugService.java": {
     "mtime": 1790911691.0874035,
@@ -409,10 +409,10 @@
     "semantic_hash": "f36c198d7ce44a160f986bb163cc3f1c"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/service/ZonaTuristicaService.java": {
-    "mtime": 1791927699.5741851,
-    "seen": 1793972560.4551678,
-    "ast_hash": "9374692d02c3a28742361b4b950bdd39",
-    "semantic_hash": "9374692d02c3a28742361b4b950bdd39"
+    "mtime": 1794003437.282546,
+    "seen": 1794003940.6039436,
+    "ast_hash": "13b9356d6ac9d1db65a40b97eaae4ef8",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/RepelonConectaApplicationTests.java": {
     "mtime": 1790911691.6301506,
@@ -475,10 +475,10 @@
     "semantic_hash": "16fbe8b9bdadb8c172b46c78457db2ae"
   },
   "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/NegocioGaleriaTests.java": {
-    "mtime": 1791923402.7897527,
-    "seen": 1793972560.4796984,
-    "ast_hash": "e00c682f2d7b18f287c0b04479917e79",
-    "semantic_hash": "e00c682f2d7b18f287c0b04479917e79"
+    "mtime": 1794003458.4428017,
+    "seen": 1794003940.6039436,
+    "ast_hash": "33666868876850f32e0a5a7522ec2353",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/eslint.config.mjs": {
     "mtime": 1790897098.1110897,
@@ -517,10 +517,10 @@
     "semantic_hash": "a5fd641c2da1790f57e72ddde2eda4c2"
   },
   "ReplonConecta/frontend/src/app/admin/EditorGaleria.tsx": {
-    "mtime": 1792537518.2705288,
-    "seen": 1793972560.4884806,
-    "ast_hash": "a75da00397f70d5c7bef9b01d7f66001",
-    "semantic_hash": "a75da00397f70d5c7bef9b01d7f66001"
+    "mtime": 1794002707.0659318,
+    "seen": 1794003940.6039436,
+    "ast_hash": "42ad9d395db14d5af4761af4d0121cd0",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/EditorUbicacion.tsx": {
     "mtime": 1792537518.2705288,
@@ -541,10 +541,10 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionHeroInicio.tsx": {
-    "mtime": 1792537518.2760718,
-    "seen": 1793972560.4953935,
-    "ast_hash": "901678a3db5a7bde65b725c7527331ae",
-    "semantic_hash": "901678a3db5a7bde65b725c7527331ae"
+    "mtime": 1794003615.8248992,
+    "seen": 1794003940.6039436,
+    "ast_hash": "32237a6ac39913b0641fb7701bfcee0d",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionNegocios.tsx": {
     "mtime": 1793993768.0555396,
@@ -571,9 +571,9 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionZonas.tsx": {
-    "mtime": 1793992260.7130165,
-    "seen": 1793992435.1977158,
-    "ast_hash": "f17cfaa5de3d78e7d7c8bd0b3d3b085d",
+    "mtime": 1794002726.4015133,
+    "seen": 1794003940.6049454,
+    "ast_hash": "b146742b3877cb7183e4b03d3a2bc5f4",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/contenido/page.tsx": {
@@ -679,16 +679,16 @@
     "semantic_hash": "941b3cd241d55ed6ee83e60eeae82b46"
   },
   "ReplonConecta/frontend/src/app/negocios/[slug]/page.tsx": {
-    "mtime": 1793934575.0060282,
-    "seen": 1793972560.5173159,
-    "ast_hash": "fd1a365b5e0b04b9914c381d095f8456",
-    "semantic_hash": "fd1a365b5e0b04b9914c381d095f8456"
+    "mtime": 1794002498.7984488,
+    "seen": 1794003940.6049454,
+    "ast_hash": "736c47b69ef82b0dd8699905748a2685",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/negocios/page.tsx": {
-    "mtime": 1792080806.654061,
-    "seen": 1793972560.519315,
-    "ast_hash": "dd016efbd375744983813af9234432b9",
-    "semantic_hash": "dd016efbd375744983813af9234432b9"
+    "mtime": 1794002523.5949874,
+    "seen": 1794003940.6049454,
+    "ast_hash": "30536ef1a9dc493150808833096e9f7d",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/not-found.tsx": {
     "mtime": 1792537518.3108935,
@@ -745,16 +745,16 @@
     "semantic_hash": "135336a2ac04e3303cfa48bf03e153ab"
   },
   "ReplonConecta/frontend/src/app/vendedor/page.tsx": {
-    "mtime": 1792080807.0335777,
-    "seen": 1793972560.5363126,
-    "ast_hash": "027d9ada91fad9c5cb12159af3c9ced7",
-    "semantic_hash": "027d9ada91fad9c5cb12159af3c9ced7"
+    "mtime": 1794002770.9993837,
+    "seen": 1794003940.6049454,
+    "ast_hash": "2ef8aabcf900ed66281dc5b8cf8878cc",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/AsistenteIaChat.tsx": {
-    "mtime": 1793937606.2975614,
-    "seen": 1793972560.5378969,
-    "ast_hash": "b4b11f54fc74e68cd1e6da06bee3ece3",
-    "semantic_hash": "b4b11f54fc74e68cd1e6da06bee3ece3"
+    "mtime": 1794003169.509245,
+    "seen": 1794003940.6049454,
+    "ast_hash": "44ae146a8b314f76af411eec00b11e3d",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/BarraNavegacion.tsx": {
     "mtime": 1793934575.015568,
@@ -787,10 +787,10 @@
     "semantic_hash": "e25de18d9bc23476891c5632b2cdac81"
   },
   "ReplonConecta/frontend/src/components/FeedCultura.tsx": {
-    "mtime": 1793940749.8606296,
-    "seen": 1793972560.5454051,
-    "ast_hash": "405a5d12f8efc498715c5df8c59df990",
-    "semantic_hash": "405a5d12f8efc498715c5df8c59df990"
+    "mtime": 1794002536.2452214,
+    "seen": 1794003940.6049454,
+    "ast_hash": "bdf7d5e023b3610aad747558ef9c1519",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/GaleriaCultura.tsx": {
     "mtime": 1793934575.02094,
@@ -799,10 +799,10 @@
     "semantic_hash": "71e7dd2fa7987872b0119df62a9b68a8"
   },
   "ReplonConecta/frontend/src/components/GaleriaNegocio.tsx": {
-    "mtime": 1792537518.3361645,
-    "seen": 1793972560.5484257,
-    "ast_hash": "4f13427519015687d99c6f8e5d7bf574",
-    "semantic_hash": "4f13427519015687d99c6f8e5d7bf574"
+    "mtime": 1794002483.7465143,
+    "seen": 1794003940.6049454,
+    "ast_hash": "e41a76195c0cbf52a8480f136cb4796e",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/HeaderConecta.tsx": {
     "mtime": 1793934575.023556,
@@ -823,15 +823,15 @@
     "semantic_hash": "19d7d4a1f5d498ccc89b745a5a9b1f6f"
   },
   "ReplonConecta/frontend/src/components/LightboxGaleria.test.tsx": {
-    "mtime": 1793934575.030969,
-    "seen": 1793972560.553426,
-    "ast_hash": "e70a590dc4ba238637b92b13145a87d3",
-    "semantic_hash": "e70a590dc4ba238637b92b13145a87d3"
+    "mtime": 1794002554.953797,
+    "seen": 1794003940.6049454,
+    "ast_hash": "52b7ddc08078da81f43aa87d9df6ae19",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/LightboxGaleria.tsx": {
-    "mtime": 1793993950.595677,
-    "seen": 1793994136.5163379,
-    "ast_hash": "07d1e1d474f0bdc3f69749c43b46205b",
+    "mtime": 1794002535.420792,
+    "seen": 1794003940.6049454,
+    "ast_hash": "5807c34eeeb9cadf0a50c667be4815ad",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/Mapa.tsx": {
@@ -853,16 +853,16 @@
     "semantic_hash": "fe6d78274b91fa12fd93f584ca6c4803"
   },
   "ReplonConecta/frontend/src/components/SliderTurismo.tsx": {
-    "mtime": 1792537518.3457136,
-    "seen": 1793972560.5620089,
-    "ast_hash": "14287a1a7909aaf797956ef1744cbcc9",
-    "semantic_hash": "14287a1a7909aaf797956ef1744cbcc9"
+    "mtime": 1794002448.406574,
+    "seen": 1794003940.6049454,
+    "ast_hash": "97db1f1e80570790bba3003bc88b1138",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/StoreCard.tsx": {
-    "mtime": 1792537518.3457136,
-    "seen": 1793972560.5639832,
-    "ast_hash": "3e6e84b00700452cd2eab0e49f1ae533",
-    "semantic_hash": "3e6e84b00700452cd2eab0e49f1ae533"
+    "mtime": 1794002515.4845815,
+    "seen": 1794003940.6049454,
+    "ast_hash": "f3cdb8c501c0bec4588be0010bff1f99",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/ui.test.tsx": {
     "mtime": 1792080807.656527,
@@ -871,10 +871,10 @@
     "semantic_hash": "196926cd19770c702c68c67e044c79e7"
   },
   "ReplonConecta/frontend/src/components/ui.tsx": {
-    "mtime": 1792537518.352399,
-    "seen": 1793972560.565981,
-    "ast_hash": "f01940a133fb13b2ad4fb957f966a160",
-    "semantic_hash": "f01940a133fb13b2ad4fb957f966a160"
+    "mtime": 1794002385.3046699,
+    "seen": 1794003940.6049454,
+    "ast_hash": "8b6c8bdda603929eb68de8ceeb232a47",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/context/CarritoContext.tsx": {
     "mtime": 1792080807.7690618,
@@ -943,16 +943,16 @@
     "semantic_hash": "dae1f10ff4e4e9146f77ab972d2f40ef"
   },
   "ReplonConecta/frontend/src/lib/imagenes.ts": {
-    "mtime": 1791319253.4748826,
-    "seen": 1793972560.587671,
-    "ast_hash": "1458ec4328fbb69f3d046d634977fb87",
-    "semantic_hash": "1458ec4328fbb69f3d046d634977fb87"
+    "mtime": 1794002368.3615024,
+    "seen": 1794003940.6049454,
+    "ast_hash": "c1ed158026a317881613aa7647508f6e",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/lib/inicio.ts": {
-    "mtime": 1791927535.4893348,
-    "seen": 1793972560.591333,
-    "ast_hash": "294d6c4b0b53ad3e92a936f3100ad73a",
-    "semantic_hash": "294d6c4b0b53ad3e92a936f3100ad73a"
+    "mtime": 1794002401.464026,
+    "seen": 1794003940.6049454,
+    "ast_hash": "fc0c6cd58eac5b5c891c3b30342e7e5c",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/lib/maps.ts": {
     "mtime": 1791668377.2654078,
@@ -973,16 +973,16 @@
     "semantic_hash": "30a4251e29c5a35a48cf76df81f72e27"
   },
   "ReplonConecta/frontend/src/lib/tipos.ts": {
-    "mtime": 1791927700.0782423,
-    "seen": 1793972560.5984414,
-    "ast_hash": "55784f02699435a7b3260a22ad8096c8",
-    "semantic_hash": "55784f02699435a7b3260a22ad8096c8"
+    "mtime": 1794003152.0301094,
+    "seen": 1794003940.6049454,
+    "ast_hash": "8f22e54397dabcdca3814440a9aaa817",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/lib/turismo.ts": {
-    "mtime": 1791927700.5227745,
-    "seen": 1793972560.6012597,
-    "ast_hash": "1de28b73fcc19da9d97445662f539be8",
-    "semantic_hash": "1de28b73fcc19da9d97445662f539be8"
+    "mtime": 1794002437.056013,
+    "seen": 1794003940.6049454,
+    "ast_hash": "559baaa6f86b69e3b1583d362173a5d7",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/lib/ubicacion.ts": {
     "mtime": 1791607314.4377792,
@@ -1244,9 +1244,9 @@
     "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/NegocioServiceTests.java": {
-    "mtime": 1793992645.6474566,
-    "seen": 1793993001.4174318,
-    "ast_hash": "badd285210f1d4f37be4cd259e1b62d4",
+    "mtime": 1794003824.9197602,
+    "seen": 1794003940.6039436,
+    "ast_hash": "82b8213d0f3b756b1084b3f89aac91db",
     "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/config/CorsConfig.java": {
@@ -1274,21 +1274,21 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/EditorProductos.tsx": {
-    "mtime": 1793993707.1817641,
-    "seen": 1793994136.5163379,
-    "ast_hash": "cfd9a90d481135f8f0295426e729c046",
+    "mtime": 1794002658.2285736,
+    "seen": 1794003940.6039436,
+    "ast_hash": "9a3e36702e5db92020f9650b1abfd961",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/FormDatosNegocio.tsx": {
-    "mtime": 1793993674.0022764,
-    "seen": 1793994136.5163379,
-    "ast_hash": "fe53291b8fa5c43bfadb0c3fb94096cd",
+    "mtime": 1794002634.9617581,
+    "seen": 1794003940.6039436,
+    "ast_hash": "b7128d76a2cde8c816363f5f7d2c680b",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/FormEditarNegocio.tsx": {
-    "mtime": 1793993749.8161373,
-    "seen": 1793994136.5163379,
-    "ast_hash": "f357c3a2ef22b9b4270ae1ed54f5ab96",
+    "mtime": 1794002671.5485647,
+    "seen": 1794003940.6039436,
+    "ast_hash": "8966abab0a2951540463d52777482197",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/NegociosModal.tsx": {
@@ -1304,21 +1304,21 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/negocios-form.ts": {
-    "mtime": 1793993629.8364935,
-    "seen": 1793994136.5163379,
-    "ast_hash": "2916ae6637305dde85a28385b7fc926d",
+    "mtime": 1794002625.1414008,
+    "seen": 1794003940.6049454,
+    "ast_hash": "8a93e695ccb699b43b13e923fbfbe179",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/useNegociosAdmin.ts": {
-    "mtime": 1793993740.2563894,
-    "seen": 1793994136.5163379,
-    "ast_hash": "9cc224e459a3e2f83cf1e2416bc2af55",
+    "mtime": 1794002905.2861376,
+    "seen": 1794003940.6049454,
+    "ast_hash": "839f0b57a4d7d80a6c1caab8204d28d3",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/FichaMapa.tsx": {
-    "mtime": 1793994287.3439555,
-    "seen": 1793994544.180159,
-    "ast_hash": "1abd97eb47cd0ee21de9c77e3248ad28",
+    "mtime": 1794003159.0554209,
+    "seen": 1794003940.6039436,
+    "ast_hash": "cf5d80951e5b6600a142bca7ecaaedc7",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/SeccionComercios.tsx": {
@@ -1334,9 +1334,9 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/SeccionHero.tsx": {
-    "mtime": 1793994274.6149082,
-    "seen": 1793994544.180159,
-    "ast_hash": "979cc6520c8e57c876047bcf0915090f",
+    "mtime": 1794002413.233654,
+    "seen": 1794003940.6039436,
+    "ast_hash": "0a09a218d540f9ae6eba903903424101",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/SeccionMapa.tsx": {
@@ -1352,15 +1352,15 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/SeccionTurismo.tsx": {
-    "mtime": 1793994333.4399672,
-    "seen": 1793994544.180159,
-    "ast_hash": "15de0285fb3e5320578efd5b642fc114",
+    "mtime": 1794002453.8874478,
+    "seen": 1794003940.6039436,
+    "ast_hash": "cfbe73fbc94369028c6028d2187a0f15",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/VentanaLugar.tsx": {
-    "mtime": 1793994333.4399672,
-    "seen": 1793994544.180159,
-    "ast_hash": "c8dc4fa03ca8ff452fe47f395ee16aed",
+    "mtime": 1794002461.7157867,
+    "seen": 1794003940.6039436,
+    "ast_hash": "c902e8ab4f39f2de5d0740c0b9db2d2e",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/contenido.tsx": {
@@ -1370,9 +1370,9 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/_inicio/useInicio.ts": {
-    "mtime": 1793994259.3860955,
-    "seen": 1793994544.180159,
-    "ast_hash": "a54fa0e44c39391eca17e2969d56a5c4",
+    "mtime": 1794002406.9130583,
+    "seen": 1794003940.6039436,
+    "ast_hash": "4d27e6e89c339db1a2594042b2e8291e",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/package-lock.json": {

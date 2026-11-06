@@ -96,11 +96,19 @@ public class ZonaTuristicaService {
 		zona.setDireccion(request.direccion().trim());
 		zona.setLatitud(request.latitud());
 		zona.setLongitud(request.longitud());
-		List<String> imagenes = request.imagenes() == null
-				? imagenesLegadas(request.imagenUrl())
-				: limpiarImagenes(request.imagenes());
-		zona.setImagenes(escribirImagenes(imagenes));
-		zona.setImagenUrl(imagenes.isEmpty() ? null : imagenes.get(0));
+		Galeria galeria = request.imagenes() == null
+				? new Galeria(imagenesLegadas(request.imagenUrl()), null)
+				: limpiarImagenes(request.imagenes(), request.creditos());
+		zona.setImagenes(escribirImagenes(galeria.imagenes()));
+		zona.setImagenUrl(galeria.imagenes().isEmpty() ? null : galeria.imagenes().get(0));
+		if (request.creditos() != null) {
+			// Las fotos y sus fuentes se limpian juntas; si venía la lista
+			// heredada de `imagenUrl`, solo hay una foto sin crédito.
+			List<String> creditos = galeria.creditos() != null
+					? galeria.creditos()
+					: limpiarCreditos(request.creditos(), galeria.imagenes().size());
+			zona.setCreditos(escribirCreditos(creditos));
+		}
 		zona.setMotivo(limpiar(request.motivo()));
 	}
 
@@ -109,16 +117,22 @@ public class ZonaTuristicaService {
 		return imagen == null ? List.of() : List.of(imagen);
 	}
 
-	private static List<String> limpiarImagenes(List<String> imagenes) {
+	private static Galeria limpiarImagenes(List<String> imagenes, List<String> creditos) {
 		if (imagenes.size() > MAX_IMAGENES) {
 			throw ApiException.peticionInvalida(
 					"La galería admite hasta " + MAX_IMAGENES + " imágenes");
 		}
-		List<String> resultado = imagenes.stream()
-				.map(ZonaTuristicaService::limpiar)
-				.filter(url -> url != null)
-				.distinct()
-				.toList();
+		List<String> resultado = new java.util.ArrayList<>();
+		List<String> creditosLimpios = new java.util.ArrayList<>();
+		for (int i = 0; i < imagenes.size(); i++) {
+			String url = limpiar(imagenes.get(i));
+			if (url == null || resultado.contains(url)) {
+				continue;
+			}
+			resultado.add(url);
+			creditosLimpios.add(limpiarCredito(
+					creditos != null && i < creditos.size() ? creditos.get(i) : null));
+		}
 		for (String url : resultado) {
 			if (url.length() > 500) {
 				throw ApiException.peticionInvalida(
@@ -129,7 +143,7 @@ public class ZonaTuristicaService {
 						"Cada imagen debe ser una URL http(s) o una ruta del sitio que empiece con /");
 			}
 		}
-		return resultado;
+		return new Galeria(resultado, creditosLimpios);
 	}
 
 	private static String escribirImagenes(List<String> imagenes) {
@@ -138,6 +152,40 @@ public class ZonaTuristicaService {
 		} catch (JacksonException e) {
 			throw ApiException.peticionInvalida("No se pudo guardar la galería turística");
 		}
+	}
+
+	private static String escribirCreditos(List<String> creditos) {
+		try {
+			return JSON.writeValueAsString(creditos);
+		} catch (JacksonException e) {
+			throw ApiException.peticionInvalida("No se pudo guardar la fuente de las fotos");
+		}
+	}
+
+	/** Alinea los créditos con las fotos: recorta o rellena con vacíos. */
+	private static List<String> limpiarCreditos(List<String> creditos, int total) {
+		List<String> limpias = new java.util.ArrayList<>();
+		for (int i = 0; i < total; i++) {
+			limpias.add(limpiarCredito(i < creditos.size() ? creditos.get(i) : null));
+		}
+		return limpias;
+	}
+
+	/** Un crédito suelto: nulo es "sin fuente" y más de 500 es inválido. */
+	private static String limpiarCredito(String credito) {
+		if (credito == null) {
+			return "";
+		}
+		String recortado = credito.trim();
+		if (recortado.length() > 500) {
+			throw ApiException.peticionInvalida(
+					"Un crédito de imagen admite hasta 500 caracteres");
+		}
+		return recortado;
+	}
+
+	/** Fotos y créditos ya limpios; `creditos` nulo = lista heredada. */
+	private record Galeria(List<String> imagenes, List<String> creditos) {
 	}
 
 	private static String limpiar(String texto) {
@@ -158,8 +206,21 @@ public class ZonaTuristicaService {
 				zona.getLongitud(),
 				zona.getImagenUrl(),
 				leerImagenes(zona.getImagenes(), zona.getImagenUrl()),
+				leerCreditos(zona.getCreditos()),
 				zona.getMotivo(),
 				zona.getOrden());
+	}
+
+	private static List<String> leerCreditos(String json) {
+		if (json == null || json.isBlank()) {
+			return List.of();
+		}
+		try {
+			List<String> creditos = JSON.readValue(json, new TypeReference<List<String>>() {});
+			return creditos.stream().map(c -> c == null ? "" : c).toList();
+		} catch (JacksonException | ClassCastException e) {
+			return List.of();
+		}
 	}
 
 	private static List<String> leerImagenes(String json, String imagenUrl) {

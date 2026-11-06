@@ -27,6 +27,7 @@ public final class ProductoDtos {
 			long precio,
 			UnidadProducto unidad,
 			String imagenUrl,
+			String imagenCredito,
 			boolean disponible,
 			Integer stock) {
 	}
@@ -55,6 +56,10 @@ public final class ProductoDtos {
 
 			@Size(max = 500)
 			String imagenUrl,
+
+			/** Fuente o crédito de la foto del producto. */
+			@Size(max = 500)
+			String imagenCredito,
 
 			UUID categoriaId,
 
