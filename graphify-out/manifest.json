@@ -547,10 +547,10 @@
     "semantic_hash": "901678a3db5a7bde65b725c7527331ae"
   },
   "ReplonConecta/frontend/src/app/admin/SeccionNegocios.tsx": {
-    "mtime": 1792537518.2760718,
-    "seen": 1793972560.497389,
-    "ast_hash": "8c83bdef0b587c1a2dbc4b3e52b92d8d",
-    "semantic_hash": "8c83bdef0b587c1a2dbc4b3e52b92d8d"
+    "mtime": 1793993768.0555396,
+    "seen": 1793994136.5163379,
+    "ast_hash": "a7af85819566c8d6b255b27256b91c89",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/SeccionPedidos.tsx": {
     "mtime": 1793991911.7767746,
@@ -607,9 +607,9 @@
     "semantic_hash": "b1dc5352aaf53d42b6e2277212d98b0f"
   },
   "ReplonConecta/frontend/src/app/admin/ui-admin.tsx": {
-    "mtime": 1793991877.5661082,
-    "seen": 1793992435.1977158,
-    "ast_hash": "4861be427493b9e55a29d82cdb0fb1ca",
+    "mtime": 1793993683.8958642,
+    "seen": 1793994136.5163379,
+    "ast_hash": "3169fd6fc39c67bf1cc1d5e8390885f0",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/admin/usuarios/page.tsx": {
@@ -829,10 +829,10 @@
     "semantic_hash": "e70a590dc4ba238637b92b13145a87d3"
   },
   "ReplonConecta/frontend/src/components/LightboxGaleria.tsx": {
-    "mtime": 1793934575.0334918,
-    "seen": 1793972560.5554264,
-    "ast_hash": "f292845492006e416da795b4c6d5b675",
-    "semantic_hash": "f292845492006e416da795b4c6d5b675"
+    "mtime": 1793993950.595677,
+    "seen": 1793994136.5163379,
+    "ast_hash": "07d1e1d474f0bdc3f69749c43b46205b",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/components/Mapa.tsx": {
     "mtime": 1792537518.3411784,
@@ -1265,6 +1265,54 @@
     "mtime": 1793993135.9930058,
     "seen": 1793993482.7095532,
     "ast_hash": "a90699d49b58b38f776e5b121a6b31f1",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/EditorLogoNegocio.tsx": {
+    "mtime": 1793993692.449064,
+    "seen": 1793994136.5163379,
+    "ast_hash": "07d17d3c1d7cb45cfc5e9fd90a2d93af",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/EditorProductos.tsx": {
+    "mtime": 1793993707.1817641,
+    "seen": 1793994136.5163379,
+    "ast_hash": "cfd9a90d481135f8f0295426e729c046",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/FormDatosNegocio.tsx": {
+    "mtime": 1793993674.0022764,
+    "seen": 1793994136.5163379,
+    "ast_hash": "fe53291b8fa5c43bfadb0c3fb94096cd",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/FormEditarNegocio.tsx": {
+    "mtime": 1793993749.8161373,
+    "seen": 1793994136.5163379,
+    "ast_hash": "f357c3a2ef22b9b4270ae1ed54f5ab96",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/NegociosModal.tsx": {
+    "mtime": 1793993761.4223065,
+    "seen": 1793994136.5163379,
+    "ast_hash": "d84c10bdd4e7b3abb54b6b648fcb3700",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/NegociosTabla.tsx": {
+    "mtime": 1793993674.0022764,
+    "seen": 1793994136.5163379,
+    "ast_hash": "c5962b0a79671a1bb3189e64ba21e700",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/negocios-form.ts": {
+    "mtime": 1793993629.8364935,
+    "seen": 1793994136.5163379,
+    "ast_hash": "2916ae6637305dde85a28385b7fc926d",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/admin/useNegociosAdmin.ts": {
+    "mtime": 1793993740.2563894,
+    "seen": 1793994136.5163379,
+    "ast_hash": "9cc224e459a3e2f83cf1e2416bc2af55",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/package-lock.json": {

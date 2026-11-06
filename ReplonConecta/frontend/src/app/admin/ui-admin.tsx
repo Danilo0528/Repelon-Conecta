@@ -32,6 +32,10 @@ export const BTN_PRIMARIO =
 export const BTN_SECUNDARIO =
 	"inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
 
+/** Etiqueta-botón que envuelve un input de archivo oculto. */
+export const BTN_SUBIR =
+	"inline-flex h-9 cursor-pointer items-center rounded-md border border-black/15 bg-white px-3 text-[13px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-50";
+
 /** Botón compacto del paginador (mismo alto h-9, menos padding). */
 const BTN_PAGINA =
 	"inline-flex h-9 items-center justify-center rounded-md border border-black/15 bg-white px-2.5 text-[12px] font-medium text-black/70 transition-colors hover:bg-black/[.03] disabled:pointer-events-none disabled:opacity-40";
