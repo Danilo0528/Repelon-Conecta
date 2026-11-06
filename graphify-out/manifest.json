@@ -697,10 +697,10 @@
     "semantic_hash": "6c256157738326fd9980a9b556959474"
   },
   "ReplonConecta/frontend/src/app/page.tsx": {
-    "mtime": 1793934575.0104003,
-    "seen": 1793972560.5213125,
-    "ast_hash": "cf2c35a9a1fb42917efb88e0051c3b7f",
-    "semantic_hash": "cf2c35a9a1fb42917efb88e0051c3b7f"
+    "mtime": 1793994354.55721,
+    "seen": 1793994544.180159,
+    "ast_hash": "07f83a636377ebc62db1dff3ce84c36f",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/app/pedidos/[id]/page.tsx": {
     "mtime": 1792537518.3159726,
@@ -1313,6 +1313,66 @@
     "mtime": 1793993740.2563894,
     "seen": 1793994136.5163379,
     "ast_hash": "9cc224e459a3e2f83cf1e2416bc2af55",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/FichaMapa.tsx": {
+    "mtime": 1793994287.3439555,
+    "seen": 1793994544.180159,
+    "ast_hash": "1abd97eb47cd0ee21de9c77e3248ad28",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionComercios.tsx": {
+    "mtime": 1793994346.9343398,
+    "seen": 1793994544.180159,
+    "ast_hash": "1ef5a434898f60a7de295d59a475224f",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionFondo.tsx": {
+    "mtime": 1793994346.9355953,
+    "seen": 1793994544.180159,
+    "ast_hash": "521baedec746f861501f8e8110541913",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionHero.tsx": {
+    "mtime": 1793994274.6149082,
+    "seen": 1793994544.180159,
+    "ast_hash": "979cc6520c8e57c876047bcf0915090f",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionMapa.tsx": {
+    "mtime": 1793994287.3629484,
+    "seen": 1793994544.180159,
+    "ast_hash": "45d19ab54d9a05a7c275db9ed377c4a3",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionRazones.tsx": {
+    "mtime": 1793994346.950624,
+    "seen": 1793994544.180159,
+    "ast_hash": "c3112e99939c80356bba0041e6fa8c50",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/SeccionTurismo.tsx": {
+    "mtime": 1793994333.4399672,
+    "seen": 1793994544.180159,
+    "ast_hash": "15de0285fb3e5320578efd5b642fc114",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/VentanaLugar.tsx": {
+    "mtime": 1793994333.4399672,
+    "seen": 1793994544.180159,
+    "ast_hash": "c8dc4fa03ca8ff452fe47f395ee16aed",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/contenido.tsx": {
+    "mtime": 1793994248.7684317,
+    "seen": 1793994544.180159,
+    "ast_hash": "7a05f111a2c8bc4d18fe30565a442dfc",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/app/_inicio/useInicio.ts": {
+    "mtime": 1793994259.3860955,
+    "seen": 1793994544.180159,
+    "ast_hash": "a54fa0e44c39391eca17e2969d56a5c4",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/package-lock.json": {
