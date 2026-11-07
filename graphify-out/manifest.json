@@ -1376,9 +1376,9 @@
     "semantic_hash": ""
   },
   "scripts/check-docs.mjs": {
-    "mtime": 1794014925.943681,
-    "seen": 1794015034.2349775,
-    "ast_hash": "4fd23270d7ac8c95516753b503767510",
+    "mtime": 1794016316.0911975,
+    "seen": 1794016422.0133288,
+    "ast_hash": "e8673d2ec9a068a0e4f595e3b4c1c951",
     "semantic_hash": ""
   },
   "scripts/generate-specs.mjs": {
