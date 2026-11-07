@@ -1,0 +1,14 @@
+{
+  "name": "Repelón Conecta — Frontend API",
+  "entryPoints": ["src/lib", "src/components"],
+  "entryPointStrategy": "expand",
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
+  "out": "../../docs/generated/api/frontend",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "hideGenerator": true,
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeExternals": true,
+  "sort": ["source-order"]
+}

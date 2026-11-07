@@ -8,3 +8,8 @@
 # Artefactos generados por el propio graphify (no indexar el grafo dentro
 # del grafo).
 graphify-out/
+
+# Documentacion generada (TypeDoc/Javadoc/specs) y archivo historico:
+# meterian miles de nodos de documentacion al grafo de arquitectura.
+docs/generated/
+docs/archive/

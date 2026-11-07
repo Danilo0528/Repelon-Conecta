@@ -1,5 +1,11 @@
 npx lint-staged
 
+# La documentacion generada (TypeDoc + Javadoc + specs) se regenera y
+# se compara contra lo stageado. Si el codigo cambio y docs/generated no,
+# el commit falla; el mensaje indica correr `npm run docs:gen` y agregar
+# el resultado. Es un check determinista, no un best-effort.
+npm run docs:check
+
 # El grafo de graphify se refresca con el codigo recien formateado: AST
 # local, sin LLM (GRAPHIFY_BACKEND=none salta el etiquetado que pediria
 # API key). Si graphify falta o falla, el commit NO se bloquea: solo avisa.

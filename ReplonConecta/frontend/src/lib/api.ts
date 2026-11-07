@@ -18,7 +18,8 @@ export class ErrorApi extends Error {
 	}
 }
 
-type Opciones = RequestInit & { auth?: boolean };
+/** Opciones del cliente HTTP; `auth` adjunta el Bearer de Supabase. */
+export type Opciones = RequestInit & { auth?: boolean };
 
 async function tokenActual(): Promise<string | null> {
 	const { data } = await supabase.auth.getSession();

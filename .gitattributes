@@ -3,3 +3,7 @@
 # resto del repo se convierte a CRLF al checkout, así que estos archivos
 # se fuerzan a LF siempre (. y index).
 .husky/* text eol=lf
+
+# La documentación generada se compara byte a byte entre Windows y CI
+# (Linux). Forzar LF evita diffs falsos por CRLF de Javadoc.
+docs/generated/** text eol=lf

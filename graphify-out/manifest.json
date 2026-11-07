@@ -13,10 +13,10 @@
     "semantic_hash": "ab50dd89da7da2346b28003352eeeeeb"
   },
   "ReplonConecta/ReplonConecta/pom.xml": {
-    "mtime": 1791527065.1267939,
-    "seen": 1793972560.3336096,
-    "ast_hash": "fce5817e841a66209b1c6678e443c437",
-    "semantic_hash": "fce5817e841a66209b1c6678e443c437"
+    "mtime": 1794014583.5085354,
+    "seen": 1794015034.233964,
+    "ast_hash": "4897e55b3b7c1e9a6d8097888f9a3886",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/run-backend.ps1": {
     "mtime": 1791526793.3951976,
@@ -253,8 +253,8 @@
     "semantic_hash": "2ee229f6a35ccd2f6a236bae773a2ba9"
   },
   "ReplonConecta/ReplonConecta/src/main/java/com/repelonconecta/RepelonConecta/entity/Usuario.java": {
-    "mtime": 1790911690.9384215,
-    "seen": 1793972560.401881,
+    "mtime": 1794011302.412425,
+    "seen": 1794011598.872164,
     "ast_hash": "62bd50fc05e11ccf4ba6b07479cf2aec",
     "semantic_hash": "62bd50fc05e11ccf4ba6b07479cf2aec"
   },
@@ -445,10 +445,10 @@
     "semantic_hash": "5b3aea5cf3ddd21573b3e1f110ad6ea0"
   },
   "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/AdminPedidoTests.java": {
-    "mtime": 1791242733.42401,
-    "seen": 1793972560.4685926,
-    "ast_hash": "17a1ea91945e8862e942def429332876",
-    "semantic_hash": "17a1ea91945e8862e942def429332876"
+    "mtime": 1794014583.5115385,
+    "seen": 1794015034.2349775,
+    "ast_hash": "c6d33b729fdbb19393c66c825b44d3c8",
+    "semantic_hash": ""
   },
   "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/AlcanceCatalogoTests.java": {
     "mtime": 1791229362.0752747,
@@ -493,10 +493,10 @@
     "semantic_hash": "f1c003aeee6c7ced776364c9964cc03f"
   },
   "ReplonConecta/frontend/package.json": {
-    "mtime": 1793934574.9993153,
-    "seen": 1793972560.4834828,
-    "ast_hash": "4e3efcb088f4cab6d54027552148553a",
-    "semantic_hash": "4e3efcb088f4cab6d54027552148553a"
+    "mtime": 1794014925.7604728,
+    "seen": 1794015034.2349775,
+    "ast_hash": "cd660ca1a31cfcdb179f8d0231ae7131",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/postcss.config.mjs": {
     "mtime": 1790890903.4493144,
@@ -895,10 +895,10 @@
     "semantic_hash": "4ee2dcd7f1f89b36c73305bb416fa4c4"
   },
   "ReplonConecta/frontend/src/lib/api.ts": {
-    "mtime": 1791694917.7280717,
-    "seen": 1793972560.570987,
-    "ast_hash": "1dc658599adc81430934068adfd353ed",
-    "semantic_hash": "1dc658599adc81430934068adfd353ed"
+    "mtime": 1794014583.5245328,
+    "seen": 1794015034.2349775,
+    "ast_hash": "5a37db6f6b9081693276f320d12635d5",
+    "semantic_hash": ""
   },
   "ReplonConecta/frontend/src/lib/compras.ts": {
     "mtime": 1791222455.650572,
@@ -1015,10 +1015,10 @@
     "semantic_hash": "1b97e64fabd5a7ae561acde0c8d1abf0"
   },
   "package.json": {
-    "mtime": 1793934575.0472674,
-    "seen": 1793972560.6109064,
-    "ast_hash": "6b02fba257c691bb3ae2f70ac5933a2e",
-    "semantic_hash": "6b02fba257c691bb3ae2f70ac5933a2e"
+    "mtime": 1794014925.893041,
+    "seen": 1794015034.2349775,
+    "ast_hash": "196ff5382d52e732b913e14d789b7383",
+    "semantic_hash": ""
   },
   "render.yaml": {
     "mtime": 1791564775.4289703,
@@ -1055,36 +1055,6 @@
     "mtime": 1791563000.843273,
     "seen": 1793984593.369899,
     "ast_hash": "455434b49f9e3302e23e148b1cb6ce0c",
-    "semantic_hash": ""
-  },
-  "ReplonConecta/docs/asistente-ia.md": {
-    "mtime": 1791902155.0022874,
-    "seen": 1793984593.369899,
-    "ast_hash": "f5537dd076b9c715d8c6fd1b1bbad3d5",
-    "semantic_hash": ""
-  },
-  "ReplonConecta/docs/cuestionario-cliente.md": {
-    "mtime": 1791218610.3987153,
-    "seen": 1793984593.369899,
-    "ast_hash": "675c619936750ba7492612bb449c0562",
-    "semantic_hash": ""
-  },
-  "ReplonConecta/docs/estado-del-proyecto.md": {
-    "mtime": 1791351337.6480565,
-    "seen": 1793984593.369899,
-    "ast_hash": "decb35c43fc7efbdb484d27036764479",
-    "semantic_hash": ""
-  },
-  "ReplonConecta/docs/resumen-para-el-cliente.md": {
-    "mtime": 1791259056.3883417,
-    "seen": 1793984593.369899,
-    "ast_hash": "17039282a6df0afe27aa526712a89909",
-    "semantic_hash": ""
-  },
-  "ReplonConecta/docs/spec-p0-buscador.md": {
-    "mtime": 1791219934.4817395,
-    "seen": 1793984593.369899,
-    "ast_hash": "8a86466dc111763ae143a1c6bcc3e5cc",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/AGENTS.md": {
@@ -1375,10 +1345,64 @@
     "ast_hash": "4d27e6e89c339db1a2594042b2e8291e",
     "semantic_hash": ""
   },
+  ".github/workflows/docs-check.yml": {
+    "mtime": 1794014924.4036727,
+    "seen": 1794015034.233964,
+    "ast_hash": "f1aa10744b4f668c3588bb2e85f530b0",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/ReplonConecta/src/test/java/com/repelonconecta/RepelonConecta/service/PedidoServiceTests.java": {
+    "mtime": 1794014583.5125334,
+    "seen": 1794015034.2349775,
+    "ast_hash": "9642630694cc1cec07f751d62393aa6b",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/.dependency-cruiser.cjs": {
+    "mtime": 1794014925.3646963,
+    "seen": 1794015034.2349775,
+    "ast_hash": "7d541820857bb9b955da9b9d6657845a",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/src/lib/compras.test.ts": {
+    "mtime": 1794014583.5255344,
+    "seen": 1794015034.2349775,
+    "ast_hash": "dc03c040ab8e3295b4faa8aed6d847bf",
+    "semantic_hash": ""
+  },
+  "ReplonConecta/frontend/typedoc.json": {
+    "mtime": 1794014925.7756476,
+    "seen": 1794015034.2349775,
+    "ast_hash": "b0c6deb530bfef630bfc1134c6418b69",
+    "semantic_hash": ""
+  },
+  "scripts/check-docs.mjs": {
+    "mtime": 1794014925.943681,
+    "seen": 1794015034.2349775,
+    "ast_hash": "4fd23270d7ac8c95516753b503767510",
+    "semantic_hash": ""
+  },
+  "scripts/generate-specs.mjs": {
+    "mtime": 1794014926.0314775,
+    "seen": 1794015034.2349775,
+    "ast_hash": "97565c152efe1b3d5ffd14df46b41b21",
+    "semantic_hash": ""
+  },
+  "scripts/reset-javadoc-stale.mjs": {
+    "mtime": 1794014926.0476296,
+    "seen": 1794015034.2349775,
+    "ast_hash": "d07ecc4edeeb9b5b28355318a372b3ca",
+    "semantic_hash": ""
+  },
+  "docs/README.md": {
+    "mtime": 1794014925.874293,
+    "seen": 1794015034.2349775,
+    "ast_hash": "97076fb3d20de484b4d43debcc44680a",
+    "semantic_hash": ""
+  },
   "ReplonConecta/frontend/package-lock.json": {
-    "mtime": 1793934574.9980133,
-    "seen": 1793992435.1986928,
-    "ast_hash": "843d4aec398b18047394c6ba95c8b8ee",
+    "mtime": 1794014925.7173245,
+    "seen": 1794015034.2349775,
+    "ast_hash": "274e77658475f6c4fcb3a14cc177bf90",
     "semantic_hash": ""
   },
   "package-lock.json": {

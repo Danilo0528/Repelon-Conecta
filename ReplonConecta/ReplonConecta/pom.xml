@@ -94,6 +94,23 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- Documentacion viva del backend: Javadoc HTML determinista
+			     (sin timestamp) generado en docs/generated/api/backend y
+			     versionado para que docs:check detecte desactualizaciones. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<notimestamp>true</notimestamp>
+					<doclint>none</doclint>
+					<quiet>true</quiet>
+					<!-- El plugin no regenera si su archivo de estado no cambio,
+					     y ese archivo no mira las fuentes: scripts/reset-javadoc-stale.mjs
+					     lo borra antes de cada corrida para que docs:check no de
+					     falso verde cuando solo cambia un comentario. -->
+					<outputDirectory>${project.basedir}/../../docs/generated/api/backend</outputDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

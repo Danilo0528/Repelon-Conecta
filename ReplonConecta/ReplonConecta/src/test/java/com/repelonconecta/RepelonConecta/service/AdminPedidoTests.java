@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,6 +54,7 @@ class AdminPedidoTests {
 	}
 
 	@Test
+	@DisplayName("El admin ve el pedido global y cancelarlo devuelve el stock")
 	void listadoGlobalYCancelacionDelAdmin() {
 		// 1. Comprador crea un pedido (camino normal del MVP).
 		Usuario comprador = usuarios.save(new Usuario(UUID.randomUUID(),
