@@ -9,7 +9,7 @@
     "typecheck": "npm run typecheck --prefix ReplonConecta/frontend",
     "test": "npm run test --prefix ReplonConecta/frontend",
     "docs:gen": "npm run docs:gen --prefix ReplonConecta/frontend && npm run docs:gen:backend && node scripts/generate-specs.mjs",
-    "docs:gen:backend": "node scripts/reset-javadoc-stale.mjs && mvn -q -f ReplonConecta/ReplonConecta/pom.xml javadoc:javadoc",
+    "docs:gen:backend": "node scripts/gen-javadoc.mjs",
     "docs:check": "npm run docs:check:rules && npm run docs:gen && node scripts/check-docs.mjs",
     "docs:check:rules": "npm run docs:check:rules --prefix ReplonConecta/frontend"
   }

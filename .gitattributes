@@ -7,3 +7,7 @@
 # La documentación generada se compara byte a byte entre Windows y CI
 # (Linux). Forzar LF evita diffs falsos por CRLF de Javadoc.
 docs/generated/** text eol=lf
+
+# Los PNG que copia Javadoc son binarios. Sin esta regla, la regla de texto de
+# arriba intenta normalizar sus saltos de linea.
+docs/generated/**/*.png binary
