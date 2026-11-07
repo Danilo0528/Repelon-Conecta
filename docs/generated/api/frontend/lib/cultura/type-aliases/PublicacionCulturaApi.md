@@ -8,7 +8,7 @@
 
 > **PublicacionCulturaApi** = `object`
 
-Defined in: [lib/cultura.ts:61](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L61)
+Defined in: [lib/cultura.ts:61](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L61)
 
 Lo que devuelve GET /api/cultura/publicaciones (panel de admin →
 backend Spring). El feed lo traduce con `aPublicacion` para no
@@ -20,7 +20,7 @@ mezclar el contrato del servidor con el modelo de pintura.
 
 > **id**: `string`
 
-Defined in: [lib/cultura.ts:62](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L62)
+Defined in: [lib/cultura.ts:62](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L62)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [lib/cultura.ts:62](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **autor**: `string`
 
-Defined in: [lib/cultura.ts:63](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L63)
+Defined in: [lib/cultura.ts:63](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L63)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [lib/cultura.ts:63](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **lugar**: `string` \| `null`
 
-Defined in: [lib/cultura.ts:64](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L64)
+Defined in: [lib/cultura.ts:64](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L64)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [lib/cultura.ts:64](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **fecha**: `string`
 
-Defined in: [lib/cultura.ts:66](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L66)
+Defined in: [lib/cultura.ts:66](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L66)
 
 yyyy-mm-dd.
 
@@ -54,7 +54,7 @@ yyyy-mm-dd.
 
 > **texto**: `string`
 
-Defined in: [lib/cultura.ts:67](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L67)
+Defined in: [lib/cultura.ts:67](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L67)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [lib/cultura.ts:67](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **tipo**: `string`
 
-Defined in: [lib/cultura.ts:69](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L69)
+Defined in: [lib/cultura.ts:69](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L69)
 
 "FOTO" o "VIDEO".
 
@@ -72,7 +72,7 @@ Defined in: [lib/cultura.ts:69](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **mediaUrl**: `string`
 
-Defined in: [lib/cultura.ts:71](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L71)
+Defined in: [lib/cultura.ts:71](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L71)
 
 URL de la foto, o ID/enlace de YouTube, o URL de archivo .mp4.
 
@@ -82,4 +82,4 @@ URL de la foto, o ID/enlace de YouTube, o URL de archivo .mp4.
 
 > **credito**: `string` \| `null`
 
-Defined in: [lib/cultura.ts:72](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L72)
+Defined in: [lib/cultura.ts:72](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L72)

@@ -8,4 +8,4 @@
 
 > `const` **CLASE\_BOTON\_VERDE**: `"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-center font-semibold text-white shadow-leaf transition hover:bg-leaf/90 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-leaf disabled:active:scale-100"` = `"flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-center font-semibold text-white shadow-leaf transition hover:bg-leaf/90 active:scale-[.98] disabled:opacity-50 disabled:hover:bg-leaf disabled:active:scale-100"`
 
-Defined in: [components/ui.tsx:35](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/components/ui.tsx#L35)
+Defined in: [components/ui.tsx:35](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/components/ui.tsx#L35)

@@ -8,7 +8,7 @@
 
 > **PublicacionCultura** = `object`
 
-Defined in: [lib/cultura.ts:40](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L40)
+Defined in: [lib/cultura.ts:40](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L40)
 
 Una publicación del feed de cultura.
 
@@ -18,7 +18,7 @@ Una publicación del feed de cultura.
 
 > **id**: `string`
 
-Defined in: [lib/cultura.ts:42](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L42)
+Defined in: [lib/cultura.ts:42](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L42)
 
 ID estable: se usa como ancla (#pub-…) y como clave de "me gusta".
 
@@ -28,7 +28,7 @@ ID estable: se usa como ancla (#pub-…) y como clave de "me gusta".
 
 > **autor**: `string`
 
-Defined in: [lib/cultura.ts:44](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L44)
+Defined in: [lib/cultura.ts:44](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L44)
 
 Quién publica, p. ej. "Repelón Conecta" o una escuela/organización.
 
@@ -38,7 +38,7 @@ Quién publica, p. ej. "Repelón Conecta" o una escuela/organización.
 
 > `optional` **lugar?**: `string`
 
-Defined in: [lib/cultura.ts:46](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L46)
+Defined in: [lib/cultura.ts:46](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L46)
 
 Lugar o contexto. Si no hay, solo se muestra autor y fecha.
 
@@ -48,7 +48,7 @@ Lugar o contexto. Si no hay, solo se muestra autor y fecha.
 
 > **fecha**: `string`
 
-Defined in: [lib/cultura.ts:48](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L48)
+Defined in: [lib/cultura.ts:48](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L48)
 
 Fecha de publicación en ISO (yyyy-mm-dd).
 
@@ -58,7 +58,7 @@ Fecha de publicación en ISO (yyyy-mm-dd).
 
 > **texto**: `string`
 
-Defined in: [lib/cultura.ts:50](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L50)
+Defined in: [lib/cultura.ts:50](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L50)
 
 Pie de la publicación.
 
@@ -68,7 +68,7 @@ Pie de la publicación.
 
 > **media**: [`MediaPublicacion`](MediaPublicacion.md)
 
-Defined in: [lib/cultura.ts:51](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L51)
+Defined in: [lib/cultura.ts:51](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L51)
 
 ***
 
@@ -76,6 +76,6 @@ Defined in: [lib/cultura.ts:51](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **meGusta**: `number`
 
-Defined in: [lib/cultura.ts:53](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L53)
+Defined in: [lib/cultura.ts:53](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L53)
 
 Contador de "me gusta" de partida.

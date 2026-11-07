@@ -8,7 +8,7 @@
 
 > **FotoCultura** = `object`
 
-Defined in: [lib/cultura.ts:21](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L21)
+Defined in: [lib/cultura.ts:21](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L21)
 
 Una foto de la galería de cultura.
 
@@ -18,7 +18,7 @@ Una foto de la galería de cultura.
 
 > **src**: `string`
 
-Defined in: [lib/cultura.ts:22](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L22)
+Defined in: [lib/cultura.ts:22](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L22)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [lib/cultura.ts:22](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **alt**: `string`
 
-Defined in: [lib/cultura.ts:23](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L23)
+Defined in: [lib/cultura.ts:23](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L23)
 
 ***
 
@@ -34,6 +34,6 @@ Defined in: [lib/cultura.ts:23](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > `optional` **credito?**: `string`
 
-Defined in: [lib/cultura.ts:25](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L25)
+Defined in: [lib/cultura.ts:25](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L25)
 
 Autor/fuente de la foto. Si no hay, no se muestra crédito.

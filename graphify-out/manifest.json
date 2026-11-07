@@ -1370,9 +1370,9 @@
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/typedoc.json": {
-    "mtime": 1794014925.7756476,
-    "seen": 1794015034.2349775,
-    "ast_hash": "b0c6deb530bfef630bfc1134c6418b69",
+    "mtime": 1794015506.834701,
+    "seen": 1794015841.1361105,
+    "ast_hash": "6cc58b5ee4192604d0454e50846f40a9",
     "semantic_hash": ""
   },
   "scripts/check-docs.mjs": {
@@ -1394,9 +1394,9 @@
     "semantic_hash": ""
   },
   "docs/README.md": {
-    "mtime": 1794014925.874293,
-    "seen": 1794015034.2349775,
-    "ast_hash": "97076fb3d20de484b4d43debcc44680a",
+    "mtime": 1794015690.9609096,
+    "seen": 1794015841.1361105,
+    "ast_hash": "1002cb066d3f29ea46163085e04fdd9a",
     "semantic_hash": ""
   },
   "ReplonConecta/frontend/package-lock.json": {

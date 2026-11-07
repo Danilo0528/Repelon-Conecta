@@ -6,7 +6,7 @@
 
 # Class: ErrorApi
 
-Defined in: [lib/api.ts:11](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/api.ts#L11)
+Defined in: [lib/api.ts:11](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/api.ts#L11)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [lib/api.ts:11](https://github.com/Danilo0528/Repelon-Conecta/blob/2
 
 > **new ErrorApi**(`estado`, `mensaje`): `ErrorApi`
 
-Defined in: [lib/api.ts:12](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/api.ts#L12)
+Defined in: [lib/api.ts:12](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/api.ts#L12)
 
 #### Parameters
 
@@ -44,4 +44,4 @@ Defined in: [lib/api.ts:12](https://github.com/Danilo0528/Repelon-Conecta/blob/2
 
 > `readonly` **estado**: `number`
 
-Defined in: [lib/api.ts:13](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/api.ts#L13)
+Defined in: [lib/api.ts:13](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/api.ts#L13)

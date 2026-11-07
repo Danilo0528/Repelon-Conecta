@@ -8,7 +8,7 @@
 
 > `const` **CULTURA**: `object`
 
-Defined in: [lib/cultura.ts:110](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L110)
+Defined in: [lib/cultura.ts:110](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L110)
 
 ## Type Declaration
 

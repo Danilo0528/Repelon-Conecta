@@ -8,7 +8,7 @@
 
 > **OrigenRuta** = `object`
 
-Defined in: [lib/ubicacion.ts:32](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/ubicacion.ts#L32)
+Defined in: [lib/ubicacion.ts:32](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/ubicacion.ts#L32)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [lib/ubicacion.ts:32](https://github.com/Danilo0528/Repelon-Conecta/
 
 > **lat**: `number`
 
-Defined in: [lib/ubicacion.ts:33](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/ubicacion.ts#L33)
+Defined in: [lib/ubicacion.ts:33](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/ubicacion.ts#L33)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/ubicacion.ts:33](https://github.com/Danilo0528/Repelon-Conecta/
 
 > **lng**: `number`
 
-Defined in: [lib/ubicacion.ts:34](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/ubicacion.ts#L34)
+Defined in: [lib/ubicacion.ts:34](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/ubicacion.ts#L34)
 
 ***
 
@@ -32,6 +32,6 @@ Defined in: [lib/ubicacion.ts:34](https://github.com/Danilo0528/Repelon-Conecta/
 
 > **real**: `boolean`
 
-Defined in: [lib/ubicacion.ts:36](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/ubicacion.ts#L36)
+Defined in: [lib/ubicacion.ts:36](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/ubicacion.ts#L36)
 
 True si vino del GPS y no del centro por defecto.

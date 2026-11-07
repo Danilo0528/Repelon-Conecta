@@ -8,7 +8,7 @@
 
 > **IconoCategoria**(`__namedParameters`): `Element`
 
-Defined in: [components/IconoCategoria.tsx:108](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/components/IconoCategoria.tsx#L108)
+Defined in: [components/IconoCategoria.tsx:108](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/components/IconoCategoria.tsx#L108)
 
 ## Parameters
 

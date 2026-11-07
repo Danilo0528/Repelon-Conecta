@@ -8,7 +8,7 @@
 
 > **FuenteImagen**(`__namedParameters`): `Element` \| `null`
 
-Defined in: [components/ui.tsx:199](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/components/ui.tsx#L199)
+Defined in: [components/ui.tsx:199](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/components/ui.tsx#L199)
 
 Crédito o fuente de una imagen, en letra pequeña debajo de la foto.
 

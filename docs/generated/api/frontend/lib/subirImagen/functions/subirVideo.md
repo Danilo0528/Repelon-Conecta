@@ -8,7 +8,7 @@
 
 > **subirVideo**(`carpeta`, `id`, `archivo`): `Promise`\<`string`\>
 
-Defined in: [lib/subirImagen.ts:134](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/subirImagen.ts#L134)
+Defined in: [lib/subirImagen.ts:134](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/subirImagen.ts#L134)
 
 Sube un video (mp4/webm) al bucket y devuelve su URL pública.
 

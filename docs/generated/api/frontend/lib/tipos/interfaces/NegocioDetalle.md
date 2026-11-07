@@ -6,7 +6,7 @@
 
 # Interface: NegocioDetalle
 
-Defined in: [lib/tipos.ts:117](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L117)
+Defined in: [lib/tipos.ts:117](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L117)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/tipos.ts:117](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **id**: `string`
 
-Defined in: [lib/tipos.ts:118](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L118)
+Defined in: [lib/tipos.ts:118](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L118)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [lib/tipos.ts:118](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **nombre**: `string`
 
-Defined in: [lib/tipos.ts:119](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L119)
+Defined in: [lib/tipos.ts:119](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L119)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [lib/tipos.ts:119](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **slug**: `string`
 
-Defined in: [lib/tipos.ts:120](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L120)
+Defined in: [lib/tipos.ts:120](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L120)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [lib/tipos.ts:120](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **descripcion**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:121](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L121)
+Defined in: [lib/tipos.ts:121](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L121)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [lib/tipos.ts:121](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **direccion**: `string`
 
-Defined in: [lib/tipos.ts:122](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L122)
+Defined in: [lib/tipos.ts:122](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L122)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [lib/tipos.ts:122](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **barrio**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:123](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L123)
+Defined in: [lib/tipos.ts:123](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L123)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [lib/tipos.ts:123](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **latitud**: `number` \| `null`
 
-Defined in: [lib/tipos.ts:124](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L124)
+Defined in: [lib/tipos.ts:124](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L124)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [lib/tipos.ts:124](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **longitud**: `number` \| `null`
 
-Defined in: [lib/tipos.ts:125](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L125)
+Defined in: [lib/tipos.ts:125](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L125)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [lib/tipos.ts:125](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **referenciaUbicacion**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:126](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L126)
+Defined in: [lib/tipos.ts:126](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L126)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [lib/tipos.ts:126](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **telefono**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:127](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L127)
+Defined in: [lib/tipos.ts:127](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L127)
 
 ***
 
@@ -94,7 +94,7 @@ Defined in: [lib/tipos.ts:127](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **whatsapp**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:128](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L128)
+Defined in: [lib/tipos.ts:128](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L128)
 
 ***
 
@@ -102,7 +102,7 @@ Defined in: [lib/tipos.ts:128](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **logoUrl**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:129](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L129)
+Defined in: [lib/tipos.ts:129](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L129)
 
 ***
 
@@ -110,7 +110,7 @@ Defined in: [lib/tipos.ts:129](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **logoCredito**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:130](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L130)
+Defined in: [lib/tipos.ts:130](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L130)
 
 ***
 
@@ -118,7 +118,7 @@ Defined in: [lib/tipos.ts:130](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **imagenes**: `string`[]
 
-Defined in: [lib/tipos.ts:132](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L132)
+Defined in: [lib/tipos.ts:132](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L132)
 
 Galería de la ficha, en el orden en que se desliza.
 
@@ -128,7 +128,7 @@ Galería de la ficha, en el orden en que se desliza.
 
 > **creditos**: `string`[]
 
-Defined in: [lib/tipos.ts:134](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L134)
+Defined in: [lib/tipos.ts:134](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L134)
 
 Crédito o fuente de cada foto, alineado por índice con `imagenes`.
 
@@ -138,7 +138,7 @@ Crédito o fuente de cada foto, alineado por índice con `imagenes`.
 
 > **horario**: `string` \| `null`
 
-Defined in: [lib/tipos.ts:135](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L135)
+Defined in: [lib/tipos.ts:135](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L135)
 
 ***
 
@@ -146,7 +146,7 @@ Defined in: [lib/tipos.ts:135](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **abierto**: `boolean`
 
-Defined in: [lib/tipos.ts:136](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L136)
+Defined in: [lib/tipos.ts:136](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L136)
 
 ***
 
@@ -154,7 +154,7 @@ Defined in: [lib/tipos.ts:136](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **destacado**: `boolean`
 
-Defined in: [lib/tipos.ts:137](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L137)
+Defined in: [lib/tipos.ts:137](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L137)
 
 ***
 
@@ -162,7 +162,7 @@ Defined in: [lib/tipos.ts:137](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **aprobado**: `boolean`
 
-Defined in: [lib/tipos.ts:138](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L138)
+Defined in: [lib/tipos.ts:138](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L138)
 
 ***
 
@@ -170,7 +170,7 @@ Defined in: [lib/tipos.ts:138](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **soyDueno**: `boolean`
 
-Defined in: [lib/tipos.ts:139](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L139)
+Defined in: [lib/tipos.ts:139](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L139)
 
 ***
 
@@ -178,7 +178,7 @@ Defined in: [lib/tipos.ts:139](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **creadoEn**: `string`
 
-Defined in: [lib/tipos.ts:140](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L140)
+Defined in: [lib/tipos.ts:140](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L140)
 
 ***
 
@@ -186,4 +186,4 @@ Defined in: [lib/tipos.ts:140](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **productos**: [`Producto`](Producto.md)[]
 
-Defined in: [lib/tipos.ts:141](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L141)
+Defined in: [lib/tipos.ts:141](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L141)

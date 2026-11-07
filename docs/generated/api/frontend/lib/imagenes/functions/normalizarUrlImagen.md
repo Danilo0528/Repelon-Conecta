@@ -8,7 +8,7 @@
 
 > **normalizarUrlImagen**(`url`): `string`
 
-Defined in: [lib/imagenes.ts:30](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/imagenes.ts#L30)
+Defined in: [lib/imagenes.ts:30](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/imagenes.ts#L30)
 
 Normaliza URLs de imagen para que funcionen como <img src>.
 

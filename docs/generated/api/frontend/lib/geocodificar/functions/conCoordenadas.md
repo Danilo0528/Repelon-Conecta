@@ -8,7 +8,7 @@
 
 > **conCoordenadas**\<`T`\>(`negocios`, `coordenadas`): `T`[]
 
-Defined in: [lib/geocodificar.ts:157](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/geocodificar.ts#L157)
+Defined in: [lib/geocodificar.ts:157](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/geocodificar.ts#L157)
 
 Devuelve la lista con las coordenadas recién resueltas ya puestas en
 cada negocio. Los que ya traían latitud/lng de la base no se tocan.

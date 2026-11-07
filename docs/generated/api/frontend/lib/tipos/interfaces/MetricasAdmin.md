@@ -6,7 +6,7 @@
 
 # Interface: MetricasAdmin
 
-Defined in: [lib/tipos.ts:271](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L271)
+Defined in: [lib/tipos.ts:271](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L271)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/tipos.ts:271](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **negociosTotales**: `number`
 
-Defined in: [lib/tipos.ts:272](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L272)
+Defined in: [lib/tipos.ts:272](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L272)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [lib/tipos.ts:272](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **negociosAprobados**: `number`
 
-Defined in: [lib/tipos.ts:273](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L273)
+Defined in: [lib/tipos.ts:273](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L273)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [lib/tipos.ts:273](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **negociosPendientes**: `number`
 
-Defined in: [lib/tipos.ts:274](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L274)
+Defined in: [lib/tipos.ts:274](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L274)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [lib/tipos.ts:274](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **usuariosTotales**: `number`
 
-Defined in: [lib/tipos.ts:275](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L275)
+Defined in: [lib/tipos.ts:275](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L275)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [lib/tipos.ts:275](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **pedidosTotales**: `number`
 
-Defined in: [lib/tipos.ts:276](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L276)
+Defined in: [lib/tipos.ts:276](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L276)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [lib/tipos.ts:276](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **ventasTotales**: `number`
 
-Defined in: [lib/tipos.ts:277](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L277)
+Defined in: [lib/tipos.ts:277](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L277)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [lib/tipos.ts:277](https://github.com/Danilo0528/Repelon-Conecta/blo
 
 > **ventasHoy**: `number`
 
-Defined in: [lib/tipos.ts:278](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/tipos.ts#L278)
+Defined in: [lib/tipos.ts:278](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/tipos.ts#L278)

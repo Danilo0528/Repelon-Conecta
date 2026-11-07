@@ -8,7 +8,7 @@
 
 > **VideoCultura** = `object`
 
-Defined in: [lib/cultura.ts:29](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L29)
+Defined in: [lib/cultura.ts:29](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L29)
 
 Un video embebido de YouTube (por ID, no por URL completa).
 
@@ -18,7 +18,7 @@ Un video embebido de YouTube (por ID, no por URL completa).
 
 > **id**: `string`
 
-Defined in: [lib/cultura.ts:30](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L30)
+Defined in: [lib/cultura.ts:30](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L30)
 
 ***
 
@@ -26,4 +26,4 @@ Defined in: [lib/cultura.ts:30](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **titulo**: `string`
 
-Defined in: [lib/cultura.ts:31](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/cultura.ts#L31)
+Defined in: [lib/cultura.ts:31](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/cultura.ts#L31)

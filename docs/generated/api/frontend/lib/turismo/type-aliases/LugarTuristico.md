@@ -8,7 +8,7 @@
 
 > **LugarTuristico** = `object`
 
-Defined in: [lib/turismo.ts:46](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L46)
+Defined in: [lib/turismo.ts:46](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L46)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [lib/turismo.ts:46](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **nombre**: `string`
 
-Defined in: [lib/turismo.ts:47](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L47)
+Defined in: [lib/turismo.ts:47](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L47)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/turismo.ts:47](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **descripcion**: `string`
 
-Defined in: [lib/turismo.ts:48](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L48)
+Defined in: [lib/turismo.ts:48](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L48)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/turismo.ts:48](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **direccion**: `string`
 
-Defined in: [lib/turismo.ts:50](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L50)
+Defined in: [lib/turismo.ts:50](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L50)
 
 Sin precios: acá solo importa dónde queda.
 
@@ -42,7 +42,7 @@ Sin precios: acá solo importa dónde queda.
 
 > **latitud**: `number` \| `null`
 
-Defined in: [lib/turismo.ts:51](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L51)
+Defined in: [lib/turismo.ts:51](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L51)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [lib/turismo.ts:51](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **longitud**: `number` \| `null`
 
-Defined in: [lib/turismo.ts:52](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L52)
+Defined in: [lib/turismo.ts:52](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L52)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [lib/turismo.ts:52](https://github.com/Danilo0528/Repelon-Conecta/bl
 
 > **imagen**: `string` \| `null`
 
-Defined in: [lib/turismo.ts:54](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L54)
+Defined in: [lib/turismo.ts:54](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L54)
 
 Ruta pública de la foto; null = ilustración de respaldo.
 
@@ -68,7 +68,7 @@ Ruta pública de la foto; null = ilustración de respaldo.
 
 > **imagenes**: `string`[]
 
-Defined in: [lib/turismo.ts:56](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L56)
+Defined in: [lib/turismo.ts:56](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L56)
 
 Fotos para el slider de la portada.
 
@@ -78,7 +78,7 @@ Fotos para el slider de la portada.
 
 > **creditos**: `string`[]
 
-Defined in: [lib/turismo.ts:58](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L58)
+Defined in: [lib/turismo.ts:58](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L58)
 
 Crédito o fuente de cada foto, alineado por índice con `imagenes`.
 
@@ -88,4 +88,4 @@ Crédito o fuente de cada foto, alineado por índice con `imagenes`.
 
 > **motivo**: [`MotivoTurismo`](MotivoTurismo.md)
 
-Defined in: [lib/turismo.ts:59](https://github.com/Danilo0528/Repelon-Conecta/blob/2f374b1802c1ab4b248cb29f684e271ee789f890/ReplonConecta/frontend/src/lib/turismo.ts#L59)
+Defined in: [lib/turismo.ts:59](https://github.com/Danilo0528/Repelon-Conecta/blob/main/ReplonConecta/frontend/src/lib/turismo.ts#L59)
