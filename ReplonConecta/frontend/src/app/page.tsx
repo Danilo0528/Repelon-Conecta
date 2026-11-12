@@ -23,8 +23,8 @@ export default function Inicio() {
 		<div className="m-0 bg-white p-0">
 			<SeccionHero inicio={inicio} />
 			<SeccionComercios inicio={inicio} />
-			<SeccionMapa inicio={inicio} />
 			<SeccionTurismo inicio={inicio} />
+			<SeccionMapa inicio={inicio} />
 			<SeccionFondo inicio={inicio} />
 			<SeccionRazones inicio={inicio} />
 		</div>

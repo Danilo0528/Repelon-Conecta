@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import { useCarrito } from "@/context/CarritoContext";
 import { COMPRAS_ACTIVAS } from "@/lib/compras";
@@ -205,6 +206,7 @@ function CenefaBandera() {
 export default function HeaderConecta() {
 	const { cantidadTotal } = useCarrito();
 	const pathname = usePathname();
+	const [menuAbierto, setMenuAbierto] = useState(false);
 
 	/*
 	 * padding-top con el notch/camara del Android: layout.tsx pone
@@ -212,8 +214,8 @@ export default function HeaderConecta() {
 	 * mete debajo del hueco en pantallas con muesca.
 	 */
 	return (
-		<header className="sticky top-0 z-cromo w-full px-4 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] sm:px-6 lg:px-8">
-			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 pt-2 pb-5 shadow-float">
+		<header className="sticky top-0 z-cromo w-full px-3 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:px-6 sm:pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] lg:px-8">
+			<nav className="relative flex items-center gap-2 rounded-2xl border border-[#e0e8f1] bg-white/95 px-2.5 pt-1.5 pb-5 shadow-[0_8px_28px_-18px_rgba(16,45,70,.35)] backdrop-blur-xl sm:gap-3 sm:px-3 sm:pt-2">
 				{/*
 				 * La bandera PINTANDO el vidrio, no solo en el borde.
 				 *
@@ -260,7 +262,7 @@ export default function HeaderConecta() {
 					<img
 						src="/img/logo-repelon-conecta-transparente.png"
 						alt="Repelón Conecta"
-						className="h-9 w-28 object-contain object-center sm:h-12 sm:w-40 md:h-14 md:w-48"
+						className="h-11 w-11 object-contain object-center sm:h-12 sm:w-12 md:h-14 md:w-14"
 					/>
 				</Link>
 
@@ -298,8 +300,21 @@ export default function HeaderConecta() {
 
 				<BuscadorNav />
 
-				<div className="ml-auto flex items-center gap-2">
-					<span aria-hidden className="hidden h-6 w-px bg-black/10 md:block" />
+					<div className="flex items-center gap-2">
+						<span aria-hidden className="hidden h-6 w-px bg-black/10 md:block" />
+						<button
+							type="button"
+							onClick={() => setMenuAbierto((abierto) => !abierto)}
+							aria-expanded={menuAbierto}
+							aria-controls="menu-destinos-movil"
+							aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+							className="glass-soft grid size-10 shrink-0 place-items-center rounded-xl text-[#12366a] transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] md:hidden"
+						>
+							<svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+								{menuAbierto ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+							</svg>
+						</button>
+
 					<Link
 						href="/perfil"
 						className="glass-soft hidden size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf sm:grid"
@@ -328,6 +343,41 @@ export default function HeaderConecta() {
 					)}
 				</div>
 			</nav>
+			{menuAbierto && (
+				<nav
+					id="menu-destinos-movil"
+					aria-label="Más destinos"
+					className="absolute inset-x-3 top-full z-cromo mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl md:hidden"
+				>
+					<p className="mb-2 px-2 text-xs font-bold uppercase tracking-wide text-[#0a7133]">Explora Repelón</p>
+					<div className="grid grid-cols-2 gap-1">
+						{DESTINOS.map(({ href, etiqueta, icono }) => (
+							<Link
+								key={href}
+								href={href}
+								onClick={() => setMenuAbierto(false)}
+								className="flex min-h-11 items-center gap-2 rounded-xl px-2 text-sm font-medium text-[#12366a] transition hover:bg-[#f4f6fc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af]"
+							>
+								<IconoNav nombre={icono} className="size-[18px] shrink-0" />
+								<span className="truncate">{etiqueta}</span>
+							</Link>
+						))}
+					</div>
+					<button
+						type="button"
+						onClick={() => {
+							setMenuAbierto(false);
+							window.dispatchEvent(new Event("repelon:open-chat"));
+						}}
+						className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-xl px-2 text-sm font-semibold text-[#0a7133] transition hover:bg-[#eaf5ef] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078930]"
+					>
+						<svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+							<path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20.5l1.8-5.2A8.4 8.4 0 1 1 21 11.5z" strokeLinejoin="round" />
+						</svg>
+						Asistente IA
+					</button>
+				</nav>
+			)}
 		</header>
 	);
 }

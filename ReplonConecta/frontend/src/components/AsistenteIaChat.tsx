@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { FuenteImagen } from "@/components/ui";
@@ -165,12 +166,19 @@ function VideoFab() {
 }
 
 export function AsistenteIaChat() {
+	const pathname = usePathname();
 	const [abierto, setAbierto] = useState(false);
 	const [mensajes, setMensajes] = useState<Mensaje[]>([
 		{ rol: "ia", texto: "¡Hola! Soy el asistente de Repelón Conecta. ¿En qué puedo ayudarte a encontrar hoy?" }
 	]);
 	const [entrada, setEntrada] = useState("");
 	const [cargando, setCargando] = useState(false);
+
+	useEffect(() => {
+		const abrirAsistente = () => setAbierto(true);
+		window.addEventListener("repelon:open-chat", abrirAsistente);
+		return () => window.removeEventListener("repelon:open-chat", abrirAsistente);
+	}, []);
 
 	const enviar = async () => {
 		if (!entrada.trim() || cargando) return;
@@ -210,7 +218,7 @@ export function AsistenteIaChat() {
 				<button
 					onClick={() => setAbierto(true)}
 					aria-label="Abrir asistente de Repelón Conecta"
-					className="relative flex size-14 items-center justify-center rounded-full bg-leaf text-white shadow-xl transition hover:scale-105"
+					className={`relative ${pathname === "/" ? "hidden md:flex" : "flex"} size-11 items-center justify-center rounded-full bg-leaf text-white shadow-xl transition hover:scale-105 sm:size-14`}
 				>
 					{/*
 					 * Halo que late hacia afuera (ia-halo): le da vida al
@@ -251,7 +259,7 @@ export function AsistenteIaChat() {
 					<VideoFab />
 				</button>
 			) : (
-				<div className="flex h-[400px] w-80 flex-col rounded-3xl border border-glass bg-white shadow-2xl">
+				<div className="flex h-[400px] w-[calc(100vw-2rem)] max-w-80 flex-col rounded-3xl border border-glass bg-white shadow-2xl sm:w-80">
 					<div className="flex items-center justify-between border-b p-4">
 						<span className="font-semibold text-ink">Asistente IA</span>
 						<button

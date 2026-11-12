@@ -31,10 +31,10 @@ export const CLAVE_IMAGENES_HERO = "inicio.hero.imagenes";
 export const CLAVE_CREDITOS_HERO = "inicio.hero.creditos";
 
 export const TEXTO_INICIO = {
-	"inicio.hero.titulo1": "Todo el pueblo,",
-	"inicio.hero.titulo2": "a un toque de tu celular.",
+	"inicio.hero.titulo1": "Lo mejor de nuestro pueblo,",
+	"inicio.hero.titulo2": "más cerca de ti.",
 	"inicio.hero.texto":
-		"Descubre los productores del agro, la pescadería y los rincones de Repelón. Consulta precios y habla directamente con tus vecinos.",
+		"Descubre negocios, productos frescos, lugares y experiencias de Repelón.",
 	[CLAVE_IMAGENES_HERO]: JSON.stringify(IMAGENES_HERO_POR_DEFECTO),
 	"inicio.mapa.texto": "Toca un pin para ver el comercio y cómo llegar.",
 	"inicio.turismo.texto":

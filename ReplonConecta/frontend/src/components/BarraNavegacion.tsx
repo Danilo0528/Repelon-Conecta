@@ -7,25 +7,9 @@ import HeaderConecta from "@/components/HeaderConecta";
 import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
 
 /*
- * Navegación de la app.
- *
- * Arriba, la pastilla de vidrio con la marca y los accesos
- * directos (HeaderConecta). Abajo, siete destinos en una barra que
- * FLOTA sobre el fondo (12 px separada del borde) con acabado de
- * vidrio: ya no es una caja blanca pegada abajo, es una pastilla que
- * descansa sobre el contenido.
- *
- * El destino encendido no se marca solo con color de texto: se dibuja
- * una píldora verde con el icono y la etiqueta en blanco, que es la
- * señal que se espera de una barra de pestañas (y la que menos se
- * discute a la hora de saber "dónde estoy"). En pantallas anchas la
- * barra se oculta porque los mismos destinos ya están en la
- * cabecera.
- *
- * El acceso del vendedor y del administrador NO vive aquí: ya hay
- * siete destinos y otro más descuadraría la barra para todos. "Mi negocio" sí entra,
- * porque es de todos. "Turismo" es una ancla (#turismo) a la sección
- * de la home, así que nunca se marca como activo.
+ * En móvil quedan cinco accesos principales en la barra inferior.
+ * Cultura y Fondo Emprender siguen disponibles en el menú de cabecera,
+ * y la navegación se oculta en escritorio porque allí vive arriba.
  */
 
 /*
@@ -39,12 +23,8 @@ const ENLACES: {
 	icono: NombreIconoNav;
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
-	// Etiquetas cortas a proposito: en un Android angosto (320 px) cada
-	// destino tiene ~37 px de ancho y un texto largo queda truncado.
 	{ href: "/negocios", etiqueta: "Negocios", icono: "comercios" },
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
-	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
-	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
 	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
 ];
@@ -62,9 +42,9 @@ export default function BarraNavegacion() {
 
 			<nav
 				aria-label="Navegación principal"
-				className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-cromo md:hidden"
+				className="fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-cromo md:hidden"
 			>
-				<div className="glass grid grid-cols-7 gap-0.5 rounded-[22px] px-1.5 py-1.5">
+				<div className="grid grid-cols-5 gap-0 rounded-[22px] border border-white/80 bg-white/95 px-1 py-1.5 shadow-[0_8px_28px_-12px_rgba(16,45,70,.38)] backdrop-blur-xl">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por
@@ -81,16 +61,17 @@ export default function BarraNavegacion() {
 								key={href}
 								href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 py-1.5 transition-all duration-200 ${
+								className={`relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1.5 transition-colors duration-200 ${
 									activo
-										? "bg-leaf font-semibold text-white shadow-leaf"
-										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
+										? "font-semibold text-[#078930]"
+										: "font-medium text-[#12366a] hover:bg-slate-50"
 								}`}
 							>
 								<IconoNav nombre={icono} />
-								<span className="w-full truncate text-center text-[10px] leading-none tracking-tighter">
+								<span className="w-full truncate text-center text-[10px] leading-none">
 									{etiqueta}
 								</span>
+								<span aria-hidden className={`absolute inset-x-2 bottom-0.5 h-0.5 rounded-full ${activo ? "bg-[#078930]" : "bg-transparent"}`} />
 							</Link>
 						);
 					})}
