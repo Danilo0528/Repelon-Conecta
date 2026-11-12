@@ -38,8 +38,8 @@
 	 * Los tres colores de la bandera, en el orden y el tono del archivo
 	 * oficial (verde #078930, blanco #ffffff, azul #0f47af).
 	 */
-	--color-verde: #059669;
-	--color-azul: #2563eb;
+		--color-verde: #078930;
+		--color-azul: #0f47af;
 	/*
 	 * Acento del ESCUDO (el sol), no de la bandera: se mantiene tibio
 	 * para que no compita con el azul del CTA.

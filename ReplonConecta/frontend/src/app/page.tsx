@@ -20,11 +20,11 @@ export default function Inicio() {
 	const inicio = useInicio();
 
 	return (
-		<div className="m-0 p-0">
+		<div className="m-0 bg-white p-0">
 			<SeccionHero inicio={inicio} />
+			<SeccionComercios inicio={inicio} />
 			<SeccionMapa inicio={inicio} />
 			<SeccionTurismo inicio={inicio} />
-			<SeccionComercios inicio={inicio} />
 			<SeccionFondo inicio={inicio} />
 			<SeccionRazones inicio={inicio} />
 		</div>

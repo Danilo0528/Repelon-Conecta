@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Fondo de la app: tapiz agricola + manchas de color.
  *
  * Dos capas, ambas fijas, sin eventos y por debajo del contenido:
@@ -17,11 +17,9 @@
  * el valor inicial (negro). Asi que el verde se controla con la
  * opacidad de esta capa, no cambiando el color desde aca.
  *
- * La opacidad de los blobs va en 0.22 y no en 0.6: ahora los tokens
- * blob-1/2/3 son los colores plenos de la bandera (#4fbc7b, #4a90d9,
- * #f6c945) y no las versiones casi blancas de antes. Con blur de 60 px
- * basta poco para teñir la pagina; a 0.6 las manchas gritaban y el
- * texto perdia contraste encima.
+ * La textura y las manchas se mantienen muy sutiles para no competir
+ * con los contenidos ni teñir de verde las superficies blancas del catálogo.
+ * Los colores siguen tomando los tokens de la bandera.
  */
 export function Blobs() {
 	return (
@@ -31,7 +29,7 @@ export function Blobs() {
 		>
 			{/* Capa 1: tapiz agricola. */}
 			<div
-				className="absolute inset-0 opacity-[.22]"
+				className="absolute inset-0 opacity-[.07]"
 				style={{
 					backgroundImage: "url(/img/tapiz-agricola.svg)",
 					backgroundSize: "240px 240px",
@@ -39,9 +37,9 @@ export function Blobs() {
 				}}
 			/>
 			{/* Capa 2: manchas que respiran, encima del tapiz. */}
-			<div className="animate-drift absolute -left-32 -top-36 size-[520px] rounded-full bg-blob-1 opacity-[.22] blur-[60px]" />
-			<div className="animate-drift absolute -right-36 top-32 size-[460px] rounded-full bg-blob-2 opacity-[.22] blur-[60px] [animation-direction:reverse]" />
-			<div className="animate-drift absolute -bottom-44 left-1/4 size-[560px] rounded-full bg-blob-3 opacity-[.18] blur-[60px]" />
+			<div className="animate-drift absolute -left-32 -top-36 size-[520px] rounded-full bg-blob-1 opacity-[.11] blur-[60px]" />
+			<div className="animate-drift absolute -right-36 top-32 size-[460px] rounded-full bg-blob-2 opacity-[.11] blur-[60px] [animation-direction:reverse]" />
+			<div className="animate-drift absolute -bottom-44 left-1/4 size-[560px] rounded-full bg-blob-3 opacity-[.08] blur-[60px]" />
 		</div>
 	);
 }

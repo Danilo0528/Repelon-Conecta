@@ -25,8 +25,10 @@ export default function PieConecta() {
 
 	return (
 		<footer className="mx-auto w-full max-w-6xl px-4 pb-nav-total pt-12 md:pb-10">
-			<div className="glass flex flex-col gap-6 rounded-3xl p-6 md:flex-row md:items-start md:justify-between">
+			<div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-[0_18px_45px_-30px_rgba(16,45,70,.4)] md:flex md:items-start md:justify-between md:gap-8">
+				<div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#078930] via-white to-[#0f47af]" />
 				<div className="max-w-xs">
+					<img src="/img/logo-repelon-conecta-transparente.png" alt="Repelón Conecta" className="mb-3 h-12 w-12 object-contain" />
 					<p className="font-display text-lg font-semibold text-ink">
 						Repelón Conecta
 					</p>

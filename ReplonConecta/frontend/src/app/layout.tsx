@@ -55,8 +55,7 @@ export const metadata: Metadata = {
 	/*
 	 * Vista previa al compartir: WhatsApp y Facebook son el canal
 	 * principal de la app, y sin esto el enlace sale con foto genérica.
-	 * hero.jpg es la imagen de fondo del hero (horizontal, ~1200x630
-	 * es lo que piden las dos plataformas).
+	 * Imagen generada para el hero: el embalse del Guájaro en Repelón.
 	 */
 	openGraph: {
 		type: "website",
@@ -67,10 +66,10 @@ export const metadata: Metadata = {
 			"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
 		images: [
 			{
-				url: "/img/hero.jpg",
-				width: 1200,
-				height: 630,
-				alt: "Repelón Conecta",
+				url: "/img/embalse-guajaro-hero.png",
+				width: 1536,
+				height: 1024,
+				alt: "Atardecer sobre el embalse del Guájaro en Repelón"
 			},
 		],
 	},
@@ -80,7 +79,7 @@ export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
 	viewportFit: "cover",
-	themeColor: "#124B82",
+	themeColor: "#078930",
 };
 
 export default function RootLayout({

@@ -12,6 +12,7 @@
  * el home usa estas, que son las que siempre estuvieron ahí.
  */
 const IMAGENES_HERO_POR_DEFECTO = [
+	"/img/embalse-guajaro-hero.png",
 	"/img/hero-campo.png",
 	"/img/hero.jpg",
 	"/img/campo.jpg",
