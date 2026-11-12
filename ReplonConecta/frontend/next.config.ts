@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 import { COMPRAS_ACTIVAS } from "./src/lib/compras";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
   /*
    * Mientras COMPRAS_ACTIVAS sea false, las rutas de compra no existen
    * para el usuario: quien entre directo (enlace viejo, marcador,
