@@ -21,35 +21,6 @@ const DESTINOS: { href: string; etiqueta: string; icono: NombreIconoNav }[] = [
 	{ href: "/vendedor", etiqueta: "Mi negocio", icono: "negocio" },
 ];
 
-function CenefaBandera() {
-	return (
-		<svg
-			aria-hidden
-			viewBox="0 0 853 225"
-			preserveAspectRatio="none"
-			className="pointer-events-none absolute inset-0 size-full"
-		>
-			<path fill="#fff" d="M0 0h853v225H0z" />
-			<path
-				fill="#0f47af"
-				d="M648 0h205v176c-82-42-157-52-233-28-87 27-161 65-260 77 133-78 218-157 288-225Z"
-			/>
-			<path
-				fill="#078930"
-				d="M561 0h89c35 71-74 143-338 225 159-87 306-152 249-225Z"
-			/>
-			<path
-				fill="#fff"
-				d="M0 210c143 24 276 25 410-8 179-44 311-116 443-121v16c-127 9-258 84-438 126-139 32-279 31-415 2Z"
-			/>
-			<path
-				fill="#0f47af"
-				d="M0 221c159 28 292 19 425-15 177-45 312-117 428-119v15c-127 9-258 84-438 126-139 32-279 31-415 2Z"
-			/>
-		</svg>
-	);
-}
-
 export default function HeaderConecta() {
 	const { cantidadTotal } = useCarrito();
 	const pathname = usePathname();
@@ -59,9 +30,8 @@ export default function HeaderConecta() {
 		<header className="sticky top-0 z-cromo w-full">
 			<nav
 				aria-label="Navegación principal"
-				className="relative isolate flex h-[82px] items-end gap-2 overflow-visible px-3 pb-2 sm:px-6 md:h-24 lg:px-8"
+				className="relative isolate flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white px-3 sm:px-6 md:h-20 lg:px-8"
 			>
-				<CenefaBandera />
 				<Link
 					href="/"
 					className="relative z-10 flex shrink-0 items-center"
@@ -71,7 +41,7 @@ export default function HeaderConecta() {
 					<img
 						src="/img/logo-repelon-conecta-transparente.png"
 						alt="Repelón Conecta"
-						className="h-9 w-[104px] object-contain md:size-14"
+						className="size-12 object-contain md:size-14"
 					/>
 				</Link>
 
