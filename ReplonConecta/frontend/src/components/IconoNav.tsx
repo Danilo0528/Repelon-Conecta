@@ -17,6 +17,7 @@ export type NombreIconoNav =
 	| "negocio"
 	| "perfil"
 	| "turismo"
+	| "palmera"
 	| "cultura"
 	| "fondo";
 
@@ -83,6 +84,15 @@ export function IconoNav({
 				<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
 					<path d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z" strokeLinejoin="round" />
 					<circle cx="12" cy="10.4" r="2.4" />
+				</svg>
+			);
+		case "palmera":
+			return (
+				<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+					<path d="M12 21V10" />
+					<path d="M12 10C9 4.5 5 3 2.5 4c1.2 4.1 4.3 6.2 9.5 6" />
+					<path d="M12 10c3-5.5 7-7 9.5-6-1.2 4.1-4.3 6.2-9.5 6" />
+					<path d="M12 9c-1.5-4.2-1.3-6.2 0-7.5 1.4 1.4 1.5 3.5 0 7.5Z" />
 				</svg>
 			);
 		case "fondo":

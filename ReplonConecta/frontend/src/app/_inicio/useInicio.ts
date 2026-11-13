@@ -131,6 +131,7 @@ export function useInicio() {
 		T,
 		imagenesHero,
 		indiceHero,
+		setHeroIdx,
 		creditoHero,
 		zonas,
 		lugares,

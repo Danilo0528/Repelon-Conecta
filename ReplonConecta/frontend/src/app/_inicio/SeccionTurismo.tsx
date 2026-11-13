@@ -13,13 +13,13 @@ export function SeccionTurismo({ inicio }: { inicio: InicioState }) {
 	return (
 		<>
 			{lugarPrincipal && (
-				<section id="turismo" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-8 sm:px-6 sm:pt-12">
+				<section id="turismo" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-4 sm:px-6 sm:pt-12">
 					<button
 						type="button"
 						onClick={() => setLugarVentana(lugarPrincipal)}
 						aria-label={`Explorar turismo: ${lugarPrincipal.nombre}`}
 						aria-haspopup="dialog"
-						className="group relative flex min-h-48 w-full items-end overflow-hidden rounded-2xl bg-[#12366a] text-left shadow-[0_12px_28px_-18px_rgba(16,45,70,.65)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] sm:min-h-64 sm:rounded-3xl"
+						className="group relative flex min-h-40 w-full items-end overflow-hidden rounded-2xl bg-[#12366a] text-left shadow-[0_12px_28px_-18px_rgba(16,45,70,.65)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] sm:min-h-64 sm:rounded-3xl"
 					>
 						<div className="absolute inset-0 overflow-hidden" aria-hidden>
 							{lugarPrincipal.imagenes.length > 0 ? (
@@ -38,7 +38,7 @@ export function SeccionTurismo({ inicio }: { inicio: InicioState }) {
 						</div>
 						<div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#062a51]/90 via-[#062a51]/55 to-transparent" />
 						<div className="relative z-10 max-w-[34rem] p-5 text-white sm:p-8">
-							<p className="font-display text-3xl italic leading-none sm:text-5xl">Vive Repelón</p>
+							<p className="font-[cursive] text-3xl italic leading-none sm:text-5xl">Vive Repelón</p>
 							<p className="mt-2 max-w-[32ch] text-xs font-semibold leading-snug text-white/95 sm:mt-3 sm:text-lg">
 								Paisajes, cultura y experiencias junto al Guájaro
 							</p>

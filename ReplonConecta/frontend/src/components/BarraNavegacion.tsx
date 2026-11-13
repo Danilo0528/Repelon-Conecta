@@ -24,8 +24,8 @@ const ENLACES: {
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
 	{ href: "/negocios", etiqueta: "Negocios", icono: "comercios" },
-	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
-	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
+	{ href: "/#turismo", etiqueta: "Turismo", icono: "palmera" },
+	{ href: "/vendedor", etiqueta: "Tienda", icono: "carrito" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
 ];
 
@@ -42,9 +42,9 @@ export default function BarraNavegacion() {
 
 			<nav
 				aria-label="Navegación principal"
-				className="fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-cromo md:hidden"
+				className="fixed inset-x-0 bottom-0 z-cromo md:hidden"
 			>
-				<div className="grid grid-cols-5 gap-0 rounded-[22px] border border-white/80 bg-white/95 px-1 py-1.5 shadow-[0_8px_28px_-12px_rgba(16,45,70,.38)] backdrop-blur-xl">
+				<div className="grid grid-cols-5 gap-0 rounded-t-[22px] rounded-b-none border-t border-slate-200/80 bg-white/95 px-1 pt-1.5 pb-[calc(env(safe-area-inset-bottom,0px)+0.375rem)] shadow-[0_-8px_28px_-18px_rgba(16,45,70,.4)] backdrop-blur-xl">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por

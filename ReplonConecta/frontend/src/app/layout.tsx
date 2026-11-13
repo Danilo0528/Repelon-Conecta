@@ -66,10 +66,10 @@ export const metadata: Metadata = {
 			"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
 		images: [
 			{
-				url: "/img/embalse-guajaro-hero.png",
+				url: "/img/repelon-atardecer-barca.png",
 				width: 1536,
 				height: 1024,
-				alt: "Atardecer sobre el embalse del Guájaro en Repelón"
+				alt: "Barca en el embalse del Guájaro al atardecer en Repelón"
 			},
 		],
 	},

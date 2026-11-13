@@ -12,12 +12,9 @@
  * el home usa estas, que son las que siempre estuvieron ahí.
  */
 const IMAGENES_HERO_POR_DEFECTO = [
-	"/img/embalse-guajaro-hero.png",
+	"/img/repelon-atardecer-barca.png",
 	"/img/hero-campo.png",
 	"/img/hero.jpg",
-	"/img/campo.jpg",
-	"/img/tienda.jpg",
-	"/img/servicios.jpg",
 ];
 
 /** La lista de imágenes del slider vive en la misma tabla que los textos. */

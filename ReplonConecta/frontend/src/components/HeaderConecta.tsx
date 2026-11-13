@@ -4,202 +4,49 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
 import { useCarrito } from "@/context/CarritoContext";
 import { COMPRAS_ACTIVAS } from "@/lib/compras";
-import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
 
 import BuscadorNav from "./BuscadorNav";
 
-/*
- * Cabecera de Repelón Conecta.
- *
- * Una pastilla de vidrio (blanco translúcido con desenfoque) que queda
- * pegada arriba, con el sello de la marca a la izquierda —la R verde y
- * el lema "del pueblo, para el pueblo"— y, a la derecha, los accesos
- * que a pantalla ancha no lleva la barra de abajo.
- *
- * En móvil la navegación vive abajo, en la barra flotante; aquí solo
- * quedan la marca y los destinos directos. El carrito y "Pedidos"
- * están ocultos mientras COMPRAS_ACTIVAS sea false: la app termina en
- * el WhatsApp del vendedor (se oculta, no se borra).
- */
-
-/*
- * Iconos de destino de la cabecera: viven en IconoNav porque la barra
- * inferior (BarraNavegacion) pinta los mismos destinos.
- */
-
 const DESTINOS: { href: string; etiqueta: string; icono: NombreIconoNav }[] = [
 	{ href: "/negocios", etiqueta: "Comercios", icono: "comercios" },
-	// Ancla a la sección de la home: el acceso no queda escondido
-	// abajo del scroll, vive en la barra como los demás destinos.
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
 	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
 	{ href: "/fondo-emprender", etiqueta: "Fondo Emprender", icono: "fondo" },
-	// Oculto mientras COMPRAS_ACTIVAS sea false: la app es solo
-	// intermediaria. Con el interruptor en true vuelve sin mas cambios.
 	...(COMPRAS_ACTIVAS
 		? [{ href: "/pedidos", etiqueta: "Pedidos", icono: "pedidos" as const }]
 		: []),
 	{ href: "/vendedor", etiqueta: "Mi negocio", icono: "negocio" },
 ];
 
-/*
- * Cenefa de la bandera, pegada al borde inferior de la pastilla.
- *
- * Son las tres franjas de Repelón (verde, blanco, azul) pero con su
- * significado escrito adentro, que es lo que la hace del pueblo y no
- * una raya decorativa:
- *   - verde: la cadena de montañas de la Serranía del Caballo, con un
- *     brote creciendo en cada loma (maíz, sorgo, yuca y plátano)
- *   - blanco: la paz, lisa, como la manda la bandera
- *   - azul: las aguas del embalse del Guájaro, con dos olas de altura
- *     distinta y un bocachico nadando (la especie que más se pesca)
- *
- * Los motivos van en <pattern> con unidades fijas (userSpaceOnUse) y
- * el svg NO lleva viewBox: así las montañas, el brote y el pez
- * conservan su tamaño real y no se estiran con el ancho de la
- * pantalla. Si se estiraran, en un monitor ancho serían monstruos y
- * en el celular ni se verían.
- *
- * Cada módulo lleva el pez entero (cuerpo + cola) y el cerro cerrado
- * contra la base: si un motivo cruzara el borde del módulo, la
- * repetición lo parte y aparece una cola suelta sin cuerpo.
- *
- * La banda mide 20 px (h-5) y va con un filete de 1 px arriba
- * (border-ink/20). Los dos detalles son la misma cosa vista dos veces:
- * sin el filete la franja blanca se funde con la pastilla de vidrio
- * y la bandera deja de leerse como tres franjas; y sin esos 20 px no
- * cabe un brote ni un pez, todo se vuelve una raya con textura.
- * Por eso el <nav> lleva pb-5: el contenido respira justo lo que
- * ocupa la cenefa y el logo no queda debajo.
- *
- * Va en aria-hidden: es decoración. El nombre del sitio ya dice
- * "Repelón", y el color no comunica nada que quien usa lector de
- * pantalla necesite saber.
- */
 function CenefaBandera() {
 	return (
-		<span
+		<svg
 			aria-hidden
-			className="pointer-events-none absolute inset-x-0 bottom-0 block h-5 overflow-hidden rounded-b-[15px] border-t border-ink/20"
+			viewBox="0 0 853 225"
+			preserveAspectRatio="none"
+			className="pointer-events-none absolute inset-0 size-full"
 		>
-			<span className="grid h-full w-full grid-cols-3">
-				{/* Serranía + agricultura. El verde va escrito a mano y no
-				    en bg-leaf: --color-leaf es un punto más oscuro (texto
-				    pequeño) y esta cenefa es bandera, así que acá manda
-				    el #078930 del archivo oficial. */}
-				<span className="relative block h-full overflow-hidden bg-[#078930]">
-					<svg className="absolute inset-0 h-full w-full">
-						<defs>
-							<pattern
-								id="cenefa-serrania"
-								width="76"
-								height="20"
-								patternUnits="userSpaceOnUse"
-							>
-								{/* Cerros anchos y de altura desigual. Con
-								    picos angostos y muy seguidos deja de
-								    leerse como cordillera y se vuelve
-								    diente de sierra, que es el error típico
-								    de este motivo. El del medio es el único
-								    que sube a y=11: ahí, en la loma, se
-								    planta el brote. */}
-								<path
-									d="M0 20 12 13.5 24 16.5 38 11 50 15.5 62 12.5 76 20Z"
-									fill="#ffffff"
-									opacity=".32"
-								/>
-								{/* Brote creciendo en la loma. Va con hojas y
-								    no con una mazorca redonda: a 9 px una
-								    bola sobre un palo se lee como chinche o
-								    como lollipop, y una hoja a cada lado se
-								    lee como planta. Es la agricultura del
-								    municipio —maíz, sorgo, yuca, plátano—
-								    reducida a lo que cabe en una cenefa. */}
-								<path
-									d="M38 11V2"
-									fill="none"
-									stroke="#ffffff"
-									strokeOpacity=".58"
-									strokeWidth="1.1"
-									strokeLinecap="round"
-								/>
-								<path
-									d="M38 5c-2.4-2.8-5.6-3.6-8.2-2.6 1.5 3.2 4.7 5 8.2 3.2z"
-									fill="#ffffff"
-									fillOpacity=".58"
-									stroke="none"
-								/>
-								<path
-									d="M38 7.4c2.4-2.8 5.6-3.6 8.2-2.6-1.5 3.2-4.7 5-8.2 3.2z"
-									fill="#ffffff"
-									fillOpacity=".58"
-									stroke="none"
-								/>
-							</pattern>
-						</defs>
-						<rect width="100%" height="100%" fill="url(#cenefa-serrania)" />
-					</svg>
-				</span>
-
-				{/* La paz. */}
-				<span className="block h-full bg-white" />
-
-				{/* El embalse del Guájaro. */}
-				<span className="relative block h-full overflow-hidden bg-azul">
-					<svg className="absolute inset-0 h-full w-full">
-						<defs>
-							<pattern
-								id="cenefa-embalse"
-								width="44"
-								height="20"
-								patternUnits="userSpaceOnUse"
-							>
-								{/* Dos ondas de altura distinta: con una
-								    sola se lee como raya ondulada; con dos
-								    se lee como agua con profundidad. */}
-								<path
-									d="M0 11.5q11-6.2 22 0t22 0"
-									fill="none"
-									stroke="#ffffff"
-									strokeOpacity=".45"
-									strokeWidth="1.4"
-									strokeLinecap="round"
-								/>
-								<path
-									d="M0 17q11-4.6 22 0t22 0"
-									fill="none"
-									stroke="#ffffff"
-									strokeOpacity=".28"
-									strokeWidth="1.2"
-									strokeLinecap="round"
-								/>
-								{/* Bocachico: la especie que más se pesca en
-								    el Guájaro. Va entero dentro del módulo
-								    (cuerpo + cola) para que la repetición no
-								    lo parta a la mitad, y deja aire entre
-								    pez y pez para que no se lea como papel
-								    tapiz. */}
-								<g
-									fill="none"
-									stroke="#ffffff"
-									strokeOpacity=".62"
-									strokeWidth="1.1"
-									strokeLinejoin="round"
-									strokeLinecap="round"
-								>
-									<path d="M11.5 4.6c2.1-2.9 8-2.9 10.1 0-2.1 2.9-8 2.9-10.1 0z" />
-									<path d="M21.6 4.6 25.2 2.1v5z" />
-								</g>
-								<circle cx="13.8" cy="4" r=".6" fill="#ffffff" fillOpacity=".75" stroke="none" />
-							</pattern>
-						</defs>
-						<rect width="100%" height="100%" fill="url(#cenefa-embalse)" />
-					</svg>
-				</span>
-			</span>
-		</span>
+			<path fill="#fff" d="M0 0h853v225H0z" />
+			<path
+				fill="#0f47af"
+				d="M648 0h205v176c-82-42-157-52-233-28-87 27-161 65-260 77 133-78 218-157 288-225Z"
+			/>
+			<path
+				fill="#078930"
+				d="M561 0h89c35 71-74 143-338 225 159-87 306-152 249-225Z"
+			/>
+			<path
+				fill="#fff"
+				d="M0 210c143 24 276 25 410-8 179-44 311-116 443-121v16c-127 9-258 84-438 126-139 32-279 31-415 2Z"
+			/>
+			<path
+				fill="#0f47af"
+				d="M0 221c159 28 292 19 425-15 177-45 312-117 428-119v15c-127 9-258 84-438 126-139 32-279 31-415 2Z"
+			/>
+		</svg>
 	);
 }
 
@@ -208,67 +55,28 @@ export default function HeaderConecta() {
 	const pathname = usePathname();
 	const [menuAbierto, setMenuAbierto] = useState(false);
 
-	/*
-	 * padding-top con el notch/camara del Android: layout.tsx pone
-	 * viewportFit=cover, asi que sin este safe-area la pastilla se
-	 * mete debajo del hueco en pantallas con muesca.
-	 */
 	return (
-		<header className="sticky top-0 z-cromo w-full px-3 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:px-6 sm:pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] lg:px-8">
-			<nav className="relative flex items-center gap-2 rounded-2xl border border-[#e0e8f1] bg-white/95 px-2.5 pt-1.5 pb-5 shadow-[0_8px_28px_-18px_rgba(16,45,70,.35)] backdrop-blur-xl sm:gap-3 sm:px-3 sm:pt-2">
-				{/*
-				 * La bandera PINTANDO el vidrio, no solo en el borde.
-				 *
-				 * Un degradado horizontal que va del verde de la bandera
-				 * a la izquierda, pasa por blanco limpio en el centro y
-				 * termina en el azul a la derecha. Los extremos son los
-				 * colores de la bandera y el medio se queda en blanco,
-				 * que es como está dibujada.
-				 *
-				 * Va con -z-10 y no con z-0: .glass usa backdrop-filter,
-				 * eso crea contexto de apilamiento, y una capa negativa
-				 * se pinta DESPUÉS del fondo del propio vidrio pero
-				 * ANTES del texto. Con z-0 quedaría encima de las
-				 * letras y las taparía.
-				 *
-				 * La opacidad va bajando hacia el centro por dos motivos:
-				 * el texto de los destinos es gris medio y sobre un verde
-				 * saturado perdería contraste, y un bloque duro de color
-				 * se lee como un calcomán pegado, no como vidrio teñido.
-				 */}
-				<span
-					aria-hidden
-					className="pointer-events-none absolute inset-0 -z-10 rounded-2xl"
-					style={{
-						background:
-							"linear-gradient(90deg, rgba(7,137,48,.32) 0%, rgba(7,137,48,.13) 24%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 56%, rgba(15,71,175,.13) 76%, rgba(15,71,175,.32) 100%)",
-					}}
-				/>
+		<header className="sticky top-0 z-cromo w-full">
+			<nav
+				aria-label="Navegación principal"
+				className="relative isolate flex h-[82px] items-end gap-2 overflow-visible px-3 pb-2 sm:px-6 md:h-24 lg:px-8"
+			>
 				<CenefaBandera />
 				<Link
 					href="/"
-					className="flex shrink-0 items-center gap-2"
+					className="relative z-10 flex shrink-0 items-center"
 					aria-label="Repelón Conecta, inicio"
 				>
-					{/*
-					 * Va la versión SIN fondo. La original trae el blanco
-					 * cocido en el archivo (es un PNG de 24 bits, sin
-					 * canal alfa) y con la cenefa y el lavado de la
-					 * bandera detrás, ese blanco aparecía como un
-					 * recuadro pegado sobre el verde. El favicon se queda
-					 * con la original: en la pestaña del navegador un
-					 * cuadro lleno se lee mejor que una silueta.
-					 */}
+					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
 						src="/img/logo-repelon-conecta-transparente.png"
 						alt="Repelón Conecta"
-						className="h-11 w-11 object-contain object-center sm:h-12 sm:w-12 md:h-14 md:w-14"
+						className="h-9 w-[104px] object-contain md:size-14"
 					/>
 				</Link>
 
-				<div className="ml-2 hidden items-center gap-1 md:flex">
+				<div className="relative z-10 ml-2 hidden items-center gap-1 md:flex">
 					{DESTINOS.map(({ href, etiqueta, icono }) => {
-						// Las anclas (#...) no son rutas: nunca se marcan.
 						const activo =
 							!href.includes("#") &&
 							(pathname === href || pathname.startsWith(`${href}/`));
@@ -277,21 +85,13 @@ export default function HeaderConecta() {
 								key={href}
 								href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm leading-none transition-all duration-200 ${
+								className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm leading-none transition-colors ${
 									activo
-										? "bg-leaf font-semibold text-white shadow-leaf"
-										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
+										? "bg-[#078930] font-semibold text-white"
+										: "font-medium text-[#12366a] hover:bg-white/60"
 								}`}
 							>
-								{/*
-								 * El ícono entra desde xl: entre 768 y 1279 px la
-								 * pastilla ya va apretada con el buscador y los
-								 * destinos, y meter cuatro íconos la desborda.
-								 */}
-								<IconoNav
-									nombre={icono}
-									className="hidden h-[17px] w-[17px] shrink-0 xl:block"
-								/>
+								<IconoNav nombre={icono} className="hidden size-[17px] shrink-0 xl:block" />
 								{etiqueta}
 							</Link>
 						);
@@ -300,42 +100,36 @@ export default function HeaderConecta() {
 
 				<BuscadorNav />
 
-					<div className="flex items-center gap-2">
-						<span aria-hidden className="hidden h-6 w-px bg-black/10 md:block" />
-						<button
-							type="button"
-							onClick={() => setMenuAbierto((abierto) => !abierto)}
-							aria-expanded={menuAbierto}
-							aria-controls="menu-destinos-movil"
-							aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-							className="glass-soft grid size-10 shrink-0 place-items-center rounded-xl text-[#12366a] transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] md:hidden"
-						>
-							<svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-								{menuAbierto ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
-							</svg>
-						</button>
-
+				<div className="relative z-10 flex items-center gap-2">
+					<span aria-hidden className="hidden h-6 w-px bg-[#12366a]/15 md:block" />
+					<button
+						type="button"
+						onClick={() => setMenuAbierto((abierto) => !abierto)}
+						aria-expanded={menuAbierto}
+						aria-controls="menu-destinos-movil"
+						aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+						className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/95 text-[#12366a] shadow-[0_6px_16px_-10px_rgba(16,45,70,.65)] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] md:hidden"
+					>
+						<svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+							{menuAbierto ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+						</svg>
+					</button>
 					<Link
 						href="/perfil"
-						className="glass-soft hidden size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf sm:grid"
+						className="hidden size-10 place-items-center rounded-xl bg-white/90 text-[#12366a] transition hover:bg-white sm:grid"
 						aria-label="Perfil"
 					>
 						<IconoNav nombre="perfil" />
 					</Link>
-
 					{COMPRAS_ACTIVAS && (
 						<Link
 							href="/carrito"
-							className="glass-soft relative grid size-10 place-items-center rounded-xl text-ink transition-colors hover:text-leaf"
-							aria-label={
-								cantidadTotal > 0
-									? `Carrito, ${cantidadTotal} ítems`
-									: "Carrito vacío"
-							}
+							className="relative grid size-10 place-items-center rounded-xl bg-white/90 text-[#12366a] transition hover:bg-white"
+							aria-label={cantidadTotal > 0 ? `Carrito, ${cantidadTotal} ítems` : "Carrito vacío"}
 						>
 							<IconoNav nombre="carrito" />
 							{cantidadTotal > 0 && (
-								<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-leaf px-1 text-[11px] font-bold leading-none text-white">
+								<span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#078930] px-1 text-[11px] font-bold leading-none text-white">
 									{cantidadTotal}
 								</span>
 							)}
@@ -343,6 +137,7 @@ export default function HeaderConecta() {
 					)}
 				</div>
 			</nav>
+
 			{menuAbierto && (
 				<nav
 					id="menu-destinos-movil"

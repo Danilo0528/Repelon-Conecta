@@ -17,7 +17,7 @@ export function StoreCard({ n }: { n: Negocio }) {
 	return (
 		<article className="group overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_8px_20px_-14px_rgba(16,45,70,.5)] transition hover:-translate-y-0.5 hover:shadow-lg">
 			<Link href={`/negocios/${n.slug}`} className="block">
-				<div className="relative aspect-[16/9] overflow-hidden bg-[#eaf5ef]">
+				<div className="relative h-36 overflow-hidden bg-[#eaf5ef] sm:h-40">
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
 						src={foto}
@@ -35,7 +35,7 @@ export function StoreCard({ n }: { n: Negocio }) {
 				<FuenteImagen credito={credito} className="px-3 pt-1" />
 
 				<div className="px-3 pb-2 pt-2">
-					<h3 className="truncate font-display text-base font-semibold leading-tight text-[#102d46] sm:text-lg">
+					<h3 className="truncate font-sans text-base font-extrabold leading-tight text-[#102d46] sm:text-lg">
 						{n.nombre}
 					</h3>
 					<p className="mt-1 line-clamp-2 min-h-9 text-xs leading-[1.35] text-[#17324d] sm:text-sm">
