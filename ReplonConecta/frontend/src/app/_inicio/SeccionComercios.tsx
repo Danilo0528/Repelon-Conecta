@@ -141,11 +141,21 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 				</div>
 
 				{negocios.error && (
-					<p role="status" className="mb-2 text-xs text-slate-500">No pudimos cargar los comercios en este momento.</p>
+					<div role="status" className="mb-3 flex items-start gap-3 rounded-2xl border border-[#e7ecf6] bg-white px-4 py-4 shadow-[0_8px_24px_-20px_rgba(16,45,70,.5)]">
+						<span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f3f5fc] text-[#12366a]" aria-hidden>
+							<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M4 19.5h16M6 19.5V9l6-4.5L18 9v10.5M9 19.5v-6h6v6" />
+							</svg>
+						</span>
+						<div>
+							<p className="text-sm font-bold text-[#12366a]">Los comercios no están disponibles por ahora</p>
+							<p className="mt-1 text-xs leading-relaxed text-slate-600">Estamos teniendo problemas para cargar el directorio. Vuelve a intentarlo en unos minutos.</p>
+						</div>
+					</div>
 				)}
 
 				<div className="grid grid-cols-1 gap-3 min-[390px]:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-					{negocios.cargando && lista.length === 0 &&
+					{negocios.cargando && !negocios.error && lista.length === 0 &&
 						Array.from({ length: 2 }).map((_, i) => <TarjetaCargando key={i} />)}
 					{paraMostrar.map((negocio) => <StoreCard key={negocio.id} n={negocio} />)}
 				</div>
