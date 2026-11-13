@@ -38,7 +38,7 @@ function IconoCategoriaAcceso({ tipo }: { tipo: IconoAcceso }) {
 
 function TarjetaCargando() {
 	return (
-		<article aria-hidden className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
+		<article aria-hidden className="hidden overflow-hidden rounded-2xl border border-slate-200/80 bg-white sm:block">
 			<div className="h-36 animate-pulse bg-gradient-to-br from-emerald-100 via-emerald-50 to-sky-100 sm:h-40" />
 			<div className="animate-pulse px-3 pb-3 pt-3">
 				<div className="h-4 w-3/5 rounded bg-slate-200" />
@@ -67,9 +67,9 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 					router.push(consulta ? `/buscar?q=${encodeURIComponent(consulta)}` : "/buscar");
 				}}
 				role="search"
-				className="mx-auto flex max-w-3xl items-center gap-2 rounded-full border border-[#d9e3f5] bg-white px-3 py-0.5 shadow-[0_8px_20px_-15px_rgba(16,45,70,.55)] sm:pl-4"
+				className="mx-auto flex max-w-3xl items-center gap-2 rounded-2xl border border-[#e9e5d9] bg-white px-3 py-1 shadow-[0_5px_18px_-16px_rgba(23,61,50,.5)] sm:rounded-2xl sm:pl-4"
 			>
-				<svg viewBox="0 0 24 24" className="size-5 shrink-0 text-[#12366a] sm:size-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+				<svg viewBox="0 0 24 24" className="size-5 shrink-0 text-[#173d32] sm:size-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
 					<circle cx="11" cy="11" r="7" />
 					<path d="m16.5 16.5 4 4" strokeLinecap="round" />
 				</svg>
@@ -81,9 +81,13 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 					onChange={(e) => setTexto(e.target.value)}
 					placeholder="¿Qué estás buscando hoy?"
 					enterKeyHint="search"
-					className="min-h-10 min-w-0 w-full bg-transparent text-xs text-[#102d46] outline-none placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-[#0f47af]/40 sm:text-base"
+					className="min-h-10 min-w-0 w-full bg-transparent text-[13px] text-[#18352b] outline-none placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-[#0f47af]/40 sm:text-base"
 				/>
-				<button type="submit" aria-label="Buscar" tabIndex={-1} className="sr-only">Buscar</button>
+				<button type="submit" aria-label="Buscar" className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#173d32] text-white transition hover:bg-[#245642] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af]">
+					<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+						<path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+					</svg>
+				</button>
 			</form>
 
 			<nav aria-label="Categorías para explorar" className="mx-auto mt-2 max-w-5xl">
@@ -92,9 +96,9 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 						<li key={nombre} className="min-w-0">
 							<Link
 								href={href}
-								className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-xl border border-[#e7ecf6] bg-[#f3f5fc] px-1.5 py-1.5 text-center text-[10px] font-semibold leading-tight text-[#12366a] transition hover:bg-[#eaf5ef] hover:text-[#0a7133] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] sm:min-h-28 sm:gap-2 sm:rounded-2xl sm:text-sm"
+								className="flex min-h-11 flex-row items-center justify-center gap-1.5 rounded-xl border border-[#e9e5d9] bg-white px-1.5 text-center text-[10px] font-semibold leading-tight text-[#234537] transition hover:border-[#b8d0bd] hover:bg-[#f7faf5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] sm:min-h-28 sm:flex-col sm:gap-2 sm:rounded-2xl sm:text-sm"
 							>
-								<span className={`grid size-6 place-items-center ${icono === "agro" ? "text-[#078930]" : "text-[#12366a]"} sm:size-10`}>
+								<span className={`grid size-4 shrink-0 place-items-center ${icono === "pesca" ? "text-[#0f47af]" : "text-[#0a7133]"} sm:size-10`}>
 									<IconoCategoriaAcceso tipo={icono} />
 								</span>
 								<span className="w-full truncate">{nombre}</span>
@@ -104,21 +108,24 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 				</ul>
 			</nav>
 
-			<div className="mt-3 sm:mt-12 md:mt-16">
-				<div className="mb-1 flex items-center gap-2 sm:mb-4 sm:gap-3">
-					<span aria-hidden className="hidden h-[3px] min-w-3 flex-1 bg-[#078930] min-[380px]:block" />
-					<h2 className="whitespace-nowrap font-sans text-[15px] font-extrabold leading-tight text-[#102d46] min-[380px]:text-lg sm:text-2xl md:text-3xl">
+			<div className="mt-5 sm:mt-12 md:mt-16">
+				<div className="mb-2 flex items-center justify-between gap-2 sm:mb-4 sm:gap-3">
+					<h2 className="whitespace-nowrap font-display text-base font-semibold leading-tight tracking-[-0.02em] text-[#173d32] min-[380px]:text-lg sm:text-2xl md:text-3xl">
 						{hayFiltro ? "Comercios encontrados" : "Comercios destacados"}
 					</h2>
-					<Link
-						href="/negocios"
-						className="inline-flex min-h-8 shrink-0 items-center gap-1 text-[10px] font-bold text-[#0a7133] hover:underline min-[380px]:text-xs sm:min-h-10 sm:text-sm"
-					>
-						Ver todos
-						<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-							<path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-						</svg>
-					</Link>
+					{negocios.cargando && !negocios.error && lista.length === 0 ? (
+						<span role="status" className="shrink-0 text-[10px] font-medium text-[#66746a] min-[380px]:text-xs">Cargando…</span>
+					) : (
+						<Link
+							href="/negocios"
+							className="inline-flex min-h-8 shrink-0 items-center gap-1 text-[11px] font-bold text-[#0a7133] hover:underline min-[380px]:text-xs sm:min-h-10 sm:text-sm"
+						>
+							Ver todos
+							<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+								<path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+							</svg>
+						</Link>
+					)}
 				</div>
 
 				<div className="mb-3 hidden gap-2 sm:flex">
@@ -141,16 +148,13 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 				</div>
 
 				{negocios.error && (
-					<div role="status" className="mb-3 flex items-start gap-3 rounded-2xl border border-[#e7ecf6] bg-white px-4 py-4 shadow-[0_8px_24px_-20px_rgba(16,45,70,.5)]">
-						<span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f3f5fc] text-[#12366a]" aria-hidden>
-							<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+					<div role="status" className="mb-3 flex items-center gap-2.5 rounded-xl border border-[#ebe7dc] bg-[#faf9f5] px-3 py-2.5">
+						<span className="grid size-7 shrink-0 place-items-center rounded-full bg-[#eeeade] text-[#536b4c]" aria-hidden>
+							<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
 								<path d="M4 19.5h16M6 19.5V9l6-4.5L18 9v10.5M9 19.5v-6h6v6" />
 							</svg>
 						</span>
-						<div>
-							<p className="text-sm font-bold text-[#12366a]">Los comercios no están disponibles por ahora</p>
-							<p className="mt-1 text-xs leading-relaxed text-slate-600">Estamos teniendo problemas para cargar el directorio. Vuelve a intentarlo en unos minutos.</p>
-						</div>
+						<p className="text-[11px] leading-snug text-[#56645a]">No pudimos cargar el directorio. Intenta de nuevo más tarde.</p>
 					</div>
 				)}
 

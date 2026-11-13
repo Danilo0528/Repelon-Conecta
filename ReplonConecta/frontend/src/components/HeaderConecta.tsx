@@ -41,7 +41,7 @@ export default function HeaderConecta() {
 					<img
 						src="/img/logo-repelon-conecta-transparente.png"
 						alt="Repelón Conecta"
-						className="size-12 object-contain md:size-14"
+						className="size-14 object-contain md:size-14"
 					/>
 				</Link>
 
@@ -78,7 +78,7 @@ export default function HeaderConecta() {
 						aria-expanded={menuAbierto}
 						aria-controls="menu-destinos-movil"
 						aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-						className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/95 text-[#12366a] shadow-[0_6px_16px_-10px_rgba(16,45,70,.65)] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] md:hidden"
+						className="grid size-10 shrink-0 place-items-center rounded-full border border-[#e7e5dc] bg-[#faf9f5] text-[#173d32] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] md:hidden"
 					>
 						<svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
 							{menuAbierto ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}

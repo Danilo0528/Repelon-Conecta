@@ -13,7 +13,7 @@ export function SeccionTurismo({ inicio }: { inicio: InicioState }) {
 	return (
 		<>
 			{lugarPrincipal && (
-				<section id="turismo" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-4 sm:px-6 sm:pt-12">
+				<section id="turismo" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-8 sm:px-6 sm:pt-12">
 					<button
 						type="button"
 						onClick={() => setLugarVentana(lugarPrincipal)}

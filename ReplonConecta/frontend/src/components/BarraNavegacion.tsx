@@ -44,7 +44,7 @@ export default function BarraNavegacion() {
 				aria-label="Navegación principal"
 				className="fixed inset-x-0 bottom-0 z-cromo md:hidden"
 			>
-				<div className="grid grid-cols-5 gap-0 rounded-t-[22px] rounded-b-none border-t border-slate-200/80 bg-white/95 px-1 pt-1.5 pb-[calc(env(safe-area-inset-bottom,0px)+0.375rem)] shadow-[0_-8px_28px_-18px_rgba(16,45,70,.4)] backdrop-blur-xl">
+				<div className="grid grid-cols-5 gap-0 border-t border-[#ebe7dc] bg-white px-1 pt-1 pb-[calc(env(safe-area-inset-bottom,0px)+0.375rem)]">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por

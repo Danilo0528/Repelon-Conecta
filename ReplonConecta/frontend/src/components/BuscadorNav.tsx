@@ -75,7 +75,7 @@ export default function BuscadorNav() {
 				onClick={() => setAbierto((v) => !v)}
 				aria-expanded={abierto}
 				aria-label={abierto ? "Cerrar buscador" : "Buscar comercio o producto"}
-				className="ml-auto grid size-10 shrink-0 place-items-center rounded-xl bg-white/95 text-[#12366a] shadow-[0_6px_16px_-10px_rgba(16,45,70,.65)] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] lg:hidden"
+				className="ml-auto grid size-10 shrink-0 place-items-center rounded-full border border-[#e7e5dc] bg-[#faf9f5] text-[#173d32] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f47af] lg:hidden"
 			>
 				<svg
 					viewBox="0 0 24 24"
