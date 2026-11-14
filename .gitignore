@@ -1,65 +1,17 @@
-# Dependencias
-node_modules/
+# Documentación autogenerada (Typedoc) - no versionar, cuelga el pre-commit en docs:gen
+docs/generated/
 
-# Builds
-target/
+# Node / Next.js
+node_modules/
 .next/
 out/
-build/
-dist/
-*.class
-
-# Secretos — NUNCA versionar
-.env
+*.log
 .env.local
 .env.*.local
-*.pem
-*.key
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Credenciales en scripts de arranque local
-run-backend.ps1
-iniciar-backend.ps1
-
-# Logs
-*.log
-.run-backend.log
-.run-frontend.log
-logs/
-
-# Capturas de demo (2.5 MB que no aportan al repo)
-demo-*.png
-frontend.rar
-
-# Sistema
+# OS
 .DS_Store
 Thumbs.db
-.idea/
-.vscode/
-*.swp
-
-# Herramientas de agentes — no son parte del portafolio
-.archify/
-.scratch/
-
-# Skills de agentes. Son symlinks a rutas absolutas de esta maquina
-# (npx skills add creo .agents/skills con symlinks); si se versionan,
-# el clon de otra persona los recibe rotos.
-.agents/
-.claude/
-
-# ui-craft deja su configuracion y brief aqui
-.ui-craft/
-
-# graphify: el grafo SI se versiona (graph.json + reporte + html) para que
-# cualquier agente lo consulte, pero la cache AST, la ruta absoluta de
-# esta maquina y los backups datados de graphify no.
-graphify-out/cache/
-graphify-out/.graphify_root
-graphify-out/.rebuild.lock
-graphify-out/.graphify_labels.pending.json
-graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
-
-# Javadoc copia estos archivos del JDK. Su contenido depende del vendor y del
-# parche (Temurin agrega ADDITIONAL_LICENSE_INFO), y ningun HTML generado los
-# referencia, asi que no se versionan.
-docs/generated/api/backend/apidocs/legal/

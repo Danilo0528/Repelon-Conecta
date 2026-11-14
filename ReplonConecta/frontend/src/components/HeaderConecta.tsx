@@ -31,12 +31,7 @@ export default function HeaderConecta() {
 						<span className="text-[18px] font-bold tracking-tight" style={{ color: "#006d23" }}>Repelón Conecta</span>
 						<span className="text-[11px] font-medium" style={{ color: "#3e4a3d" }}>Impulso Comunitario &amp; Comercio</span>
 					</div>
-					{/* Badge bandera — solo escritorio */}
-					<div className="hidden md:flex items-center gap-1.5 rounded-full px-2.5 py-1 ml-1 shadow-sm"
-						style={{ background: "#e5eeff" }}>
-						<BanderaChica />
-						<span className="text-[12px] font-bold" style={{ color: "#091c31" }}>Repelón, Atl.</span>
-					</div>
+					<span className="text-[12px] font-bold" style={{ color: "#091c31" }}>Repelón, Atl.</span>
 				</div>
 
 				{/* Nav escritorio */}
@@ -111,15 +106,5 @@ export default function HeaderConecta() {
 				</div>
 			</div>
 		</header>
-	);
-}
-
-function BanderaChica() {
-	return (
-		<div className="flex h-3.5 w-5 flex-col overflow-hidden rounded-sm border border-[#becab9]" title="Bandera de Repelón" aria-hidden>
-			<span className="h-1/3 w-full" style={{ background: "#006d23" }} />
-			<span className="h-1/3 w-full" style={{ background: "#fff" }} />
-			<span className="h-1/3 w-full" style={{ background: "#1660a3" }} />
-		</div>
 	);
 }
