@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Mono, Manrope } from "next/font/google";
 
 import BarraNavegacion from "@/components/BarraNavegacion";
-import { Blobs } from "@/components/Blobs";
 import { CarritoProvider } from "@/context/CarritoContext";
 import { SesionProvider } from "@/context/SesionContext";
 import { AsistenteIaChat } from "@/components/AsistenteIaChat";
@@ -36,19 +35,23 @@ const plexMono = IBM_Plex_Mono({
 	display: "swap",
 });
 
+/*
+ * URL pública del sitio. Si falta la variable, el respaldo es el dominio
+ * de producción y NO localhost: una vista previa de WhatsApp con
+ * `http://localhost:3000/img/hero.jpg` no la abre nadie. En local se
+ * puede sobreescribir con NEXT_PUBLIC_URL=http://localhost:3000.
+ */
+const URL_SITIO =
+	process.env.NEXT_PUBLIC_URL ?? "https://repelon-conecta.vercel.app";
+
+const TITULO = "Repelón Conecta | Encuentra lo que necesitas";
+const DESCRIPCION =
+	"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.";
+
 export const metadata: Metadata = {
-	/*
-	 * Base para resolver las URLs relativas del og:image. Sin esto
-	 * Next avisa y arma la URL con localhost, lo que rompe la vista
-	 * previa al compartir en producción. El hosting real se declara en
-	 * NEXT_PUBLIC_URL (p. ej. https://repelonconecta.example.com).
-	 */
-	metadataBase: new URL(
-		process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
-	),
-	title: "Repelón Conecta | Encuentra lo que necesitas",
-	description:
-		"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
+	metadataBase: new URL(URL_SITIO),
+	title: TITULO,
+	description: DESCRIPCION,
 	icons: {
 		icon: "/img/logo-repelon-conecta.png",
 	},
@@ -56,15 +59,16 @@ export const metadata: Metadata = {
 	 * Vista previa al compartir: WhatsApp y Facebook son el canal
 	 * principal de la app, y sin esto el enlace sale con foto genérica.
 	 * hero.jpg es la imagen de fondo del hero (horizontal, ~1200x630
-	 * es lo que piden las dos plataformas).
+	 * es lo que piden las dos plataformas). Las URLs se resuelven con
+	 * metadataBase, así que NO salen con localhost.
 	 */
 	openGraph: {
 		type: "website",
 		locale: "es_CO",
 		siteName: "Repelón Conecta",
-		title: "Repelón Conecta | Encuentra lo que necesitas",
-		description:
-			"Encuentra productos agrícolas, pescado fresco y lugares para visitar en Repelón, Atlántico. Conecta directamente con negocios locales por WhatsApp.",
+		url: "/",
+		title: TITULO,
+		description: DESCRIPCION,
 		images: [
 			{
 				url: "/img/hero.jpg",
@@ -74,13 +78,19 @@ export const metadata: Metadata = {
 			},
 		],
 	},
+	twitter: {
+		card: "summary_large_image",
+		title: TITULO,
+		description: DESCRIPCION,
+		images: ["/img/hero.jpg"],
+	},
 };
 
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
 	viewportFit: "cover",
-	themeColor: "#124B82",
+	themeColor: "#0b2f4f",
 };
 
 export default function RootLayout({
@@ -91,9 +101,8 @@ export default function RootLayout({
 			lang="es"
 			className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable} h-full`}
 		>
-			{/* Sin bg-background acá a propósito: el fondo vive en html (ver
-				    globals.css) para que no tape los blobs ni el tapiz. */}
-			<body className="flex min-h-full flex-col text-ink">
+			{/* El fondo de la app: gris azulado uniforme, sin blobs. */}
+			<body className="flex min-h-full flex-col bg-[#f6f8fb] text-[#17202e]">
 				{/*
 				 * Atajo de teclado: el primer Tab salta la cabecera y la
 				 * barra de destinos y aterriza en el contenido. Oculto a
@@ -105,7 +114,6 @@ export default function RootLayout({
 				>
 					Saltar al contenido
 				</a>
-				<Blobs />
 				<SesionProvider>
 					<CarritoProvider>
 						<BarraNavegacion />
@@ -121,7 +129,7 @@ export default function RootLayout({
 						<main
 							id="contenido"
 							tabIndex={-1}
-							className="mx-auto w-full max-w-6xl flex-1 focus:outline-none"
+							className="w-full flex-1 focus:outline-none"
 						>
 							{children}
 						</main>

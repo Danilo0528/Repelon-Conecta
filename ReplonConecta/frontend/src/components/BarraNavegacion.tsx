@@ -4,56 +4,67 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import HeaderConecta from "@/components/HeaderConecta";
-import { IconoNav, type NombreIconoNav } from "@/components/IconoNav";
 
 /*
- * Navegación de la app.
- *
- * Arriba, la pastilla de vidrio con la marca y los accesos
- * directos (HeaderConecta). Abajo, siete destinos en una barra que
- * FLOTA sobre el fondo (12 px separada del borde) con acabado de
- * vidrio: ya no es una caja blanca pegada abajo, es una pastilla que
- * descansa sobre el contenido.
- *
- * El destino encendido no se marca solo con color de texto: se dibuja
- * una píldora verde con el icono y la etiqueta en blanco, que es la
- * señal que se espera de una barra de pestañas (y la que menos se
- * discute a la hora de saber "dónde estoy"). En pantallas anchas la
- * barra se oculta porque los mismos destinos ya están en la
- * cabecera.
- *
- * El acceso del vendedor y del administrador NO vive aquí: ya hay
- * siete destinos y otro más descuadraría la barra para todos. "Mi negocio" sí entra,
- * porque es de todos. "Turismo" es una ancla (#turismo) a la sección
- * de la home, así que nunca se marca como activo.
+ * Barra de navegación inferior móvil — diseño Material.
+ * 5 destinos: Inicio, Comercios, Turismo, SENA, Mi Negocio.
+ * Fondo #fbfbf9/90 con backdrop-blur, sombra arriba.
  */
 
-/*
- * Iconos de destino de la navegación: viven en IconoNav porque la
- * cabecera (HeaderConecta) pinta los mismos destinos.
- */
-
-const ENLACES: {
-	href: string;
-	etiqueta: string;
-	icono: NombreIconoNav;
-}[] = [
-	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
-	// Etiquetas cortas a proposito: en un Android angosto (320 px) cada
-	// destino tiene ~37 px de ancho y un texto largo queda truncado.
-	{ href: "/negocios", etiqueta: "Negocios", icono: "comercios" },
-	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
-	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
-	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
-	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
-	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
+const ENLACES = [
+	{
+		href: "/",
+		label: "Inicio",
+		icon: (
+			<svg viewBox="0 0 24 24" className="size-[22px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+				<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z" />
+			</svg>
+		),
+	},
+	{
+		href: "/negocios",
+		label: "Comercios",
+		icon: (
+			<svg viewBox="0 0 24 24" className="size-[22px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+				<path d="M4 9l1-5h14l1 5M4 9v11h16V9M4 9h16" />
+			</svg>
+		),
+	},
+	{
+		href: "/#turismo",
+		label: "Turismo",
+		icon: (
+			<svg viewBox="0 0 24 24" className="size-[22px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+				<path d="M12 21s7-6 7-11a7 7 0 00-14 0c0 5 7 11 7 11z" />
+				<circle cx="12" cy="10" r="2.5" />
+			</svg>
+		),
+	},
+	{
+		href: "/cultura",
+		label: "Cultura",
+		icon: (
+			<svg viewBox="0 0 24 24" className="size-[22px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+				<path d="M9 18V5l12-2v13" />
+				<circle cx="6" cy="18" r="3" />
+				<circle cx="18" cy="16" r="3" />
+			</svg>
+		),
+	},
+	{
+		href: "/vendedor",
+		label: "Mi Negocio",
+		icon: (
+			<svg viewBox="0 0 24 24" className="size-[22px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+				<path d="M4.5 9.5h15V19a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" strokeLinejoin="round" />
+				<path d="M3 9.5 4.8 4.5h14.4L21 9.5" strokeLinejoin="round" />
+			</svg>
+		),
+	},
 ];
 
 export default function BarraNavegacion() {
 	const pathname = usePathname();
-
-	// El panel /admin tiene su propio cromo (sidebar, barra superior y
-	// menú): la navegación pública no se pinta ahí.
 	if (pathname.startsWith("/admin")) return null;
 
 	return (
@@ -62,34 +73,27 @@ export default function BarraNavegacion() {
 
 			<nav
 				aria-label="Navegación principal"
-				className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-cromo md:hidden"
+				className="fixed inset-x-0 bottom-0 z-cromo md:hidden"
+				style={{
+					background: "rgba(251,251,249,0.92)",
+					backdropFilter: "blur(20px)",
+					boxShadow: "0 -2px 12px rgba(7,27,47,0.06)",
+					paddingBottom: "env(safe-area-inset-bottom, 0px)",
+				}}
 			>
-				<div className="glass grid grid-cols-7 gap-0.5 rounded-[22px] px-1.5 py-1.5">
-					{ENLACES.map(({ href, etiqueta, icono }) => {
-						// "/" es la home pero también el prefijo de todo lo
-						// demás, así que se compara exacto; el resto por
-						// prefijo, para que /negocios/[slug] deje "Negocios"
-						// encendido dentro de la ficha. Las anclas (#...) no
-						// son rutas, nunca se marcan.
-						const activo =
-							href === "/"
-								? pathname === "/"
-								: !href.includes("#") &&
-										(pathname === href || pathname.startsWith(`${href}/`));
+				<div className="flex h-16 items-center justify-around px-1">
+					{ENLACES.map(({ href, label, icon }) => {
+						const activo = href === "/"
+							? pathname === "/"
+							: !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`));
 						return (
-							<Link
-								key={href}
-								href={href}
+							<Link key={href} href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 py-1.5 transition-all duration-200 ${
-									activo
-										? "bg-leaf font-semibold text-white shadow-leaf"
-										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
-								}`}
-							>
-								<IconoNav nombre={icono} />
-								<span className="w-full truncate text-center text-[10px] leading-none tracking-tighter">
-									{etiqueta}
+								className="flex min-h-[44px] min-w-[56px] flex-col items-center justify-center gap-0.5 py-1 transition-colors"
+								style={{ color: activo ? "#006d23" : "#3e4a3d" }}>
+								{icon}
+								<span className="text-[11px] font-bold leading-none" style={{ letterSpacing: "0.04em" }}>
+									{label}
 								</span>
 							</Link>
 						);

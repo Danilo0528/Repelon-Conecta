@@ -58,10 +58,23 @@
 	--color-leaf: #0a7133;
 	--color-cielo: #7cc4ec;
 	--color-mist: #eaf5ef;
-	--color-ink: #0e2138;
-	--color-muted-foreground: #56697a;
+	--color-ink: #17202e;
+	--color-muted-foreground: #4a5568;
 	--color-glass: #ffffff;
-	--color-background: #f3f9f5;
+	--color-background: #f6f8fb;
+
+	/*
+	 * Superficies del rediseño: el sitio deja de ser una app de vidrio y
+	 * pasa a hojas blancas con un borde fino sobre un fondo gris azulado.
+	 * `marina` es el azul profundo del hero y del pie (el mismo que ya
+	 * usaba el home en sus degradados).
+	 */
+	--color-fondo: #f6f8fb;
+	--color-superficie: #ffffff;
+	--color-linea: #dce3ec;
+	--color-tinta: #17202e;
+	--color-tinta-suave: #4a5568;
+	--color-marina: #0b2f4f;
 
 	/*
 	 * Paleta semántica para el panel denso (dense dashboard).
@@ -96,12 +109,48 @@
 	 */
 
 	/*
-	 * Altura reservada para la barra inferior de destinos: la barra va
-	 * flotando a 12 px del borde y mide ~52 px, así que el contenido de
-	 * las pantallas baja 4.5rem + el margen seguro del teléfono para
-	 * que nunca quede debajo de la barra.
+	 * Altura reservada para la barra inferior de destinos. La barra del
+	 * rediseño es una banda blanca pegada al borde de 76 px (más el
+	 * safe-area del teléfono); el contenido deja 5.25rem para que el
+	 * último botón nunca quede debajo.
 	 */
-	--spacing-nav-total: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+	--spacing-nav-total: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+
+	/*
+	 * Tokens del rediseño Material (rama feat/rediseno-material).
+	 * Paleta extraída del HTML de referencia.
+	 */
+	--color-mc-surface:          #f8f9ff;
+	--color-mc-surface-cream:    #fbfbf9;
+	--color-mc-surface-subtle:   #f0f4f2;
+	--color-mc-surface-low:      #eff4ff;
+	--color-mc-surface-container: #e5eeff;
+	--color-mc-surface-container-high: #dbe9ff;
+	--color-mc-surface-container-highest: #d2e4ff;
+	--color-mc-surface-container-lowest: #ffffff;
+	--color-mc-on-surface:       #091c31;
+	--color-mc-on-surface-var:   #3e4a3d;
+	--color-mc-primary:          #006d23;
+	--color-mc-primary-container: #078930;
+	--color-mc-on-primary:       #ffffff;
+	--color-mc-primary-fixed:    #8bfb92;
+	--color-mc-primary-fixed-dim: #6fdd79;
+	--color-mc-secondary:        #1660a3;
+	--color-mc-secondary-fixed:  #d2e4ff;
+	--color-mc-on-secondary:     #ffffff;
+	--color-mc-tertiary:         #7a5700;
+	--color-mc-tertiary-fixed:   #ffdea7;
+	--color-mc-tertiary-fixed-dim: #fdbb2c;
+	--color-mc-on-tertiary:      #ffffff;
+	--color-mc-tertiary-container: #9a6e00;
+	--color-mc-on-tertiary-container: #fffeff;
+	--color-mc-on-tertiary-fixed: #271900;
+	--color-mc-whatsapp:         #25d366;
+	--color-mc-status-open:      #0b8544;
+	--color-mc-status-verified:  #0b5c9e;
+	--color-mc-terracotta:       #c85a32;
+	--color-mc-outline:          #6e7a6b;
+	--color-mc-outline-variant:  #becab9;
 }
 
 :root {

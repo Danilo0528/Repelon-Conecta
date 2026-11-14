@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { IconoCategoria } from "@/components/IconoCategoria";
 import { Aviso } from "@/components/ui";
@@ -8,126 +9,176 @@ import { enAlcance } from "@/lib/alcance";
 import { supabaseConfigurado } from "@/lib/env";
 import type { InicioState } from "./useInicio";
 
-/** Portada: slider de fotos, promesa del pueblo digitalizado y atajos por rubro. */
 export function SeccionHero({ inicio }: { inicio: InicioState }) {
+	const router = useRouter();
 	const { imagenesHero, indiceHero, creditoHero, categorias, T } = inicio;
 
+	function buscar(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		const fd = new FormData(e.currentTarget);
+		const q = (fd.get("q") as string).trim();
+		router.push(q ? `/buscar?q=${encodeURIComponent(q)}` : "/buscar");
+	}
+
 	return (
-		<section className="relative left-1/2 m-0 min-h-[calc(100svh-4rem)] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat">
-			{/* Slider de fondo: imágenes apiladas con crossfade */}
+		<section className="relative w-full overflow-hidden" style={{ background: "#fbfbf9" }}>
+			{/* Ambientación de fondo */}
+			<div className="pointer-events-none absolute inset-0"
+				style={{ background: "linear-gradient(to right, #f0f4f2 0%, transparent 50%, #eff4ff 100%)", opacity: 0.7 }} aria-hidden />
+			<div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full blur-3xl" style={{ background: "rgba(210,228,255,0.3)" }} aria-hidden />
+			<div className="pointer-events-none absolute bottom-0 left-10 h-80 w-80 rounded-full blur-3xl" style={{ background: "rgba(111,221,121,0.15)" }} aria-hidden />
+
+			{/* Fotos de fondo crossfade (detrás del contenido, no sobre él) */}
 			{imagenesHero.map((src, i) => (
-				<div
-					key={`${src}-${i}`}
-					aria-hidden
-					className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1200ms] ease-in-out"
-					style={{
-						backgroundImage: `linear-gradient(90deg, rgba(7,27,47,.46), rgba(7,27,47,.08)), url(${src})`,
-						opacity: i === indiceHero ? 1 : 0,
-					}}
-				/>
+				<div key={`${src}-${i}`} aria-hidden
+					className="absolute inset-0 bg-cover bg-center transition-opacity duration-[1400ms]"
+					style={{ backgroundImage: `url(${src})`, opacity: i === indiceHero ? 0.12 : 0 }} />
 			))}
-			{/* Overlay oscuro para mejorar legibilidad del texto */}
-			<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
-			<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 
-			{/* Contenido superpuesto: en móvil el padding vertical baja
-			    para que el hero no ocupe toda la primera pantalla. */}
-			<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-6 px-5 py-10 sm:gap-8 sm:px-10 sm:py-14 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
-				<div className="max-w-2xl">
-					<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
-						<span className="h-px w-8 bg-amarillo" />
-						Repelón, Atlántico
-					</div>
-					<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
-						<span className="size-2 rounded-full bg-leaf" aria-hidden />
-						Comercio local, digitalizado
-					</span>
+			<div className="relative mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-16 lg:px-12 lg:py-20">
+				<div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center">
 
-					<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
-						{T("inicio.hero.titulo1")}{" "}
-						<span className="italic text-amarillo">
-							{T("inicio.hero.titulo2")}
-						</span>
-					</h1>
+					{/* ── Columna izquierda ── */}
+					<div className="flex flex-col items-start lg:col-span-7">
 
-					<p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/90">
-						{T("inicio.hero.texto")}
-					</p>
-
-					<div className="mt-6 flex flex-wrap gap-3">
-						<Link
-							href="/negocios"
-							className="inline-flex min-h-12 items-center justify-center rounded-xl bg-leaf px-5 py-3 font-semibold text-white shadow-leaf transition-transform active:scale-[.98]"
-						>
-							Explorar comercios
-						</Link>
-						<Link
-							href="/vendedor"
-							className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-5 py-3 font-semibold text-leaf shadow-leaf transition-transform active:scale-[.98]"
-						>
-							Registrar mi negocio
-						</Link>
-					</div>
-
-					{!supabaseConfigurado && (
-						<div className="mt-4">
-							<Aviso tono="info">
-								Falta configurar Supabase en <code>.env.local</code>. Se ve el
-								catálogo, pero no se puede iniciar sesión ni pedir.
-							</Aviso>
+						{/* Badge municipal */}
+						<div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1.5 shadow-sm"
+							style={{ background: "#e5eeff" }}>
+							<BanderaChica />
+							<span className="h-2 w-2 animate-pulse rounded-full" style={{ background: "#078930" }} aria-hidden />
+							<span className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#091c31" }}>
+								Repelón, Atlántico
+							</span>
+							<span style={{ color: "#3e4a3d" }}>•</span>
+							<span className="text-[12px] font-bold" style={{ color: "#006d23" }}>Orgullo Repelonero</span>
 						</div>
-					)}
 
-					<div className="mt-6 flex flex-wrap gap-2 text-xs font-medium">
-						{(categorias.datos ?? [])
-							.filter((c) => enAlcance(c.slug))
-							.map((c) => (
-								<Link
-									key={c.id}
-									href="/negocios"
-									className="glass-soft inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:text-leaf"
-								>
-									<IconoCategoria categoria={c} className="h-4 w-4" />
+						{/* Titular */}
+						<h1 className="mb-5 font-sans font-extrabold tracking-tight"
+							style={{ fontSize: "clamp(2rem,5vw,3rem)", lineHeight: "1.1", color: "#091c31" }}>
+							Todo el pueblo, a un{" "}
+							<span style={{ color: "#006d23", fontStyle: "italic" }}>toque de tu celular.</span>
+						</h1>
+
+						<p className="mb-6 max-w-xl text-[18px] leading-[1.6]" style={{ color: "#3e4a3d" }}>
+							{T("inicio.hero.texto")}
+						</p>
+
+						{!supabaseConfigurado && (
+							<div className="mb-5 w-full max-w-xl">
+								<Aviso tono="info">Falta configurar Supabase en <code>.env.local</code>.</Aviso>
+							</div>
+						)}
+
+						{/* CTAs */}
+						<div className="mb-6 flex flex-wrap items-center gap-3">
+							<Link href="/negocios"
+								className="inline-flex items-center gap-2 rounded-lg px-6 py-3.5 text-[14px] font-semibold text-white shadow-md transition hover:-translate-y-0.5"
+								style={{ background: "#078930" }}>
+								<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+									<path d="M4.5 9.5h15V19a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" strokeLinejoin="round" />
+									<path d="M3 9.5 4.8 4.5h14.4L21 9.5" strokeLinejoin="round" />
+								</svg>
+								Explorar comercios
+							</Link>
+							<Link href="/vendedor"
+								className="inline-flex items-center gap-2 rounded-lg px-6 py-3.5 text-[14px] font-semibold shadow-sm transition hover:bg-[#f0f4f2]"
+								style={{ background: "#fff", color: "#1660a3", border: "1.5px solid #d2e4ff" }}>
+								<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+									<circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" strokeLinecap="round" />
+								</svg>
+								Registrar mi negocio
+							</Link>
+						</div>
+
+						{/* Chips de categoría */}
+						<div className="flex flex-wrap items-center gap-2">
+							<span className="text-[12px] font-bold uppercase tracking-wider mr-1" style={{ color: "#3e4a3d" }}>
+								Explorar rápido:
+							</span>
+							{(categorias.datos ?? []).filter((c) => enAlcance(c.slug)).map((c) => (
+								<Link key={c.id} href="/negocios"
+									className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold transition hover:brightness-95"
+									style={{ background: "#e5eeff", color: "#091c31" }}>
+									<IconoCategoria categoria={c} className="size-4" />
 									{c.nombre}
 								</Link>
 							))}
-					</div>
-				</div>
-
-				<div className="hidden md:block">
-					<div className="overflow-hidden rounded-3xl border border-white/50 bg-white/90 shadow-2xl backdrop-blur-md">
-						<div className="relative h-48 overflow-hidden bg-[#d8eadc]">
-							<div className="absolute inset-0 bg-[url('/img/hero-campo.png')] bg-cover bg-center" />
-							<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/65 to-transparent" />
-							<div className="absolute bottom-4 left-4 right-4 text-white">
-								<p className="text-xs font-semibold uppercase tracking-[0.16em] text-amarillo">Historias que conectan</p>
-								<p className="mt-1 font-display text-xl font-semibold">Tu negocio merece ser encontrado</p>
-							</div>
 						</div>
-						<div className="p-5">
-							<div className="flex items-start gap-3">
-								<div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-leaf text-lg text-white">R</div>
-								<div>
-									<p className="font-semibold text-ink">Crece con Repelón Conecta</p>
-									<p className="mt-1 text-sm leading-relaxed text-muted-foreground">Haz visible lo que haces y conecta con nuevos clientes del pueblo.</p>
+					</div>
+
+					{/* ── Columna derecha: tarjeta de presentación ── */}
+					<div className="lg:col-span-5">
+						<div className="overflow-hidden rounded-xl shadow-xl" style={{ background: "#fff" }}>
+							{/* Imagen del Guájaro o primera imagen del hero */}
+							<div className="relative h-64 w-full overflow-hidden">
+								{imagenesHero.length > 0 ? (
+									<div className="h-full w-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
+										style={{ backgroundImage: `url(${imagenesHero[indiceHero]})` }} />
+								) : (
+									<div className="h-full w-full"
+										style={{ background: "linear-gradient(135deg, #e5eeff 0%, #d2e4ff 50%, #e5eeff 100%)" }} />
+								)}
+								<div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(9,28,49,0.75) 0%, transparent 60%)" }} />
+								<div className="absolute bottom-3 left-3 right-3">
+									<span className="mb-1 inline-block rounded-full px-2.5 py-0.5 text-[12px] font-bold uppercase tracking-wider"
+										style={{ background: "#ffdea7", color: "#271900" }}>
+										Historias que conectan
+									</span>
+									<h3 className="text-[20px] font-bold leading-snug text-white">
+										Tu negocio merece ser encontrado
+									</h3>
 								</div>
 							</div>
-							<Link href="/vendedor" className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white transition hover:bg-azul/90">Registrar mi negocio</Link>
+
+							{/* Contenido inferior */}
+							<div className="p-5">
+								<div className="mb-3 flex items-center gap-3">
+									<div className="flex h-10 w-10 items-center justify-center rounded-full text-white font-bold text-lg shadow-sm"
+										style={{ background: "#078930" }}>R</div>
+									<div>
+										<p className="text-[16px] font-bold leading-tight" style={{ color: "#091c31" }}>
+											Crece con Repelón Conecta
+										</p>
+										<p className="text-[12px]" style={{ color: "#3e4a3d" }}>
+											Impulso municipal para familias campesinas y emprendedoras
+										</p>
+									</div>
+								</div>
+								<p className="mb-4 text-[14px] leading-relaxed" style={{ color: "#3e4a3d" }}>
+									Haz visible lo que produces: plátano, yuca, mojarra fresca o servicios técnicos.
+									Llega a tus clientes directamente a tu WhatsApp.
+								</p>
+								<Link href="/vendedor"
+									className="flex w-full items-center justify-center gap-2 rounded-lg py-3 text-[14px] font-semibold text-white transition hover:brightness-95"
+									style={{ background: "#1660a3" }}>
+									<svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+										<path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 4.18 2 2 0 0 1 5.07 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.35 1.85.59 2.81.72A2 2 0 0 1 23 17z" strokeLinejoin="round" />
+									</svg>
+									Registrar mi negocio ahora
+								</Link>
+							</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
 
-			{/*
-			 * Crédito de autor de la imagen del slider visible, si
-			 * tiene uno registrado en lib/creditos. En móvil sube
-			 * sobre la barra flotante de destinos (bottom-nav-total).
-			 */}
 			{creditoHero && (
-				<p className="absolute bottom-nav-total right-5 z-10 max-w-[70%] text-right text-[11px] leading-snug text-white/65 md:bottom-4 md:right-8">
-					Fuente: {creditoHero}
+				<p className="absolute bottom-2 right-4 z-10 text-[11px]" style={{ color: "#3e4a3d" }}>
+					{creditoHero}
 				</p>
 			)}
 		</section>
+	);
+}
+
+function BanderaChica() {
+	return (
+		<div className="flex h-3.5 w-5 flex-col overflow-hidden rounded-sm border" style={{ borderColor: "#becab9" }} aria-hidden>
+			<span className="h-1/3 w-full" style={{ background: "#006d23" }} />
+			<span className="h-1/3 w-full" style={{ background: "#fff" }} />
+			<span className="h-1/3 w-full" style={{ background: "#1660a3" }} />
+		</div>
 	);
 }

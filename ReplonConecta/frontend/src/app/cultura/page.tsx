@@ -26,24 +26,24 @@ export const metadata: Metadata = {
 export default function Cultura() {
 	return (
 		<article className="mx-auto max-w-2xl px-4 py-10">
-			<p className="text-xs font-semibold uppercase tracking-[0.18em] text-leaf">
+			<p className="text-xs font-bold uppercase tracking-[0.18em]" style={{ color: "#006d23" }}>
 				Repelón, Atlántico
 			</p>
-			<h1 className="mt-2 font-display text-3xl font-semibold text-ink">
+			<h1 className="mt-2 font-sans text-3xl font-extrabold tracking-tight" style={{ color: "#091c31" }}>
 				{CULTURA.titulo}
 			</h1>
 
-			<div className="mt-4 space-y-3 text-sm leading-relaxed text-ink/90">
+			<div className="mt-4 space-y-3 text-sm leading-relaxed" style={{ color: "#3e4a3d" }}>
 				{CULTURA.descripcion.map((parrafo, i) => (
 					<p key={i}>{parrafo}</p>
 				))}
 			</div>
 
 			<section className="mt-10" aria-label="Publicaciones de cultura">
-				<h2 className="font-display text-2xl font-semibold text-ink">
+				<h2 className="font-sans text-2xl font-bold" style={{ color: "#091c31" }}>
 					Publicaciones
 				</h2>
-				<p className="mt-1 text-sm text-muted-foreground">
+				<p className="mt-1 text-sm" style={{ color: "#3e4a3d" }}>
 					Fotos, videos y oficios del municipio, como en un muro. Toca
 					una foto para verla en gran tamaño.
 				</p>

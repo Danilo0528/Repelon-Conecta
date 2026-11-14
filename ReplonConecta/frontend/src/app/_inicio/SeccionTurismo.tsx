@@ -1,126 +1,115 @@
 "use client";
 
+import Link from "next/link";
+
 import { SliderTurismo } from "@/components/SliderTurismo";
 import { FONDO_MOTIVO, MOTIVO_TRAZO } from "./contenido";
 import { VentanaLugar } from "./VentanaLugar";
 import type { InicioState } from "./useInicio";
 
-/*
- * Fichas sin precios: una de las tres familias del alcance no vende
- * productos, solo muestra dónde queda cada lugar. El contenido vive en
- * la base (`zonas_turisticas`, cargadas desde /admin; lib/turismo.ts
- * solo respalda) y el "camino" cierra en Google Maps: al presionar la
- * ficha se abre una ventana flotante con la info previa del lugar y
- * desde ahí el botón sale hacia el mapa, nunca a un chat de pedido.
- * Con la base vacía no hay ancla "Turismo" que mostrar. El id es el
- * ancla del nav y el scroll-mt deja que el título no quede bajo la
- * pastilla de vidrio.
- */
 export function SeccionTurismo({ inicio }: { inicio: InicioState }) {
-	const { lugares, lugarVentana, setLugarVentana, T } = inicio;
+	const { lugares, lugarVentana, setLugarVentana } = inicio;
 
 	return (
 		<>
 			{lugares.length > 0 && (
-				<section
-					id="turismo"
-					className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12"
-				>
-					<div className="mb-5">
-						<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
-							Turismo en Repelón
-						</h2>
-						<p className="mt-1 text-sm text-muted-foreground">
-							{T("inicio.turismo.texto")}
-						</p>
-					</div>
+				<section id="turismo" className="scroll-mt-24 w-full py-10 md:py-16"
+					style={{ background: "#fbfbf9" }}>
+					<div className="mx-auto max-w-[1280px] px-4 md:px-8 lg:px-12">
 
-					<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-						{lugares.map((lugar) => (
-						<button
-							key={`${lugar.nombre}|${lugar.direccion}`}
-							type="button"
-							onClick={() => setLugarVentana(lugar)}
-							aria-haspopup="dialog"
-							aria-label={`Ver información de ${lugar.nombre}`}
-							className="glass flex w-full flex-col rounded-3xl p-5 text-left transition hover:-translate-y-0.5 hover:shadow-float focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
-						>
-							{/*
-							 * Banda superior: foto real si existe; si no,
-							 * ilustración de respaldo (gradiente pastel +
-							 * trazo del motivo). El desbordamiento (-m*) la
-							 * lleva al borde de la tarjeta.
-							 */}
-							<div
-								role="img"
-								aria-label={lugar.imagen
-									? `${lugar.nombre} (fotos)`
-									: `${lugar.nombre} (ilustración)`}
-								className={`relative -mx-5 -mt-5 mb-4 h-36 overflow-hidden rounded-t-3xl ${FONDO_MOTIVO[lugar.motivo]}`}
-							>
-								{lugar.imagenes.length > 0 ? (
-									<SliderTurismo
-										imagenes={lugar.imagenes}
-										creditos={lugar.creditos}
-										nombre={lugar.nombre}
-									/>
-								) : (
-									<svg
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="1.2"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										aria-hidden
-										className="absolute -bottom-6 -right-4 h-36 w-36 text-ink/15"
-									>
-										{MOTIVO_TRAZO[lugar.motivo]}
-									</svg>
-								)}
+						{/* Encabezado */}
+						<div className="mb-8 max-w-3xl">
+							<div className="mb-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-bold"
+								style={{ background: "#d2e4ff", color: "#004880" }}>
+								<svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+									<path d="M12 21s7-6 7-11a7 7 0 00-14 0c0 5 7 11 7 11z" strokeLinecap="round" strokeLinejoin="round" />
+									<circle cx="12" cy="10" r="2.5" />
+								</svg>
+								Destinos Comunitarios
 							</div>
-							<div className="flex items-center gap-2">
-									<span className="grid size-9 place-items-center rounded-xl bg-cielo/25 text-azul">
-										<svg
-											viewBox="0 0 24 24"
-											className="size-5"
-											fill="none"
-											stroke="currentColor"
-											strokeWidth="1.8"
-											aria-hidden
-										>
-											<path
-												d="M12 21s6.5-5.6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21z"
-												strokeLinejoin="round"
-											/>
-											<circle cx="12" cy="10.4" r="2.4" />
-										</svg>
-									</span>
-									<h3 className="font-display font-semibold text-ink">
-										{lugar.nombre}
-									</h3>
-								</div>
-								<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-									{lugar.descripcion}
-								</p>
-								<p className="mt-2 text-xs text-muted-foreground/80">
-									{lugar.direccion}
-								</p>
-							<span className="glass-soft mt-4 inline-flex min-h-11 items-center justify-center rounded-xl px-3 py-2.5 text-sm font-semibold text-ink">
-								Cómo llegar
-							</span>
-						</button>
-					))}
+							<h2 className="font-sans text-[2rem] font-extrabold tracking-tight md:text-[2.25rem]"
+								style={{ color: "#091c31" }}>
+								Turismo en Repelón
+							</h2>
+							<p className="mt-1 text-[16px]" style={{ color: "#3e4a3d" }}>
+								Lugares y zonas del pueblo: el camino termina en el mapa y la calidez de su gente.
+							</p>
+						</div>
+
+						{/* Rejilla */}
+						<div className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+							{lugares.map((lugar) => (
+								<button
+									key={`${lugar.nombre}|${lugar.direccion}`}
+									type="button"
+									onClick={() => setLugarVentana(lugar)}
+									aria-haspopup="dialog"
+									aria-label={`Ver información de ${lugar.nombre}`}
+									className="group flex w-full flex-col overflow-hidden text-left transition-all duration-300 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-[#006d23] focus-visible:ring-offset-2"
+									style={{ background: "#fff", borderRadius: "12px", boxShadow: "0 1px 4px rgba(7,27,47,0.06)" }}
+								>
+									{/* Foto */}
+									<div className={`relative h-52 w-full overflow-hidden ${FONDO_MOTIVO[lugar.motivo]}`}>
+										{lugar.imagenes.length > 0 ? (
+											<SliderTurismo imagenes={lugar.imagenes} creditos={lugar.creditos} nombre={lugar.nombre} />
+										) : (
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden
+												className="absolute -bottom-6 -right-4 h-36 w-36 opacity-15">
+												{MOTIVO_TRAZO[lugar.motivo]}
+											</svg>
+										)}
+										{/* Overlay badge */}
+										<div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(9,28,49,0.65) 0%, transparent 55%)" }} />
+									</div>
+
+									{/* Info */}
+									<div className="flex flex-1 flex-col p-4">
+										<div className="mb-1.5 flex items-center gap-1 text-[12px]" style={{ color: "#1660a3" }}>
+											<svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+												<path d="M12 22s8-7 8-12a8 8 0 1 0-16 0c0 5 8 12 8 12z" strokeLinejoin="round" />
+												<circle cx="12" cy="10" r="2.5" />
+											</svg>
+											{lugar.direccion}
+										</div>
+										<h3 className="font-sans text-[18px] font-bold leading-snug" style={{ color: "#091c31" }}>
+											{lugar.nombre}
+										</h3>
+										<p className="mt-2 flex-1 text-[14px] leading-relaxed" style={{ color: "#3e4a3d" }}>
+											{lugar.descripcion}
+										</p>
+										<div className="mt-4 flex items-center justify-between">
+											<span className="flex items-center gap-1 text-[12px] font-bold" style={{ color: "#0b8544" }}>
+												<span className="h-2 w-2 rounded-full" style={{ background: "#0b8544" }} aria-hidden />
+												Acceso Libre
+											</span>
+											<span className="flex items-center gap-1 text-[14px] font-bold transition-colors group-hover:underline" style={{ color: "#006d23" }}>
+												Cómo llegar
+												<svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+													<path d="M5 12h14M12 5l7 7-7 7" />
+												</svg>
+											</span>
+										</div>
+									</div>
+								</button>
+							))}
+						</div>
+
+						<div className="mt-8 flex justify-center">
+							<Link href="/#turismo"
+								className="inline-flex items-center gap-2 rounded-lg px-8 py-3.5 text-[14px] font-semibold shadow-sm transition hover:bg-[#e5eeff]"
+								style={{ background: "#fff", color: "#091c31", border: "1px solid #dbe9ff" }}>
+								Ver los {lugares.length} lugares turísticos
+								<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+									<path d="M5 12h14M12 5l7 7-7 7" />
+								</svg>
+							</Link>
+						</div>
 					</div>
 				</section>
 			)}
 
-			{/* Ventana flotante del lugar turístico elegido */}
 			{lugarVentana && (
-				<VentanaLugar
-					lugar={lugarVentana}
-					onCerrar={() => setLugarVentana(null)}
-				/>
+				<VentanaLugar lugar={lugarVentana} onCerrar={() => setLugarVentana(null)} />
 			)}
 		</>
 	);
