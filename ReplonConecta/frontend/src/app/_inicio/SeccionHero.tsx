@@ -13,7 +13,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 	const { imagenesHero, indiceHero, creditoHero, categorias, T } = inicio;
 
 	return (
-		<section className="relative left-1/2 m-0 min-h-[calc(100svh-4rem)] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat">
+		<section className="relative left-1/2 m-0 min-h-[78svh] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat sm:min-h-[86svh] md:min-h-[calc(100svh-4rem)]">
 			{/* Slider de fondo: imágenes apiladas con crossfade */}
 			{imagenesHero.map((src, i) => (
 				<div
@@ -30,47 +30,47 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 			<div className="absolute inset-0 bg-gradient-to-r from-[#071b2f]/85 via-[#0b3550]/55 to-[#0b3550]/20" />
 			<div className="absolute inset-0 bg-gradient-to-t from-[#071b2f]/60 via-transparent to-transparent" />
 
-			{/* Contenido superpuesto: en móvil el padding vertical baja
-			    para que el hero no ocupe toda la primera pantalla. */}
-			<div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-[1480px] items-center gap-6 px-5 py-10 sm:gap-8 sm:px-10 sm:py-14 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-16 xl:px-24">
+			{/* Contenido superpuesto: en móvil más compacto para que se vea
+			    contenido útil antes del primer scroll. */}
+			<div className="relative z-10 mx-auto grid min-h-[78svh] w-full max-w-[1480px] items-center gap-4 px-4 py-6 sm:min-h-[86svh] sm:gap-6 sm:px-8 sm:py-10 md:min-h-[calc(100svh-4rem)] md:grid-cols-[minmax(0,1fr)_320px] md:gap-8 md:px-10 md:py-14 lg:gap-10 lg:px-16 xl:px-24">
 				<div className="max-w-2xl">
-					<div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
-						<span className="h-px w-8 bg-amarillo" />
+					<div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80 sm:mb-4 sm:gap-3 sm:text-xs sm:tracking-[0.18em]">
+						<span className="h-px w-6 bg-amarillo sm:w-8" />
 						Repelón, Atlántico
 					</div>
-					<span className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-leaf">
+					<span className="glass-soft inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-semibold text-leaf sm:px-3 sm:text-xs">
 						<span className="size-2 rounded-full bg-leaf" aria-hidden />
 						Comercio local, digitalizado
 					</span>
 
-					<h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
+					<h1 className="mt-3 font-display text-[2rem] font-semibold leading-[1.05] tracking-tight text-white sm:mt-4 sm:text-4xl md:text-5xl lg:text-6xl">
 						{T("inicio.hero.titulo1")}{" "}
 						<span className="italic text-amarillo">
 							{T("inicio.hero.titulo2")}
 						</span>
 					</h1>
 
-					<p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/90">
+					<p className="mt-3 max-w-md text-[14px] leading-snug text-white/90 sm:mt-4 sm:text-[15px] sm:leading-relaxed">
 						{T("inicio.hero.texto")}
 					</p>
 
-					<div className="mt-6 flex flex-wrap gap-3">
+					<div className="mt-4 flex flex-wrap gap-2 sm:mt-6 sm:gap-3">
 						<Link
 							href="/negocios"
-							className="inline-flex min-h-12 items-center justify-center rounded-xl bg-leaf px-5 py-3 font-semibold text-white shadow-leaf transition-transform active:scale-[.98]"
+							className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-leaf px-4 py-2.5 text-sm font-semibold text-white shadow-leaf transition-transform active:scale-[.98] sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-base"
 						>
 							Explorar comercios
 						</Link>
 						<Link
 							href="/vendedor"
-							className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-5 py-3 font-semibold text-leaf shadow-leaf transition-transform active:scale-[.98]"
+							className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-leaf shadow-leaf transition-transform active:scale-[.98] sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-base"
 						>
 							Registrar mi negocio
 						</Link>
 					</div>
 
 					{!supabaseConfigurado && (
-						<div className="mt-4">
+						<div className="mt-3 sm:mt-4">
 							<Aviso tono="info">
 								Falta configurar Supabase en <code>.env.local</code>. Se ve el
 								catálogo, pero no se puede iniciar sesión ni pedir.
@@ -78,14 +78,14 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 						</div>
 					)}
 
-					<div className="mt-6 flex flex-wrap gap-2 text-xs font-medium">
+					<div className="mt-4 flex flex-wrap gap-1.5 text-xs font-medium sm:mt-6 sm:gap-2">
 						{(categorias.datos ?? [])
 							.filter((c) => enAlcance(c.slug))
 							.map((c) => (
 								<Link
 									key={c.id}
 									href="/negocios"
-									className="glass-soft inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:text-leaf"
+									className="glass-soft inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 py-1 text-muted-foreground transition-colors hover:text-leaf sm:min-h-0 sm:px-3 sm:py-1.5"
 								>
 									<IconoCategoria categoria={c} className="h-4 w-4" />
 									{c.nombre}

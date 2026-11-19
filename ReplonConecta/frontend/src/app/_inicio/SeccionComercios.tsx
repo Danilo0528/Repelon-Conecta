@@ -20,19 +20,19 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 		inicio;
 
 	return (
-		<section className="mx-auto max-w-6xl px-4 pt-12">
+		<section className="mx-auto max-w-6xl px-4 pt-6 sm:pt-8 md:pt-12">
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
 					const consulta = texto.trim();
 					router.push(consulta ? `/buscar?q=${encodeURIComponent(consulta)}` : "/buscar");
 				}}
-				className="glass-soft mb-6 flex items-center gap-3 rounded-xl px-4 py-3 text-ink"
+				className="glass-soft mb-4 flex items-center gap-2 rounded-xl px-3 py-2.5 text-ink sm:mb-5 sm:gap-3 sm:px-4 sm:py-3 md:mb-6"
 			>
 				<button
 					type="submit"
 					aria-label="Buscar productos en el pueblo"
-					className="shrink-0 text-leaf"
+					className="flex h-9 w-9 shrink-0 items-center justify-center text-leaf sm:h-auto sm:w-auto"
 				>
 					<svg
 						viewBox="0 0 24 24"
@@ -53,25 +53,25 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 					onChange={(e) => setTexto(e.target.value)}
 					placeholder="Busca un comercio o producto"
 					enterKeyHint="search"
-					className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground"
+					className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground sm:text-base"
 				/>
 				<button
 					type="submit"
-					className="shrink-0 rounded-lg bg-leaf px-3 py-1.5 text-xs font-semibold text-white"
+					className="inline-flex min-h-9 shrink-0 items-center rounded-lg bg-leaf px-3 py-1.5 text-xs font-semibold text-white"
 				>
 					Buscar
 				</button>
 			</form>
 
-			<div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-				<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
+			<div className="mb-3 flex flex-wrap items-end justify-between gap-2 sm:mb-4 sm:gap-3 md:mb-5">
+				<h2 className="font-display text-xl font-semibold text-ink sm:text-2xl md:text-3xl">
 					Comercios del pueblo
 				</h2>
-				<div className="flex gap-2 text-xs font-semibold">
+				<div className="flex gap-1.5 text-xs font-semibold sm:gap-2">
 					<button
 						type="button"
 						onClick={() => setSoloAbiertos(false)}
-						className={`rounded-full px-3 py-1.5 ${
+						className={`inline-flex min-h-9 items-center rounded-full px-3 py-1.5 ${
 							!soloAbiertos ? "bg-leaf text-white" : "glass-soft text-muted-foreground"
 						}`}
 					>
@@ -80,7 +80,7 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 					<button
 						type="button"
 						onClick={() => setSoloAbiertos(true)}
-						className={`rounded-full px-3 py-1.5 ${
+						className={`inline-flex min-h-9 items-center rounded-full px-3 py-1.5 ${
 							soloAbiertos ? "bg-leaf text-white" : "glass-soft text-muted-foreground"
 						}`}
 					>
@@ -95,11 +95,11 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 				</Aviso>
 			)}
 
-			<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+			<div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:gap-5">
 				{negocios.cargando &&
 					lista.length === 0 &&
 					Array.from({ length: 3 }).map((_, i) => (
-						<div key={i} className="glass h-72 animate-pulse rounded-3xl" />
+						<div key={i} className="glass h-60 animate-pulse rounded-3xl sm:h-72" />
 					))}
 				{filtrados.map((n) => (
 					<StoreCard key={n.id} n={n} />
@@ -107,15 +107,15 @@ export function SeccionComercios({ inicio }: { inicio: InicioState }) {
 			</div>
 
 			{!negocios.cargando && !negocios.error && filtrados.length === 0 && (
-				<p className="py-8 text-center text-muted-foreground">
+				<p className="py-6 text-center text-sm text-muted-foreground sm:py-8">
 					No encontramos resultados.
 				</p>
 			)}
 
-			<div className="mt-6 text-center">
+			<div className="mt-4 text-center sm:mt-6">
 				<Link
 					href="/negocios"
-					className="glass-soft inline-flex min-h-12 items-center justify-center rounded-xl px-5 py-3 font-semibold text-ink"
+					className="glass-soft inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-ink sm:min-h-12 sm:px-5 sm:py-3 sm:text-base"
 				>
 					Ver todos los comercios
 				</Link>

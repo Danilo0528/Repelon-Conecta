@@ -27,7 +27,7 @@ export function StoreCard({ n }: { n: Negocio }) {
 	const credito = fallaEn === logo ? null : creditoNegocio(n);
 
 	return (
-		<article className="glass group rounded-3xl p-4 transition-transform hover:-translate-y-1">
+		<article className="glass group rounded-3xl p-3 transition-transform hover:-translate-y-1 sm:p-4">
 			<Link href={`/negocios/${n.slug}`} className="block">
 				<div className="overflow-hidden rounded-2xl">
 					{/* eslint-disable-next-line @next/next/no-img-element */}
@@ -40,10 +40,10 @@ export function StoreCard({ n }: { n: Negocio }) {
 					/>
 				</div>
 
-				<FuenteImagen credito={credito} className="pt-2" />
+				<FuenteImagen credito={credito} className="pt-1.5 sm:pt-2" />
 
-				<div className="flex items-center justify-between gap-2 pt-4">
-					<h3 className="min-w-0 truncate font-display text-lg font-semibold text-ink">
+				<div className="flex items-center justify-between gap-2 pt-2.5 sm:pt-4">
+					<h3 className="min-w-0 truncate font-display text-base font-semibold text-ink sm:text-lg">
 						{n.nombre}
 					</h3>
 					{n.destacado && (
@@ -56,13 +56,13 @@ export function StoreCard({ n }: { n: Negocio }) {
 					)}
 				</div>
 
-				<p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+				<p className="mt-0.5 line-clamp-1 text-[13px] text-muted-foreground sm:mt-1 sm:text-sm">
 					{n.descripcion ?? n.direccion}
 				</p>
 
-				<div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+				<div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mt-3">
 					<InsigniaAbierto abierto={n.abierto} />
-					<span className="text-sm text-muted-foreground">
+					<span className="text-[13px] text-muted-foreground sm:text-sm">
 						{n.barrio ?? n.direccion} · {n.cantidadProductos} productos
 					</span>
 				</div>
@@ -73,7 +73,7 @@ export function StoreCard({ n }: { n: Negocio }) {
 					href={`https://wa.me/${n.whatsapp.replace(/\D/g, "")}`}
 					target="_blank"
 					rel="noreferrer"
-					className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-leaf hover:underline"
+					className="mt-2 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-leaf hover:underline sm:mt-3"
 				>
 					<svg
 						viewBox="0 0 24 24"

@@ -53,12 +53,12 @@ export default function ListaNegocios() {
 	}
 
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-3 pt-4 sm:px-4 sm:pt-6">
 			<div className="flex items-baseline justify-between gap-2">
-				<h1 className="font-display text-2xl font-semibold text-ink">
+				<h1 className="font-display text-xl font-semibold text-ink sm:text-2xl">
 					Negocios en Repelón
 				</h1>
-				<Link href="/" className="shrink-0 text-sm font-medium text-azul">
+				<Link href="/" className="inline-flex min-h-10 shrink-0 items-center text-sm font-medium text-azul">
 					Ver mapa
 				</Link>
 			</div>
@@ -68,11 +68,11 @@ export default function ListaNegocios() {
 				value={texto}
 				onChange={(e) => setTexto(e.target.value)}
 				placeholder="Busca yuca, pescado, mojarra…"
-				className="mt-4 w-full min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3 text-base text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 md:max-w-xl"
+				className="mt-3 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-base text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 sm:mt-4 sm:min-h-12 sm:px-4 sm:py-3 md:max-w-xl"
 				aria-label="Buscar negocios o productos"
 			/>
 
-			<div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+			<div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 sm:mt-3 sm:gap-2">
 				<Chip activo={soloAbiertos} onClick={() => setSoloAbiertos((v) => !v)}>
 					Abiertos ahora
 				</Chip>
@@ -96,7 +96,7 @@ export default function ListaNegocios() {
 			<select
 				value={barrio}
 				onChange={(e) => setBarrio(e.target.value)}
-				className="mt-3 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 md:max-w-xs"
+				className="mt-2 w-full min-h-11 rounded-xl border border-black/15 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors focus:border-azul focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 sm:mt-3 md:max-w-xs"
 				aria-label="Filtrar por barrio"
 			>
 				<option value="">Todos los barrios</option>
@@ -108,7 +108,7 @@ export default function ListaNegocios() {
 			</select>
 
 			{negocios.error && (
-				<div className="mt-3">
+				<div className="mt-2 sm:mt-3">
 					<Aviso tono="error">
 						No se pudo cargar la lista: {negocios.error}
 					</Aviso>
@@ -128,7 +128,7 @@ export default function ListaNegocios() {
 								setBarrio("");
 								setSoloAbiertos(false);
 							}}
-							className="min-h-12 rounded-xl bg-azul px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-azul/90 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
+							className="min-h-11 rounded-xl bg-azul px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-azul/90 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 sm:min-h-12 sm:py-3"
 						>
 							Quitar filtros
 						</button>
@@ -136,7 +136,7 @@ export default function ListaNegocios() {
 				</Vacio>
 			)}
 
-			<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+			<ul className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
 				{(negocios.datos ?? []).map((n) => (
 					<li key={n.id}>
 						<Link
@@ -146,19 +146,19 @@ export default function ListaNegocios() {
 							<Foto
 								src={fotoNegocio(n)}
 								alt={`Foto de ${n.nombre}`}
-								className="h-36 w-full"
+								className="h-28 w-full sm:h-36"
 							/>
 							<FuenteImagen
 								credito={creditoNegocio(n)}
-								className="px-3 pt-1.5"
+								className="px-2.5 pt-1 sm:px-3 sm:pt-1.5"
 							/>
-							<div className="flex flex-1 flex-col p-3">
-								<p className="line-clamp-2 font-semibold leading-tight text-ink">
+							<div className="flex flex-1 flex-col p-2.5 sm:p-3">
+								<p className="line-clamp-2 text-[14px] font-semibold leading-tight text-ink sm:text-base">
 									{n.nombre}
 								</p>
-								<div className="mt-auto pt-2">
+								<div className="mt-auto pt-1.5 sm:pt-2">
 									<InsigniaAbierto abierto={n.abierto} />
-									<p className="mt-1.5 text-xs text-muted-foreground">
+									<p className="mt-1 text-[11px] text-muted-foreground sm:mt-1.5 sm:text-xs">
 										{n.barrio ?? "Repelón"} · {n.cantidadProductos} prod.
 									</p>
 								</div>

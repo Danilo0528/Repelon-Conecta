@@ -119,14 +119,14 @@ function Ficha() {
 					}
 					alt={negocio.nombre}
 				/>
-				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-4 pb-4 pt-16">
-					<div className="flex items-end justify-between gap-3">
-						<h1 className="text-2xl font-bold leading-tight text-white sm:text-3xl">
+				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-12 sm:px-4 sm:pb-4 sm:pt-16">
+					<div className="flex items-end justify-between gap-2 sm:gap-3">
+						<h1 className="text-xl font-bold leading-tight text-white sm:text-2xl md:text-3xl">
 							{negocio.nombre}
 						</h1>
 						<InsigniaAbierto abierto={negocio.abierto} />
 					</div>
-					<p className="mt-1 text-sm text-white/80">
+					<p className="mt-0.5 text-[13px] text-white/85 sm:mt-1 sm:text-sm">
 						{negocio.barrio ?? "Repelón"} · {negocio.direccion}
 					</p>
 				</div>
@@ -139,9 +139,9 @@ function Ficha() {
 			 */}
 			<div className="md:grid md:grid-cols-2 md:items-start md:gap-6 lg:gap-10">
 				{/* Info */}
-				<div className="px-4 pt-4">
+				<div className="px-3 pt-3 sm:px-4 sm:pt-4">
 					{negocio.descripcion && (
-						<p className="text-sm leading-relaxed text-black/70">
+						<p className="text-[14px] leading-relaxed text-black/70 sm:text-sm">
 							{negocio.descripcion}
 						</p>
 					)}
@@ -150,7 +150,7 @@ function Ficha() {
 				</div>
 
 				{/* Acciones + mapa */}
-				<section className="mt-4 px-4 md:mt-4">
+				<section className="mt-3 px-3 sm:mt-4 sm:px-4 md:mt-4">
 					{negocio.whatsapp && (
 						<a
 							href={enlaceWhatsApp(
@@ -281,9 +281,9 @@ function Ficha() {
 			</div>
 
 			{/* Productos */}
-			<section className="mt-8 px-4">
+			<section className="mt-5 px-3 sm:mt-6 sm:px-4 md:mt-8">
 				<div className="flex items-baseline justify-between gap-2">
-					<h2 className="text-lg font-bold">Productos</h2>
+					<h2 className="text-base font-bold sm:text-lg">Productos</h2>
 					{disponibles.length > 0 && (
 						<span className="text-sm text-black/50">
 							{disponibles.length}
@@ -292,7 +292,7 @@ function Ficha() {
 				</div>
 
 				{!negocio.abierto && disponibles.length > 0 && (
-					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-sm text-black/70">
+					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-[13px] text-black/70 sm:text-sm">
 						El negocio está cerrado ahora.{" "}
 						{COMPRAS_ACTIVAS
 							? "Puedes armar el pedido, pero confirma antes de enviarlo."
@@ -303,7 +303,7 @@ function Ficha() {
 				{disponibles.length === 0 ? (
 					<Vacio titulo="Este negocio aún no tiene productos" />
 				) : (
-					<ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+					<ul className="mt-2.5 grid grid-cols-2 gap-2 sm:mt-3 sm:gap-3 sm:grid-cols-3 lg:grid-cols-4">
 						{disponibles.map((p) => {
 							const unidades = unidadesDe(p.id);
 							return (
@@ -318,17 +318,17 @@ function Ficha() {
 									/>
 									<FuenteImagen
 										credito={p.imagenCredito}
-										className="px-3 pt-1.5"
+										className="px-2.5 pt-1 sm:px-3 sm:pt-1.5"
 									/>
-									<div className="flex flex-1 flex-col p-3">
-										<p className="line-clamp-2 text-sm font-medium leading-tight">
+									<div className="flex flex-1 flex-col p-2.5 sm:p-3">
+										<p className="line-clamp-2 text-[13px] font-medium leading-tight sm:text-sm">
 											{p.nombre}
 										</p>
 
-										<p className="mt-1.5 text-base font-bold">
+										<p className="mt-1 text-[15px] font-bold sm:mt-1.5 sm:text-base">
 											{pesos(p.precio)}
 											{p.unidad && (
-												<span className="text-xs font-medium text-black/50">
+												<span className="text-[11px] font-medium text-black/50 sm:text-xs">
 													{" "}
 													/ {p.unidad === "LIBRA" ? "libra" : "kilo"}
 												</span>
@@ -336,7 +336,7 @@ function Ficha() {
 										</p>
 
 										{p.stock != null && p.stock <= 5 && (
-											<p className="mt-0.5 text-xs text-black/50">
+											<p className="mt-0.5 text-[11px] text-black/50 sm:text-xs">
 												{p.stock === 0
 													? "Agotado"
 													: `Quedan ${p.stock}`}
@@ -344,7 +344,7 @@ function Ficha() {
 										)}
 
 										{COMPRAS_ACTIVAS && unidades > 0 && (
-											<p className="mt-0.5 text-xs font-medium text-azul">
+											<p className="mt-0.5 text-[11px] font-medium text-azul sm:text-xs">
 												{unidades === 1
 													? "1 en el carrito"
 													: `${unidades} en el carrito`}
@@ -356,7 +356,7 @@ function Ficha() {
 												type="button"
 												onClick={() => agregarProducto(p)}
 												disabled={p.stock === 0}
-												className={`${CLASE_BOTON_AZUL} mt-auto pt-2.5`}
+												className={`${CLASE_BOTON_AZUL} mt-auto pt-2 sm:pt-2.5`}
 												aria-label={`Agregar ${p.nombre} al carrito`}
 											>
 												<span aria-hidden className="text-xl leading-none">

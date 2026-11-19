@@ -97,11 +97,10 @@
 
 	/*
 	 * Altura reservada para la barra inferior de destinos: la barra va
-	 * flotando a 12 px del borde y mide ~52 px, así que el contenido de
-	 * las pantallas baja 4.5rem + el margen seguro del teléfono para
-	 * que nunca quede debajo de la barra.
+	 * flotando a 12 px del borde y mide ~52 px; en móvil se compacta un
+	 * poco, así que el contenido baja lo justo para no quedar debajo.
 	 */
-	--spacing-nav-total: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+	--spacing-nav-total: calc(4.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 :root {

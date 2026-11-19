@@ -24,19 +24,19 @@ export default function PieConecta() {
 	const creditos = listaCreditos();
 
 	return (
-		<footer className="mx-auto w-full max-w-6xl px-4 pb-nav-total pt-12 md:pb-10">
-			<div className="glass flex flex-col gap-6 rounded-3xl p-6 md:flex-row md:items-start md:justify-between">
+		<footer className="mx-auto w-full max-w-6xl px-4 pb-nav-total pt-8 sm:pt-10 md:pb-10 md:pt-12">
+			<div className="glass flex flex-col gap-4 rounded-3xl p-4 sm:gap-5 sm:p-5 md:flex-row md:items-start md:justify-between md:gap-6 md:p-6">
 				<div className="max-w-xs">
 					<p className="font-display text-lg font-semibold text-ink">
 						Repelón Conecta
 					</p>
-					<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+					<p className="mt-1 text-sm leading-snug text-muted-foreground sm:leading-relaxed">
 						El comercio local y los lugares del pueblo, en un solo lugar.
 						Hecho en Repelón, Atlántico.
 					</p>
 				</div>
 
-				<nav aria-label="Enlaces del pie" className="flex flex-col gap-2 text-sm">
+				<nav aria-label="Enlaces del pie" className="flex flex-col gap-1.5 text-sm sm:gap-2">
 					<Link href="/negocios" className="font-medium text-muted-foreground transition-colors hover:text-leaf">
 						Comercios
 					</Link>
@@ -51,7 +51,7 @@ export default function PieConecta() {
 					</Link>
 				</nav>
 
-				<nav aria-label="Enlaces legales" className="flex flex-col gap-2 text-sm">
+				<nav aria-label="Enlaces legales" className="flex flex-col gap-1.5 text-sm sm:gap-2">
 					<Link href="/privacidad" className="font-medium text-muted-foreground transition-colors hover:text-leaf">
 						Privacidad
 					</Link>

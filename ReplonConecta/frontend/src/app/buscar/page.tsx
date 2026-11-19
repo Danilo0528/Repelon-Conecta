@@ -163,21 +163,21 @@ function Busqueda() {
 	const negociosEnLista = new Set(lista.map((r) => r.negocioId)).size;
 
 	return (
-		<div className="mx-auto max-w-6xl px-4 pb-8 pt-6">
-			<section className="rounded-3xl bg-azul px-5 py-7 text-white shadow-float md:px-8 md:py-9">
+		<div className="mx-auto max-w-6xl px-3 pb-6 pt-4 sm:px-4 sm:pb-8 sm:pt-6">
+			<section className="rounded-2xl bg-azul px-4 py-5 text-white shadow-float sm:rounded-3xl sm:px-5 sm:py-6 md:px-8 md:py-9">
 				<div className="max-w-2xl">
-					<p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-amarillo">
+					<p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-amarillo sm:mb-2 sm:text-xs">
 						Repelón Conecta
 					</p>
-					<h1 className="font-display text-3xl font-semibold leading-tight md:text-5xl">
+					<h1 className="font-display text-2xl font-semibold leading-tight sm:text-3xl md:text-5xl">
 						Encuentra lo que necesitas en Repelón
 					</h1>
-					<p className="mt-3 max-w-xl text-sm leading-6 text-white/80 md:text-base">
+					<p className="mt-2 max-w-xl text-sm leading-snug text-white/85 sm:mt-3 sm:leading-6 md:text-base">
 						Conectamos vecinos y visitantes con negocios agrícolas, pesqueros y turísticos del pueblo.
 					</p>
 				</div>
 
-				<label className="mt-6 flex items-center gap-3 rounded-2xl bg-white px-4 py-4 text-ink shadow-lg">
+				<label className="mt-4 flex items-center gap-2.5 rounded-xl bg-white px-3 py-3 text-ink shadow-lg sm:mt-5 sm:gap-3 sm:rounded-2xl sm:px-4 sm:py-4 md:mt-6">
 					<svg
 						viewBox="0 0 24 24"
 						className="size-5 shrink-0 text-leaf"
@@ -196,18 +196,18 @@ function Busqueda() {
 						onChange={(e) => setTexto(e.target.value)}
 						placeholder="Ej: 20 kilos de yuca, pescado fresco o una finca para visitar"
 						enterKeyHint="search"
-						className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground"
+						className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground sm:text-base"
 					/>
 				</label>
 			</section>
 
-			<div className="mt-6 flex flex-wrap gap-2" aria-label="Búsquedas sugeridas">
+			<div className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2 md:mt-6" aria-label="Búsquedas sugeridas">
 				{["Yuca", "Pescado", "Plátano", "Fincas", "Cabañas"].map((sugerencia) => (
 					<button
 						key={sugerencia}
 						type="button"
 						onClick={() => setTexto(sugerencia)}
-						className="rounded-full border border-azul/15 bg-white px-4 py-2 text-sm font-semibold text-azul shadow-sm transition-colors hover:border-amarillo hover:bg-amarillo/20 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2"
+						className="inline-flex min-h-9 items-center rounded-full border border-azul/15 bg-white px-3 py-1.5 text-[13px] font-semibold text-azul shadow-sm transition-colors hover:border-amarillo hover:bg-amarillo/20 focus-visible:ring-2 focus-visible:ring-azul focus-visible:ring-offset-2 sm:min-h-10 sm:px-4 sm:py-2 sm:text-sm"
 					>
 						{sugerencia}
 					</button>
@@ -215,7 +215,7 @@ function Busqueda() {
 			</div>
 
 				{/* -------------------------- Filtros ---------------------------- */}
-				<div className="mt-4 flex flex-wrap items-center gap-2">
+				<div className="mt-3 flex flex-wrap items-center gap-1.5 sm:mt-4 sm:gap-2">
 				<div className="flex flex-wrap gap-2 text-xs font-semibold">
 					{CATEGORIAS_BUSQUEDA.map(({ slug, nombre }) => (
 						<button
@@ -278,11 +278,11 @@ function Busqueda() {
 			)}
 
 			{/* ------------- Lista y mapa, al mismo tiempo ------------------- */}
-			<div className="mt-4 grid gap-4 lg:grid-cols-2 lg:items-start">
+			<div className="mt-3 grid gap-3 sm:mt-4 sm:gap-4 lg:grid-cols-2 lg:items-start">
 				{/* Mapa: arriba en móvil, columna derecha fija en PC. */}
 				<div className="order-first lg:order-last lg:sticky lg:top-24">
-					<div className="glass shadow-float relative overflow-hidden rounded-[28px] p-2">
-						<div className="relative h-60 overflow-hidden rounded-[22px] lg:h-[62vh]">
+					<div className="glass shadow-float relative overflow-hidden rounded-[22px] p-1.5 sm:rounded-[28px] sm:p-2">
+						<div className="relative h-52 overflow-hidden rounded-[18px] sm:h-60 sm:rounded-[22px] lg:h-[62vh]">
 							<MapaNegocios
 								negocios={enMapa}
 								onSeleccionar={(n) => router.push(`/negocios/${n.slug}`)}
@@ -362,20 +362,20 @@ function Busqueda() {
 					)}
 
 					{resultados.cargando && (resultados.datos?.length ?? 0) === 0 && (
-						<div className="space-y-3">
+						<div className="space-y-2 sm:space-y-3">
 							{Array.from({ length: 3 }).map((_, i) => (
-								<div key={i} className="glass h-28 animate-pulse rounded-2xl" />
+								<div key={i} className="glass h-24 animate-pulse rounded-2xl sm:h-28" />
 							))}
 						</div>
 					)}
 
-					<ul className="space-y-3">
+					<ul className="space-y-2 sm:space-y-3">
 						{lista.map((r) => {
 							const activo = negocioActivo === r.negocioId;
 							return (
 								<li key={r.productoId}>
 									<article
-										className={`glass rounded-2xl p-3 transition-shadow ${
+										className={`glass rounded-2xl p-2.5 transition-shadow sm:p-3 ${
 											activo ? "ring-2 ring-leaf" : ""
 										}`}
 									>
@@ -383,42 +383,42 @@ function Busqueda() {
 											href={`/negocios/${r.negocioSlug}?producto=${encodeURIComponent(r.productoNombre)}`}
 											onMouseEnter={() => setNegocioActivo(r.negocioId)}
 											onFocus={() => setNegocioActivo(r.negocioId)}
-											className="flex items-center gap-3"
+											className="flex items-center gap-2.5 sm:gap-3"
 										>
 											<Foto
 												src={r.imagenUrl}
 												alt={r.productoNombre}
-												className="size-20 shrink-0 rounded-xl object-cover"
+												className="size-16 shrink-0 rounded-xl object-cover sm:size-20"
 											/>
 
 											<div className="min-w-0 flex-1">
 												<div className="flex items-start justify-between gap-2">
-													<p className="truncate text-sm font-semibold leading-tight text-ink">
+													<p className="truncate text-[13px] font-semibold leading-tight text-ink sm:text-sm">
 														{r.productoNombre}
 													</p>
 													<InsigniaAbierto abierto={r.abierto} />
 												</div>
 
-												<p className="mt-1 text-lg font-bold leading-tight text-ink">
+												<p className="mt-0.5 text-base font-bold leading-tight text-ink sm:mt-1 sm:text-lg">
 													{pesos(r.precio)}{" "}
-													<span className="text-xs font-medium text-muted-foreground">
+													<span className="text-[11px] font-medium text-muted-foreground sm:text-xs">
 														/ {r.unidad === "KILO" ? "kilo" : "libra"}
 													</span>
 												</p>
 
-												<p className="mt-1 truncate text-xs text-muted-foreground">
+												<p className="mt-0.5 truncate text-[11px] text-muted-foreground sm:mt-1 sm:text-xs">
 													{r.negocioNombre}
 													{r.barrio ? ` · ${r.barrio}` : ` · ${r.direccion}`}
 												</p>
 
-												<div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+												<div className="mt-1 flex flex-wrap items-center gap-1 sm:mt-1.5 sm:gap-1.5">
 													{r.categoriaNombre && (
-														<span className="rounded-full bg-leaf/10 px-2 py-0.5 text-[11px] font-semibold text-leaf">
+														<span className="rounded-full bg-leaf/10 px-2 py-0.5 text-[10px] font-semibold text-leaf sm:text-[11px]">
 															{r.categoriaNombre}
 														</span>
 													)}
 													{!r.disponible && (
-														<span className="rounded-full bg-black/10 px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+														<span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground sm:text-[11px]">
 															Sin stock
 														</span>
 													)}

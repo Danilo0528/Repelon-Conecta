@@ -9,18 +9,18 @@ export function SeccionMapa({ inicio }: { inicio: InicioState }) {
 	const { catalogo, seleccion, setSeleccionId, controlRef, T } = inicio;
 
 	return (
-		<section className="mx-auto max-w-6xl px-4 pt-12">
-			<div className="mb-5">
-				<h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">
+		<section className="mx-auto max-w-6xl px-4 pt-6 sm:pt-8 md:pt-12">
+			<div className="mb-3 sm:mb-4 md:mb-5">
+				<h2 className="font-display text-xl font-semibold text-ink sm:text-2xl md:text-3xl">
 					El pueblo en el mapa
 				</h2>
-				<p className="mt-1 text-sm text-muted-foreground">
+				<p className="mt-1 text-sm leading-snug text-muted-foreground sm:leading-normal">
 					{T("inicio.mapa.texto")}
 				</p>
 			</div>
 
-			<div className="glass shadow-float relative overflow-hidden rounded-[28px] p-2">
-				<div className="relative h-[420px] overflow-hidden rounded-[22px] md:h-[480px] lg:h-[540px]">
+			<div className="glass shadow-float relative overflow-hidden rounded-[22px] p-1.5 sm:rounded-[28px] sm:p-2">
+				<div className="relative h-[300px] overflow-hidden rounded-[18px] sm:h-[360px] sm:rounded-[22px] md:h-[460px] lg:h-[540px]">
 					<MapaNegocios
 						negocios={catalogo}
 						onSeleccionar={(n) => setSeleccionId(n.id)}

@@ -212,8 +212,8 @@ export default function HeaderConecta() {
 	 * mete debajo del hueco en pantallas con muesca.
 	 */
 	return (
-		<header className="sticky top-0 z-cromo w-full px-4 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] sm:px-6 lg:px-8">
-			<nav className="glass relative flex items-center gap-3 rounded-2xl border-azul/10 px-3 pt-2 pb-5 shadow-float">
+		<header className="sticky top-0 z-cromo w-full px-3 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] lg:px-8">
+			<nav className="glass relative flex items-center gap-2 rounded-2xl border-azul/10 px-2.5 pt-1.5 pb-5 shadow-float sm:gap-3 sm:px-3 sm:pt-2">
 				{/*
 				 * La bandera PINTANDO el vidrio, no solo en el borde.
 				 *
@@ -260,7 +260,7 @@ export default function HeaderConecta() {
 					<img
 						src="/img/logo-repelon-conecta-transparente.png"
 						alt="Repelón Conecta"
-						className="h-9 w-28 object-contain object-center sm:h-12 sm:w-40 md:h-14 md:w-48"
+						className="h-8 w-[6.5rem] object-contain object-center sm:h-10 sm:w-32 md:h-12 md:w-40 lg:h-14 lg:w-48"
 					/>
 				</Link>
 

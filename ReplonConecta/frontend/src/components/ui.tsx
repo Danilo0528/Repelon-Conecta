@@ -75,7 +75,7 @@ export function Chip({
 			type="button"
 			onClick={onClick}
 			aria-pressed={activo}
-			className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium shadow-sm ${
+			className={`inline-flex min-h-10 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[13px] font-medium shadow-sm sm:min-h-11 sm:px-3 sm:py-2 sm:text-sm ${
 				activo ? "bg-verde text-white" : "border border-black/10 bg-white text-black/70"
 			}`}
 		>
@@ -94,11 +94,11 @@ export function Cargando({ texto = "Cargando…" }: { texto?: string }) {
 	 */
 	return (
 		<div
-			className="mx-auto w-full max-w-2xl space-y-3 px-4 py-10"
+			className="mx-auto w-full max-w-2xl space-y-3 px-4 py-8 sm:py-10"
 			role="status"
 			aria-live="polite"
 		>
-			<div className="glass h-28 animate-pulse rounded-3xl" />
+			<div className="glass h-24 animate-pulse rounded-3xl sm:h-28" />
 			<div className="glass h-4 w-2/3 animate-pulse rounded-2xl" />
 			<div className="glass h-4 w-1/2 animate-pulse rounded-2xl" />
 			<span className="sr-only">{texto}</span>
@@ -146,11 +146,11 @@ export function Vacio({
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className="px-6 py-16 text-center">
+		<div className="px-5 py-10 text-center sm:px-6 sm:py-14 md:py-16">
 			<p className="text-base font-semibold">{titulo}</p>
 			{texto && <p className="mx-auto mt-1 max-w-xs text-sm text-black/60">{texto}</p>}
 			{/* En PC el botón no se estira al ancho de la pantalla. */}
-			{children && <div className="mx-auto mt-4 max-w-sm">{children}</div>}
+			{children && <div className="mx-auto mt-3 max-w-sm sm:mt-4">{children}</div>}
 		</div>
 	);
 }
