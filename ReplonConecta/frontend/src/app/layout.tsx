@@ -5,7 +5,6 @@ import BarraNavegacion from "@/components/BarraNavegacion";
 import { Blobs } from "@/components/Blobs";
 import { CarritoProvider } from "@/context/CarritoContext";
 import { SesionProvider } from "@/context/SesionContext";
-import { AsistenteIaChat } from "@/components/AsistenteIaChat";
 import PieConecta from "@/components/PieConecta";
 
 import "./globals.css";
@@ -126,7 +125,6 @@ export default function RootLayout({
 							{children}
 						</main>
 						<PieConecta />
-						<AsistenteIaChat />
 					</CarritoProvider>
 				</SesionProvider>
 			</body>

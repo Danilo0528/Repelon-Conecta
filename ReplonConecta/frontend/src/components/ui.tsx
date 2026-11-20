@@ -146,11 +146,27 @@ export function Vacio({
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className="px-5 py-10 text-center sm:px-6 sm:py-14 md:py-16">
-			<p className="text-base font-semibold">{titulo}</p>
-			{texto && <p className="mx-auto mt-1 max-w-xs text-sm text-black/60">{texto}</p>}
-			{/* En PC el botón no se estira al ancho de la pantalla. */}
-			{children && <div className="mx-auto mt-3 max-w-sm sm:mt-4">{children}</div>}
+		<div className="rounded-3xl border border-black/10 bg-white px-5 py-10 text-center sm:px-6 sm:py-12">
+			<div className="mx-auto mb-3 grid size-12 place-items-center rounded-2xl bg-leaf/10 text-leaf">
+				<svg
+					viewBox="0 0 24 24"
+					className="size-6"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.8"
+					aria-hidden
+				>
+					<circle cx="11" cy="11" r="7" />
+					<path d="m16.5 16.5 4 4" strokeLinecap="round" />
+				</svg>
+			</div>
+			<p className="font-display text-lg font-semibold text-ink">{titulo}</p>
+			{texto && (
+				<p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+					{texto}
+				</p>
+			)}
+			{children && <div className="mx-auto mt-4 max-w-sm">{children}</div>}
 		</div>
 	);
 }

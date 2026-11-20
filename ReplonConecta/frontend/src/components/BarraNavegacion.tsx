@@ -39,13 +39,9 @@ const ENLACES: {
 	icono: NombreIconoNav;
 }[] = [
 	{ href: "/", etiqueta: "Inicio", icono: "inicio" },
-	// Etiquetas cortas a proposito: en un Android angosto (320 px) cada
-	// destino tiene ~37 px de ancho y un texto largo queda truncado.
 	{ href: "/negocios", etiqueta: "Negocios", icono: "comercios" },
 	{ href: "/#turismo", etiqueta: "Turismo", icono: "turismo" },
 	{ href: "/cultura", etiqueta: "Cultura", icono: "cultura" },
-	{ href: "/fondo-emprender", etiqueta: "Fondo", icono: "fondo" },
-	{ href: "/vendedor", etiqueta: "Tienda", icono: "negocio" },
 	{ href: "/perfil", etiqueta: "Perfil", icono: "perfil" },
 ];
 
@@ -62,9 +58,9 @@ export default function BarraNavegacion() {
 
 			<nav
 				aria-label="Navegación principal"
-				className="fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-cromo sm:inset-x-3 sm:bottom-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden"
+				className="fixed inset-x-3 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-cromo sm:inset-x-4 md:hidden"
 			>
-				<div className="glass grid grid-cols-7 gap-px rounded-[20px] px-1 py-1 sm:gap-0.5 sm:rounded-[22px] sm:px-1.5 sm:py-1.5">
+				<div className="glass grid grid-cols-5 gap-1 rounded-[20px] px-1.5 py-1.5 shadow-float">
 					{ENLACES.map(({ href, etiqueta, icono }) => {
 						// "/" es la home pero también el prefijo de todo lo
 						// demás, así que se compara exacto; el resto por
@@ -81,14 +77,14 @@ export default function BarraNavegacion() {
 								key={href}
 								href={href}
 								aria-current={activo ? "page" : undefined}
-								className={`flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl px-px py-1 transition-all duration-200 sm:min-h-12 sm:gap-1 sm:rounded-2xl sm:px-0.5 sm:py-1.5 ${
+								className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1.5 transition-colors ${
 									activo
 										? "bg-leaf font-semibold text-white shadow-leaf"
 										: "font-medium text-muted-foreground hover:bg-black/5 hover:text-ink"
 								}`}
 							>
-								<IconoNav nombre={icono} className="size-[18px] sm:size-5" />
-								<span className="w-full truncate text-center text-[9px] leading-none tracking-tight sm:text-[10px] sm:tracking-tighter">
+								<IconoNav nombre={icono} className="size-5" />
+								<span className="w-full truncate text-center text-[11px] leading-none">
 									{etiqueta}
 								</span>
 							</Link>

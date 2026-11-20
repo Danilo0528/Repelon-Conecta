@@ -13,7 +13,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 	const { imagenesHero, indiceHero, creditoHero, categorias, T } = inicio;
 
 	return (
-		<section className="relative left-1/2 m-0 min-h-[78svh] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat sm:min-h-[86svh] md:min-h-[calc(100svh-4rem)]">
+		<section className="relative left-1/2 m-0 min-h-[70svh] w-[100vw] max-w-none -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat sm:min-h-[80svh] md:min-h-[calc(100svh-4rem)]">
 			{/* Slider de fondo: imágenes apiladas con crossfade */}
 			{imagenesHero.map((src, i) => (
 				<div
@@ -32,29 +32,29 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 
 			{/* Contenido superpuesto: en móvil más compacto para que se vea
 			    contenido útil antes del primer scroll. */}
-			<div className="relative z-10 mx-auto grid min-h-[78svh] w-full max-w-[1480px] items-center gap-4 px-4 py-6 sm:min-h-[86svh] sm:gap-6 sm:px-8 sm:py-10 md:min-h-[calc(100svh-4rem)] md:grid-cols-[minmax(0,1fr)_320px] md:gap-8 md:px-10 md:py-14 lg:gap-10 lg:px-16 xl:px-24">
+			<div className="relative z-10 mx-auto grid min-h-[70svh] w-full max-w-[1480px] items-center gap-3 px-4 py-5 sm:min-h-[80svh] sm:gap-5 sm:px-8 sm:py-8 md:min-h-[calc(100svh-4rem)] md:grid-cols-[minmax(0,1fr)_320px] md:gap-8 md:px-10 md:py-14 lg:gap-10 lg:px-16 xl:px-24">
 				<div className="max-w-2xl">
-					<div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80 sm:mb-4 sm:gap-3 sm:text-xs sm:tracking-[0.18em]">
-						<span className="h-px w-6 bg-amarillo sm:w-8" />
+					<div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80 sm:mb-3 sm:text-[11px] sm:tracking-[0.16em]">
+						<span className="h-px w-5 bg-amarillo sm:w-7" />
 						Repelón, Atlántico
 					</div>
-					<span className="glass-soft inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-semibold text-leaf sm:px-3 sm:text-xs">
-						<span className="size-2 rounded-full bg-leaf" aria-hidden />
+					<span className="glass-soft inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-leaf sm:gap-2 sm:py-1 sm:text-xs">
+						<span className="size-1.5 rounded-full bg-leaf sm:size-2" aria-hidden />
 						Comercio local, digitalizado
 					</span>
 
-					<h1 className="mt-3 font-display text-[2rem] font-semibold leading-[1.05] tracking-tight text-white sm:mt-4 sm:text-4xl md:text-5xl lg:text-6xl">
+					<h1 className="mt-2.5 font-display text-[1.85rem] font-semibold leading-[1.04] tracking-tight text-white sm:mt-3 sm:text-[2.25rem] md:text-5xl lg:text-6xl">
 						{T("inicio.hero.titulo1")}{" "}
 						<span className="italic text-amarillo">
 							{T("inicio.hero.titulo2")}
 						</span>
 					</h1>
 
-					<p className="mt-3 max-w-md text-[14px] leading-snug text-white/90 sm:mt-4 sm:text-[15px] sm:leading-relaxed">
+					<p className="mt-2.5 max-w-md text-[13.5px] leading-snug text-white/90 sm:mt-3 sm:text-[15px] sm:leading-relaxed">
 						{T("inicio.hero.texto")}
 					</p>
 
-					<div className="mt-4 flex flex-wrap gap-2 sm:mt-6 sm:gap-3">
+					<div className="mt-3.5 flex flex-wrap gap-2 sm:mt-5 sm:gap-3">
 						<Link
 							href="/negocios"
 							className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-leaf px-4 py-2.5 text-sm font-semibold text-white shadow-leaf transition-transform active:scale-[.98] sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-base"
@@ -70,7 +70,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 					</div>
 
 					{!supabaseConfigurado && (
-						<div className="mt-3 sm:mt-4">
+						<div className="mt-2.5 sm:mt-3">
 							<Aviso tono="info">
 								Falta configurar Supabase en <code>.env.local</code>. Se ve el
 								catálogo, pero no se puede iniciar sesión ni pedir.
@@ -78,7 +78,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 						</div>
 					)}
 
-					<div className="mt-4 flex flex-wrap gap-1.5 text-xs font-medium sm:mt-6 sm:gap-2">
+					<div className="mt-3 flex flex-wrap gap-1.5 text-xs font-medium sm:mt-5 sm:gap-2">
 						{(categorias.datos ?? [])
 							.filter((c) => enAlcance(c.slug))
 							.map((c) => (
@@ -87,7 +87,7 @@ export function SeccionHero({ inicio }: { inicio: InicioState }) {
 									href="/negocios"
 									className="glass-soft inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 py-1 text-muted-foreground transition-colors hover:text-leaf sm:min-h-0 sm:px-3 sm:py-1.5"
 								>
-									<IconoCategoria categoria={c} className="h-4 w-4" />
+									<IconoCategoria categoria={c} className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 									{c.nombre}
 								</Link>
 							))}

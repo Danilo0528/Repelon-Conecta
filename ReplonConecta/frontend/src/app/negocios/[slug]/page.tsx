@@ -119,14 +119,14 @@ function Ficha() {
 					}
 					alt={negocio.nombre}
 				/>
-				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-12 sm:px-4 sm:pb-4 sm:pt-16">
+				<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-2.5 pt-10 sm:px-4 sm:pb-4 sm:pt-16">
 					<div className="flex items-end justify-between gap-2 sm:gap-3">
-						<h1 className="text-xl font-bold leading-tight text-white sm:text-2xl md:text-3xl">
+						<h1 className="text-[1.2rem] font-bold leading-tight text-white sm:text-2xl md:text-3xl">
 							{negocio.nombre}
 						</h1>
 						<InsigniaAbierto abierto={negocio.abierto} />
 					</div>
-					<p className="mt-0.5 text-[13px] text-white/85 sm:mt-1 sm:text-sm">
+					<p className="mt-0.5 text-[13px] leading-snug text-white/85 sm:mt-1 sm:text-sm">
 						{negocio.barrio ?? "Repelón"} · {negocio.direccion}
 					</p>
 				</div>
@@ -139,9 +139,9 @@ function Ficha() {
 			 */}
 			<div className="md:grid md:grid-cols-2 md:items-start md:gap-6 lg:gap-10">
 				{/* Info */}
-				<div className="px-3 pt-3 sm:px-4 sm:pt-4">
+				<div className="px-3 pt-2.5 sm:px-4 sm:pt-4">
 					{negocio.descripcion && (
-						<p className="text-[14px] leading-relaxed text-black/70 sm:text-sm">
+						<p className="text-[14px] leading-snug text-black/70 sm:text-sm sm:leading-relaxed">
 							{negocio.descripcion}
 						</p>
 					)}
@@ -150,7 +150,7 @@ function Ficha() {
 				</div>
 
 				{/* Acciones + mapa */}
-				<section className="mt-3 px-3 sm:mt-4 sm:px-4 md:mt-4">
+				<section className="mt-2.5 px-3 sm:mt-4 sm:px-4 md:mt-4">
 					{negocio.whatsapp && (
 						<a
 							href={enlaceWhatsApp(
@@ -179,7 +179,7 @@ function Ficha() {
 					)}
 
 					{negocio.telefono && (
-						<div className="mt-2">
+						<div className="mt-1.5 sm:mt-2">
 							<BotonNumero telefono={negocio.telefono} />
 						</div>
 					)}
@@ -188,7 +188,7 @@ function Ficha() {
 						href={enlaceComoLlegar(ubicacion)}
 						target="_blank"
 						rel="noreferrer"
-						className={`${CLASE_BOTON_AZUL} mt-2`}
+						className={`${CLASE_BOTON_AZUL} mt-1.5 sm:mt-2`}
 					>
 						<svg
 							className="h-5 w-5 shrink-0"
@@ -212,7 +212,7 @@ function Ficha() {
 					 * se muestra la dirección escrita con un enlace a
 					 * Google Maps para buscarla.
 					 */}
-					<div className="mt-3">
+					<div className="mt-2.5 sm:mt-3">
 						{lat != null && lng != null ? (
 							<>
 								<MapaMini
@@ -281,7 +281,7 @@ function Ficha() {
 			</div>
 
 			{/* Productos */}
-			<section className="mt-5 px-3 sm:mt-6 sm:px-4 md:mt-8">
+			<section className="mt-4 px-3 sm:mt-6 sm:px-4 md:mt-8">
 				<div className="flex items-baseline justify-between gap-2">
 					<h2 className="text-base font-bold sm:text-lg">Productos</h2>
 					{disponibles.length > 0 && (
@@ -292,7 +292,7 @@ function Ficha() {
 				</div>
 
 				{!negocio.abierto && disponibles.length > 0 && (
-					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-[13px] text-black/70 sm:text-sm">
+					<p className="mt-2 rounded-xl border border-black/15 bg-black/[.03] px-3 py-2 text-[13px] leading-snug text-black/70 sm:text-sm">
 						El negocio está cerrado ahora.{" "}
 						{COMPRAS_ACTIVAS
 							? "Puedes armar el pedido, pero confirma antes de enviarlo."
@@ -303,7 +303,7 @@ function Ficha() {
 				{disponibles.length === 0 ? (
 					<Vacio titulo="Este negocio aún no tiene productos" />
 				) : (
-					<ul className="mt-2.5 grid grid-cols-2 gap-2 sm:mt-3 sm:gap-3 sm:grid-cols-3 lg:grid-cols-4">
+					<ul className="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:gap-3 sm:grid-cols-3 lg:grid-cols-4">
 						{disponibles.map((p) => {
 							const unidades = unidadesDe(p.id);
 							return (
@@ -318,14 +318,14 @@ function Ficha() {
 									/>
 									<FuenteImagen
 										credito={p.imagenCredito}
-										className="px-2.5 pt-1 sm:px-3 sm:pt-1.5"
+										className="px-2 pt-1 sm:px-3 sm:pt-1.5"
 									/>
-									<div className="flex flex-1 flex-col p-2.5 sm:p-3">
+									<div className="flex flex-1 flex-col p-2 sm:p-3">
 										<p className="line-clamp-2 text-[13px] font-medium leading-tight sm:text-sm">
 											{p.nombre}
 										</p>
 
-										<p className="mt-1 text-[15px] font-bold sm:mt-1.5 sm:text-base">
+										<p className="mt-0.5 text-[15px] font-bold sm:mt-1.5 sm:text-base">
 											{pesos(p.precio)}
 											{p.unidad && (
 												<span className="text-[11px] font-medium text-black/50 sm:text-xs">

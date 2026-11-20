@@ -1,121 +1,74 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { StoreCard } from "@/components/StoreCard";
 import { Aviso } from "@/components/ui";
 import type { InicioState } from "./useInicio";
 
-/**
- * Rejilla de comercios con buscador local.
- *
- * La caja principal filtra la rejilla mientras se escribe; con Enter (o
- * el botón) abre la pantalla de búsqueda /buscar, que sí llama al
- * endpoint de productos y pinta lista y mapa al mismo tiempo.
- */
+/** Negocios destacados para la home móvil. */
 export function SeccionComercios({ inicio }: { inicio: InicioState }) {
-	const router = useRouter();
-	const { texto, setTexto, soloAbiertos, setSoloAbiertos, negocios, lista, filtrados } =
-		inicio;
+	const { negocios, lista } = inicio;
+
+	const destacados = [...lista]
+		.sort((a, b) => Number(b.destacado) - Number(a.destacado) || Number(b.abierto) - Number(a.abierto))
+		.slice(0, 4);
 
 	return (
-		<section className="mx-auto max-w-6xl px-4 pt-6 sm:pt-8 md:pt-12">
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					const consulta = texto.trim();
-					router.push(consulta ? `/buscar?q=${encodeURIComponent(consulta)}` : "/buscar");
-				}}
-				className="glass-soft mb-4 flex items-center gap-2 rounded-xl px-3 py-2.5 text-ink sm:mb-5 sm:gap-3 sm:px-4 sm:py-3 md:mb-6"
-			>
-				<button
-					type="submit"
-					aria-label="Buscar productos en el pueblo"
-					className="flex h-9 w-9 shrink-0 items-center justify-center text-leaf sm:h-auto sm:w-auto"
-				>
-					<svg
-						viewBox="0 0 24 24"
-						className="size-5"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2"
-						aria-hidden
-					>
-						<circle cx="11" cy="11" r="7" />
-						<path d="m16.5 16.5 4 4" strokeLinecap="round" />
-					</svg>
-				</button>
-				<span className="sr-only">Buscar comercios y productos</span>
-				<input
-					type="search"
-					value={texto}
-					onChange={(e) => setTexto(e.target.value)}
-					placeholder="Busca un comercio o producto"
-					enterKeyHint="search"
-					className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground sm:text-base"
-				/>
-				<button
-					type="submit"
-					className="inline-flex min-h-9 shrink-0 items-center rounded-lg bg-leaf px-3 py-1.5 text-xs font-semibold text-white"
-				>
-					Buscar
-				</button>
-			</form>
-
-			<div className="mb-3 flex flex-wrap items-end justify-between gap-2 sm:mb-4 sm:gap-3 md:mb-5">
-				<h2 className="font-display text-xl font-semibold text-ink sm:text-2xl md:text-3xl">
-					Comercios del pueblo
-				</h2>
-				<div className="flex gap-1.5 text-xs font-semibold sm:gap-2">
-					<button
-						type="button"
-						onClick={() => setSoloAbiertos(false)}
-						className={`inline-flex min-h-9 items-center rounded-full px-3 py-1.5 ${
-							!soloAbiertos ? "bg-leaf text-white" : "glass-soft text-muted-foreground"
-						}`}
-					>
-						Todos
-					</button>
-					<button
-						type="button"
-						onClick={() => setSoloAbiertos(true)}
-						className={`inline-flex min-h-9 items-center rounded-full px-3 py-1.5 ${
-							soloAbiertos ? "bg-leaf text-white" : "glass-soft text-muted-foreground"
-						}`}
-					>
-						Abiertos ahora
-					</button>
+		<section className="mx-auto max-w-6xl px-4 pt-8 pb-2 sm:pt-10 sm:pb-4 md:pt-12">
+			<div className="mb-4 flex items-end justify-between gap-3">
+				<div>
+					<h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
+						Negocios destacados
+					</h2>
+					<p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+						Comercios del pueblo para descubrir y contactar fácilmente.
+					</p>
 				</div>
+				<Link
+					href="/negocios"
+					className="hidden min-h-11 shrink-0 items-center text-sm font-semibold text-leaf sm:inline-flex"
+				>
+					Ver todos
+				</Link>
 			</div>
 
 			{negocios.error && (
-				<Aviso tono="error">
-					No se pudo cargar el catálogo: {negocios.error}
-				</Aviso>
+				<Aviso tono="error">No se pudo cargar el catálogo: {negocios.error}</Aviso>
 			)}
 
-			<div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:gap-5">
+			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{negocios.cargando &&
 					lista.length === 0 &&
-					Array.from({ length: 3 }).map((_, i) => (
-						<div key={i} className="glass h-60 animate-pulse rounded-3xl sm:h-72" />
+					Array.from({ length: 4 }).map((_, i) => (
+						<div key={i} className="h-64 animate-pulse rounded-3xl border border-black/10 bg-black/[.03]" />
 					))}
-				{filtrados.map((n) => (
+				{destacados.map((n) => (
 					<StoreCard key={n.id} n={n} />
 				))}
 			</div>
 
-			{!negocios.cargando && !negocios.error && filtrados.length === 0 && (
-				<p className="py-6 text-center text-sm text-muted-foreground sm:py-8">
-					No encontramos resultados.
-				</p>
+			{!negocios.cargando && !negocios.error && destacados.length === 0 && (
+				<div className="rounded-3xl border border-black/10 bg-white px-5 py-10 text-center">
+					<p className="font-display text-lg font-semibold text-ink">
+						Aún no hay negocios para mostrar
+					</p>
+					<p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+						Cuando los comercios del pueblo se publiquen, aparecerán aquí para que puedas explorarlos.
+					</p>
+					<Link
+						href="/vendedor"
+						className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-leaf px-4 py-2.5 text-sm font-semibold text-white"
+					>
+						Registrar mi negocio
+					</Link>
+				</div>
 			)}
 
-			<div className="mt-4 text-center sm:mt-6">
+			<div className="mt-4 sm:mt-6">
 				<Link
 					href="/negocios"
-					className="glass-soft inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-ink sm:min-h-12 sm:px-5 sm:py-3 sm:text-base"
+					className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-ink sm:w-auto"
 				>
 					Ver todos los comercios
 				</Link>

@@ -25,8 +25,6 @@ export default function Inicio() {
 			<SeccionMapa inicio={inicio} />
 			<SeccionTurismo inicio={inicio} />
 			<SeccionComercios inicio={inicio} />
-			<SeccionFondo inicio={inicio} />
-			<SeccionRazones inicio={inicio} />
 		</div>
 	);
 }

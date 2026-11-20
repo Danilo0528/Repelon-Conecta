@@ -146,13 +146,13 @@ export default function ListaNegocios() {
 							<Foto
 								src={fotoNegocio(n)}
 								alt={`Foto de ${n.nombre}`}
-								className="h-28 w-full sm:h-36"
+								className="h-24 w-full sm:h-32 md:h-36"
 							/>
 							<FuenteImagen
 								credito={creditoNegocio(n)}
-								className="px-2.5 pt-1 sm:px-3 sm:pt-1.5"
+								className="px-2 pt-1 sm:px-3 sm:pt-1.5"
 							/>
-							<div className="flex flex-1 flex-col p-2.5 sm:p-3">
+							<div className="flex flex-1 flex-col p-2 sm:p-3">
 								<p className="line-clamp-2 text-[14px] font-semibold leading-tight text-ink sm:text-base">
 									{n.nombre}
 								</p>

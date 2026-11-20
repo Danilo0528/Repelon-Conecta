@@ -24,31 +24,47 @@ export default function Perfil() {
 	if (!perfil) return null;
 
 	return (
-		<div className="px-4 pt-4">
-			<h1 className="text-xl font-bold">Mi perfil</h1>
+		<div className="mx-auto max-w-2xl px-4 pb-4 pt-4 sm:pt-6">
+			<h1 className="text-xl font-bold text-ink sm:text-2xl">Mi perfil</h1>
 
 			<PanelRol />
 
-		{/*
-		 * En PC dos columnas: los datos de la cuenta a la izquierda y
-		 * las direcciones a la derecha, para que todo se vea sin
-		 * bajar la página.
-		 *
-		 * Las direcciones (y "Mis pedidos") están ocultas mientras
-		 * COMPRAS_ACTIVAS sea false: la app es solo intermediaria y
-		 * no pide entregas. El código sigue aquí, no se borró.
-		 */}
-		<div className="md:grid md:grid-cols-2 md:items-start md:gap-8">
-			<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
-			{COMPRAS_ACTIVAS && <Direcciones />}
-		</div>
+			<section className="mt-4 rounded-2xl border border-black/10 bg-white/70 p-4">
+				<h2 className="text-sm font-semibold text-ink">Accesos</h2>
+				<div className="mt-3 grid gap-2 sm:grid-cols-2">
+					<Link
+						href="/fondo-emprender"
+						className="inline-flex min-h-11 items-center justify-center rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-black/[.03]"
+					>
+						Fondo Emprender
+					</Link>
+					<Link
+						href="/vendedor"
+						className="inline-flex min-h-11 items-center justify-center rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-black/[.03]"
+					>
+						Mi tienda
+					</Link>
+				</div>
+			</section>
 
-		<div className="mt-6 max-w-md space-y-3">
-			{COMPRAS_ACTIVAS && (
-				<Link href="/pedidos" className={CLASE_BOTON_NEUTRO}>
-					Mis pedidos
-				</Link>
-			)}
+			{/*
+			 * En PC dos columnas: los datos de la cuenta a la izquierda y
+			 * las direcciones a la derecha.
+			 *
+			 * Las direcciones (y "Mis pedidos") están ocultas mientras
+			 * COMPRAS_ACTIVAS sea false. El código sigue aquí, no se borró.
+			 */}
+			<div className="mt-4 md:grid md:grid-cols-2 md:items-start md:gap-8">
+				<DatosPerfil perfil={perfil} onGuardado={refrescarPerfil} />
+				{COMPRAS_ACTIVAS && <Direcciones />}
+			</div>
+
+			<div className="mt-6 space-y-3 sm:max-w-md">
+				{COMPRAS_ACTIVAS && (
+					<Link href="/pedidos" className={CLASE_BOTON_NEUTRO}>
+						Mis pedidos
+					</Link>
+				)}
 
 				<button
 					type="button"

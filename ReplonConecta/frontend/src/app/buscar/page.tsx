@@ -282,7 +282,7 @@ function Busqueda() {
 				{/* Mapa: arriba en móvil, columna derecha fija en PC. */}
 				<div className="order-first lg:order-last lg:sticky lg:top-24">
 					<div className="glass shadow-float relative overflow-hidden rounded-[22px] p-1.5 sm:rounded-[28px] sm:p-2">
-						<div className="relative h-52 overflow-hidden rounded-[18px] sm:h-60 sm:rounded-[22px] lg:h-[62vh]">
+						<div className="relative h-48 overflow-hidden rounded-[18px] sm:h-56 sm:rounded-[22px] lg:h-[62vh]">
 							<MapaNegocios
 								negocios={enMapa}
 								onSeleccionar={(n) => router.push(`/negocios/${n.slug}`)}
